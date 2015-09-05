@@ -25,18 +25,24 @@ zip game_folder, zip_file, (err)->
 		resourceFiles: [zip_file]
 		(err)->
 			throw err if err
-			console.log "Done!"
-			# console.log "Okay"
-			# setTimeout ->
-			# 	console.log "Update the icon"
-			# 	winresourcer
-			# 		operation: "Update"
-			# 		exeFile: path.resolve game_exe
-			# 		resourceType: "Icongroup"
-			# 		resourceName: 1
-			# 		# lang: 1033 # Required, except when updating or deleting
-			# 		resourceFile: path.resolve win_ico
-			# 		(err)->
-			# 			throw err if err
-			# 			console.log "Done"
-			# , 500
+			console.log "Delete the Node.js icon from #{game_exe}"
+			winresourcer
+				operation: "Delete"
+				exeFile: path.resolve game_exe
+				resourceFile: path.resolve win_ico
+				resourceType: "Icon"
+				resourceName: 1
+				lang: 1033
+				(err)->
+					throw err if err
+					console.log "Add the new icon to #{game_exe}"
+					winresourcer
+						operation: "Add"
+						exeFile: path.resolve game_exe
+						resourceFile: path.resolve win_ico
+						resourceType: "Icon"
+						resourceName: 1
+						lang: 1033
+						(err)->
+							throw err if err
+							console.log "Done"
