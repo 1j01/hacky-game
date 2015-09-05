@@ -1,0 +1,47 @@
+{
+  "name": "Hacky Game",
+  "version": "0.0.0",
+  "description": "Some kind of hacky tech demo",
+  "license": "UNLICENSED",
+  "private": true,
+  "keywords": [
+    "hack",
+    "hacky",
+    "game",
+    "weird",
+    "crazy",
+    "strange",
+    "nexe",
+    "exe",
+    "platformer",
+    "tech",
+    "demo",
+    "technical",
+    "demonstration",
+    "concept",
+    "multiplayer",
+    "procedural",
+    "world",
+    "game",
+    "fun",
+    "play",
+    "yay",
+    "build",
+    "construct",
+    "customize",
+    "2d",
+    "canvas",
+    "idk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1j01/hacky-game.git"
+  },
+  "bugs": {
+    "url": "https://github.com/1j01/hacky-game/issues"
+  },
+  "main": "game.html",
+  "window": {
+    "toolbar": false
+  }
+}
