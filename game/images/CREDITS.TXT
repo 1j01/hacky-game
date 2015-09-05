@@ -1,0 +1,244 @@
+###############################################
+OpenGameArt.org automatically generated credits file notice:
+
+THIS FILE IS FOR INFORMATIONAL PURPOSES ONLY.  NO WARRANTY OF ANY KIND IS EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL OPENGAMEART.ORG BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE USE OF THIS FILE OR THE INFORMATION IN IT.
+
+In plain English:  This credits file is automatically generated to the best of our ability, but it remains YOUR RESPONSIBILITY as a game developer to ensure that the art you use is attributed properly.  That is, we can't be held liable even if all of the information in this file is completely wrong.   In addition, some of the art listed in this file may have SPECIAL ATTRIBUTION INSTRUCTIONS that ask that you credit the artist in a particular way, rather than a verbatim copyright notice.  In those cases, you will probably need to hand-edit this file to comply with their instructions.  In some older art, attribution instructions may be included in the art description itself.  Please check the art page to be sure.
+
+We recommend that you delete this notice when you're sure the information here is correct.
+###############################################
+
+Title:
+    Classic hero and baddies pack
+
+Author:
+    Jason-Em
+
+URL:
+    http://opengameart.org/content/classic-hero-and-baddies-pack
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+File(s):
+    * Standard sprites upd.png
+
+----------------------------------------
+
+Title:
+    Arcade (Re)Pack
+
+Author:
+    vnen
+
+URL:
+    http://opengameart.org/content/arcade-repack
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+Copyright/Attribution Notice:
+    All credits to Buch (http://opengameart.org/users/buch), and follow the attribution in the original Arcade Pack (http://opengameart.org/content/arcade-pack).
+
+File(s):
+    * arcadArne_sheet_org_desat.png
+
+----------------------------------------
+
+Title:
+    platformer-tileset-template
+
+Author:
+    rubberduck
+
+URL:
+    http://opengameart.org/content/platformer-tileset-template
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+File(s):
+    * platformer-tileset-template.png
+    * platformer-tileset-template-2.png
+
+----------------------------------------
+
+Title:
+    Shiny Noise Bricks
+
+Author:
+    SpiderDave
+
+URL:
+    http://opengameart.org/content/shiny-noise-bricks
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+Copyright/Attribution Notice:
+    No attribution required. If you want to credit me anyway, credit me as "SpiderDave".
+
+File(s):
+    * ShinyNoiseBricks1.png
+    * ShinyNoiseBricks2.png
+    * ShinyNoiseBricksWindows.png
+    * windowShadow.png
+    * ShinyNoiseBricksSmall.png
+
+----------------------------------------
+
+Title:
+    Items and elements
+
+Author:
+    Jason-Em
+
+URL:
+    http://opengameart.org/content/items-and-elements
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+File(s):
+    * Items.png
+
+----------------------------------------
+
+Title:
+    Tubes
+
+Author:
+    SpiderDave
+
+URL:
+    http://opengameart.org/content/tubes
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+Copyright/Attribution Notice:
+    No attribution required.  If you want to credit me anyway, credit me as "SpiderDave", and maybe link to this page (whatever you like).
+
+File(s):
+    * tubes.png
+
+----------------------------------------
+
+Title:
+    Platform game sprites
+
+Author:
+    Marcus
+
+URL:
+    http://opengameart.org/content/platform-game-sprites
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+File(s):
+    * pickups.png
+    * juan.png
+    * worker.png
+    * employer.png
+    * coin.png
+    * bricks.png
+
+----------------------------------------
+
+Title:
+    Ground tiles
+
+Author:
+    SpiderDave
+
+URL:
+    http://opengameart.org/content/ground-tiles-0
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+Copyright/Attribution Notice:
+    No attribution required. If you want to credit me anyway, credit me as "SpiderDave", and maybe link to this page (whatever you like).
+
+File(s):
+    * ground3T.png
+    * ground3.png
+
+----------------------------------------
+
+Title:
+    Flowers
+
+Author:
+    SpiderDave
+
+URL:
+    http://opengameart.org/content/flowers
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+Copyright/Attribution Notice:
+    No attribution required. If you want to credit me anyway, credit me as "SpiderDave".
+
+File(s):
+    * flowers.png
+
+----------------------------------------
+
+Title:
+    Platformer Baddies
+
+Author:
+    Jason-Em
+
+URL:
+    http://opengameart.org/content/platformer-baddies
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+File(s):
+    * Old enemies.png
+
+----------------------------------------
+
+Title:
+    Classic Hero
+
+Author:
+    Jason-Em
+
+URL:
+    http://opengameart.org/content/classic-hero
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+File(s):
+    * Old hero.png
+
+----------------------------------------
+
+Title:
+    Kiwi Sprites
+
+Author:
+    Shepardskin
+
+URL:
+    http://opengameart.org/content/kiwi-sprites
+
+License(s):
+    * CC0 ( http://creativecommons.org/publicdomain/zero/1.0/legalcode )
+
+SPECIAL ATTRIBUTION INSTRUCTIONS:
+    No attribution necessary, unless you want to. Just credit Shepardskin and/or a link to my twitter. https://twitter.com/Shepardskin
+
+File(s):
+    * kiwi.zip
+
+----------------------------------------
+
+
