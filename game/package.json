@@ -42,6 +42,7 @@
   },
   "main": "game.html",
   "window": {
-    "toolbar": false
+    "toolbar": false,
+    "icon": "images/icon-32.png"
   }
 }
