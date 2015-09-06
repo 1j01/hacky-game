@@ -11,7 +11,7 @@ setInterval ->
 	document.body.scrollTop = document.body.scrollHeight
 , 200
 
-imgs = require("fs").readdirSync "images"
+imgs = (img for img in require("fs").readdirSync "images" when img.match /\.(png|gif)/)
 setInterval ->
 	document.body.innerHTML += "<img src='images/#{imgs[~~(imgs.length * Math.random())]}'>"
 	document.body.scrollTop = document.body.scrollHeight
