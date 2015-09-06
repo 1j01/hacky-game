@@ -43,6 +43,7 @@
   "main": "game.html",
   "window": {
     "toolbar": false,
-    "icon": "images/icon-32.png"
+    "icon": "images/icon-32.png",
+    "title": "Hacky Game"
   }
 }

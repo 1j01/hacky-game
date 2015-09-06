@@ -45,11 +45,12 @@
     "cpr": "^0.4.1",
     "nexe": "^0.4.1",
     "nw-builder": "^2.0.2",
+    "nw-dev": "^1.2.3",
     "path-extra": "^1.0.3",
     "zip-folder": "^1.0.0"
   },
   "scripts": {
-    "start": "nwbuild -r game",
+    "start": "nwbuild -v 0.12.0 -r game",
     "prepublish": "coffee -c wrapper.coffee",
     "nwbuild": "nwbuild -v 0.12.0 -p win64 -o nw-builds game",
     "build": "coffee -c wrapper.coffee & coffee make-wrapper.coffee"

@@ -18,9 +18,11 @@ zip = nexeres.get "game.zip"
 
 # console.log "Using locations", {zip_file, nwjs_dl_folder, nwjs_url}
 
+# require("repl").start useGlobal: yes
+
 run = ->
 	# console.log "Launching game"
-	proc = spawn nwjs_exe, [zip_file], detached: yes, stdio: ['ignore', 'ignore', 'ignore']
+	proc = spawn nwjs_exe, [zip_file, process.execPath], detached: yes, stdio: ['ignore', 'ignore', 'ignore']
 	# process.exit()
 	proc.unref()
 	# proc.on 'open', -> # this is not an event that exists btw
