@@ -12,23 +12,26 @@ module.exports = class Server
 		@world = new World
 		
 		clients = []
+		
+		send_all_data = =>
+			for c in clients
+				for id, room of @world.rooms
+					c.write "#{JSON.stringify {room}}\n"
+		
+		send_ents = =>
+			for c in clients
+				for id, room of @world.rooms
+					c.write "#{JSON.stringify {room: room.ents}}\n"
+		
 		@server = net.createServer (c)->
 			console.debug "a client connected", c
 			clients.push c
 			c.on "end", ->
 				console.debug "a client disconnected", c
 				clients.splice (clients.indexOf c), 1
+			send_all_data()
+		
 		@server.listen 3164
-		
-		send_all_data = =>
-			for c in clients
-				for id, room of @world.rooms
-					c.write JSON.stringify {room}
-		
-		send_ents = =>
-			for c in clients
-				for id, room of @world.rooms
-					c.write JSON.stringify {room: room.ents}
 		
 		@iid = setInterval =>
 			if global.window?.CRASHED
@@ -64,3 +67,4 @@ module.exports = class Server
 	close: ->
 		@server.close()
 		clearInterval @iid
+		clearInterval @slower_iid

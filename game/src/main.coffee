@@ -14,17 +14,16 @@ global.socket = socket = net.connect port: 3164
 socket.on "end", ->
 	console.warn "Disconnected from server!"
 socket.setEncoding "utf8"
-socket.on "data", (json)->
-	return if window.CRASHED
-	# @TODO: handle this stream properly and split messages
-	try
-		message = JSON.parse json
-	catch e
-		console.warn "failed to parse json message", json
-	if message?.room
-		world.applyRoomUpdate message.room
-	else
-		console.warn "unknown message"
+socket.on "data", (data)->
+	for json in data.trim().split "\n"
+		try
+			message = JSON.parse json
+		catch e
+			console.error "failed to parse json message", json
+		if message?.room
+			world.applyRoomUpdate message.room
+		else
+			console.warn "unknown message"
 
 canvas = document.createElement "canvas"
 document.body.appendChild canvas
