@@ -3,14 +3,8 @@
 # The client starts out connected to it's server
 # If a connection fails with a remote server, you get booted back to the local server
 
-# console = require("nw.gui").Window.get().window.console
-# log = (args...)->
-# 	require("nw.gui").Window.get().window.console.log args...
-
-# log = (args...)->
-# 	process.stdout.write "ASSHOLE" + args[0] + args[1]
-
 World = require "./World"
+net = require "net"
 
 module.exports = class Server
 	constructor: ->
@@ -18,19 +12,20 @@ module.exports = class Server
 		
 		@world = new World
 		
-		# io = (global.require "socket.io")()
-		@io = (require "socket.io")()
-		@io.on "connection", (socket)->
-			console.log "client connected to server", socket
-		@io.listen 3164, (err)->
-			console.log "io.listen cb", arguments
+		clients = []
+		@server = net.createServer (c)->
+			console.log "a client connected", c
+			clients.push c
+			c.on "end", ->
+				console.log "a client disconnected", c
+				clients.splice (clients.indexOf c), 1
+		@server.listen 3164
 		
-		i = 0
-		@iid = setInterval =>
-			console.log "server emit room hey", i
-			@io.emit "room", i++ # @world.rooms[0]
+		setInterval =>
+			for c in clients
+				c.write JSON.stringify {text: ~~(Math.random()*500)}
 		, 550
 	
 	close: ->
-		@io.close()
+		@server.close()
 		clearInterval @iid

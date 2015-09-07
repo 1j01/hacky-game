@@ -1,22 +1,17 @@
 
-# a local world for Dead Reckoning
+# a local world, simulated for Dead Reckoning
 world = new World
-# each client has a server
-# server = new Server
-# each client starts out connected to their own server
-# world.connect server
+# the client starts out connected to it's own server
 
-# localStorage.debug = "*"
+net = require "net"
 
-socket = io.connect "http://localhost:3164", transports: ['websocket']
-socket.on "connect", ->
-	console.log "Connected to server!"
-socket.on "disconnect", ->
-	console.warn "Disconnect from server!"
+socket = net.connect port: 3164
 texts = []
-socket.on "room", (room)->
-	console.log {room}
-	texts.push room
+socket.on "data", (json)->
+	data = JSON.parse json
+	texts.push data.text
+socket.on "end", ->
+	console.warn "Disconnect from server!"
 
 canvas = document.createElement "canvas"
 document.body.appendChild canvas
@@ -28,7 +23,6 @@ do animate = ->
 	ctx.fillStyle = "black"
 	ctx.fillRect 0, 0, canvas.width, canvas.height
 	ctx.fillStyle = "red"
-	# ctx.fillRect 0, 0, 5, 5
 	ctx.font = "#{Math.random()*50+5}px monospace"
 	for text in texts
 		ctx.fillText text, Math.random() * canvas.width, Math.random() * canvas.height
