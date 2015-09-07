@@ -1,2 +1,0 @@
-
-# ssdp = require "ssdp"

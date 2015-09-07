@@ -9,7 +9,7 @@ if game_exe is "--enable-logging"
 # else
 	# running from nexe
 
-@find_saved_game = (callback)->
+find_saved_game = (callback)->
 	fs.stat game_exe, (err, stats)->
 		return callback err if err
 		fs.open game_exe, "r+", (err, fd)->
@@ -48,12 +48,16 @@ if game_exe is "--enable-logging"
 				else
 					console.log "Executable does not contain save data"
 					callback()
-	
+
+@has_game = (callback)->
+	find_saved_game (err, savegame, file_position)->
+		return callback err if err
+		callback null, savegame?
 
 @load_game = (callback)->
 	find_saved_game (err, savegame, file_position)->
 		return callback err if err
-		callback err, savegame
+		callback null, savegame
 
 @erase_game = (callback)->
 	find_saved_game (err, savegame, file_position)->

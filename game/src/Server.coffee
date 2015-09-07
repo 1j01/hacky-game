@@ -8,8 +8,6 @@ net = require "net"
 
 module.exports = class Server
 	constructor: ->
-		window.addEventListener "beforeunload", -> @close()
-		
 		@world = new World
 		
 		clients = []

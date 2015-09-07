@@ -22,8 +22,10 @@ do animate = ->
 	canvas.height = innerHeight
 	ctx.fillStyle = "black"
 	ctx.fillRect 0, 0, canvas.width, canvas.height
-	ctx.fillStyle = "red"
-	ctx.font = "#{Math.random()*50+5}px monospace"
+	ctx.fillStyle = "rgba(255, 0, 0, 0.2)"
+	ctx.font = "#{Math.random()*500+5}px monospace"
+	ctx.textAlign = "center"
+	ctx.textBaseline = "middle"
 	for text in texts
 		ctx.fillText text, Math.random() * canvas.width, Math.random() * canvas.height
 
