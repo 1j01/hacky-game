@@ -36,7 +36,7 @@ module.exports = class Server
 		@iid = setInterval =>
 			if global.window?.CRASHED
 				console.log "Server: stopping, since the client crashed"
-				clearInterval @iid
+				@close()
 				return
 			# console.log "Server: stepping, #{clients.length} client(s) connected"
 			@world.step()
@@ -63,7 +63,8 @@ module.exports = class Server
 				[1,1,1,1,1,2,2,2,2,1,0,0,1,2,2,2]
 			]
 			ents: [
-				{x: 1, y: 1}
+				{id: 0, x: 1, y: 1, type: "Enemy"}
+				{id: 1, x: 8, y: 3, type: "Player"}
 			]
 		
 		# TODO: load game from exe

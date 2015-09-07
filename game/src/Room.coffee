@@ -33,8 +33,11 @@ class @Room
 						existing_ent.applyUpdate ent
 						existing_ent
 					else
-						# TODO: instantiate subclasses
-						new Ent ent, @
+						if ent.type and ent.type.match /\w+/
+							EntClass = require "./Entities/#{ent.type}"
+							new EntClass ent, @
+						else
+							new Ent ent, @
 	
 	getEntByID: (id)->
 		return ent for ent in @ents when ent.id is id

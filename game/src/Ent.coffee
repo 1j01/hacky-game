@@ -23,12 +23,6 @@ class @Ent
 			@[k] = v
 	
 	step: (t)->
-		# TODO: move this elsewhere
-		@vx += 0.02
-		if @collision @x, @y+0.1
-			@vy = -0.56
-		# end "ai" code
-		
 		@vx *= 0.9
 		@vy += 0.05
 		for new_x in [@x..@x+@vx] by (if @vx < 0 then -0.1 else 0.1)
