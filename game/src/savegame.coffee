@@ -1,6 +1,6 @@
 
 fs = require "fs"
-{App} = require "nw.gui"
+{App} = window.require "nw.gui"
 [game_exe] = App.argv
 
 if game_exe is "--enable-logging"
@@ -49,29 +49,30 @@ find_saved_game = (callback)->
 					console.log "Executable does not contain save data"
 					callback()
 
-@has_game = (callback)->
-	find_saved_game (err, savegame, file_position)->
-		return callback err if err
-		callback null, savegame?
-
-@load_game = (callback)->
-	find_saved_game (err, savegame, file_position)->
-		return callback err if err
-		callback null, savegame
-
-@erase_game = (callback)->
-	find_saved_game (err, savegame, file_position)->
-		return callback err if err
-		return callback null unless savegame
-		if savegame
-			fs.truncate game_exe, file_position, callback
-		else
-			callback()
-
-@save_game = (savegame, callback)->
-	erase_game (err)->
-		return callback err if err
-		json = JSON.stringify savegame
-		fs.appendFile game_exe, json, (err)->
+module.exports =
+	exists: (callback)->
+		find_saved_game (err, savegame, file_position)->
 			return callback err if err
-			callback null, savegame # in case you've forgotten what you passed into this function
+			callback null, savegame?
+	
+	erase: (callback)->
+		find_saved_game (err, savegame, file_position)->
+			return callback err if err
+			return callback null unless savegame
+			if savegame
+				fs.truncate game_exe, file_position, callback
+			else
+				callback()
+	
+	load: (callback)->
+		find_saved_game (err, savegame, file_position)->
+			return callback err if err
+			callback null, savegame
+	
+	save: (savegame, callback)->
+		erase_game (err)->
+			return callback err if err
+			json = JSON.stringify savegame
+			fs.appendFile game_exe, json, (err)->
+				return callback err if err
+				callback null, savegame # in case you've forgotten what you passed into this function

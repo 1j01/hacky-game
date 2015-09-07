@@ -4,6 +4,7 @@
 # If a connection fails with a remote server, you get booted back to the local server
 
 World = require "./World"
+savegame = require "./savegame"
 net = require "net"
 
 module.exports = class Server
@@ -12,17 +13,53 @@ module.exports = class Server
 		
 		clients = []
 		@server = net.createServer (c)->
-			console.log "a client connected", c
+			console.debug "a client connected", c
 			clients.push c
 			c.on "end", ->
-				console.log "a client disconnected", c
+				console.debug "a client disconnected", c
 				clients.splice (clients.indexOf c), 1
 		@server.listen 3164
 		
-		setInterval =>
+		send_all_data = =>
 			for c in clients
-				c.write JSON.stringify {text: ~~(Math.random()*500)}
-		, 550
+				for id, room of @world.rooms
+					c.write JSON.stringify {room}
+		
+		send_ents = =>
+			for c in clients
+				for id, room of @world.rooms
+					c.write JSON.stringify {room: room.ents}
+		
+		@iid = setInterval =>
+			if global.window?.CRASHED
+				console.log "Server: stopping, since the client crashed"
+				clearInterval @iid
+				return
+			# console.log "Server: stepping, #{clients.length} client(s) connected"
+			@world.step()
+			send_ents()
+		, 1000 / 30
+		
+		@slower_iid = setInterval =>
+			send_all_data()
+		, 500
+		
+		@world.applyRoomUpdate
+			id: "first room ever"
+			tiles: [
+				[0,0,0,0,0,0,2]
+				[0,0,0,0,0,0,1]
+				[0,0,0,0,0,1,2]
+				[1,1,1,1,1,2,2]
+			]
+			ents: [
+				{x: 1, y: 1}
+			]
+		
+		# setInterval =>
+		# 	# TODO: only save if there has been activity
+		# 	savegame.save {}, (err)->
+		# , 500
 	
 	close: ->
 		@server.close()
