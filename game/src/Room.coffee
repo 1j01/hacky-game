@@ -10,7 +10,7 @@ class @Room
 		@ents = []
 	
 	toJSON: ->
-		{@ents, tiles:
+		{@id, @ents, tiles:
 			for row, y in @tiles
 				for tile, x in row
 					tile.value

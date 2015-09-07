@@ -9,6 +9,8 @@ class @World
 		{@rooms}
 	
 	applyRoomUpdate: (room)->
+		unless room.id
+			throw new Error "Trying to applyRoomUpdate with a room lacking an id (keys: #{Object.keys(room).join ", "})"
 		@rooms[room.id] ?= new Room room.id
 		@rooms[room.id].applyUpdate room
 	

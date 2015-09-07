@@ -21,7 +21,7 @@ module.exports = class Server
 		send_ents = =>
 			for c in clients
 				for id, room of @world.rooms
-					c.write "#{JSON.stringify {room: room.ents}}\n"
+					c.write "#{JSON.stringify {room: {id: room.id, ents: room.ents}}}\n"
 		
 		@server = net.createServer (c)->
 			console.debug "a client connected", c
@@ -45,6 +45,9 @@ module.exports = class Server
 		
 		@slower_iid = setInterval =>
 			send_all_data()
+			# TODO: save
+			# TODO: only save if there has been activity
+			# savegame.save {}, (err)->
 		, 500
 		
 		@world.applyRoomUpdate
@@ -58,11 +61,6 @@ module.exports = class Server
 			ents: [
 				{x: 1, y: 1}
 			]
-		
-		# setInterval =>
-		# 	# TODO: only save if there has been activity
-		# 	savegame.save {}, (err)->
-		# , 500
 	
 	close: ->
 		@server.close()
