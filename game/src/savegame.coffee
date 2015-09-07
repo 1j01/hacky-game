@@ -25,14 +25,13 @@ if game_exe is "--enable-logging"
 			
 			fs.read fd, buffer, 0, buffer_size, position, (err)->
 				return callback err if err
-				# console.log buffer
 				if buffer[buffer.length - 1] is "}".charCodeAt(0)
 					console.log "Executable contains save data"
 					combined = ""
 					do read_backwards_until_json_is_parsable = ->
 						buffer_str = buffer.toString "utf8"
-						for char, i in buffer_str  by -1 when char is "{"
-							
+						
+						for char, i in buffer_str when char is "{"
 							potential_json = "#{buffer_str.substring i}#{combined}"
 							console.log "Potential JSON:", potential_json
 							try gamesave = JSON.parse potential_json
@@ -72,16 +71,3 @@ if game_exe is "--enable-logging"
 		fs.appendFile game_exe, json, (err)->
 			return callback err if err
 			callback null, savegame # in case you've forgotten what you passed into this function
-
-# if fs.existsSync game_exe
-# 	console.log game_exe, "exists"
-# 	load_game (err, savegame)->
-# 		if err
-# 			console.error err
-# 		else if savegame
-# 			console.log "Game loaded successfully", savegame
-# 		else
-# 			console.log "Start new game"
-# else
-# 	console.error game_exe, "does not exist"
-# 	alert "Where am I?"

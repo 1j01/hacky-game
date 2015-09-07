@@ -4,36 +4,11 @@
 	<meta charset="utf-8">
 	<title>Hacky Game</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	<style type="text/css">
-		html, body {
-			padding: 0;
-			margin: 0;
-			border: 0;
-			overflow: hidden;
-			font-family: Helvetica, sans-serif;
-			background: black;
-			color: lime;
-			font-family: monospace;
-		}
-		.how-is-this-a-game {
-			position: fixed;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-			padding: 50px;
-		}
-		.how-is-this-a-game textarea {
-			width: 100%;
-			height: 100%;
-			background: rgba(0, 0, 0, 0.5);
-			color: white;
-			font-size: 3em;
-		}
-	</style>
+	<style>body,html{margin:0;height:100%;overflow:hidden}</style>
 </head>
 <body>
 	<!-- <script src="lib/howler.min.js"></script> -->
+	<script src="node_modules/socket.io/node_modules/socket.io-client/socket.io.js"></script>
 	<script src="lib/coffee-script.js"></script>
 	<script type="text/coffeescript">
 		try
@@ -42,9 +17,12 @@
 			script.src = src
 			document.head.appendChild script
 	</script>
+	<script>process.mainModule.exports.init(window);</script>
 	<!-- <script src="src/MultiHowl.coffee" type="text/coffeescript"></script> -->
 	<!-- <script src="src/helpers.coffee" type="text/coffeescript"></script> -->
 	<script src="src/savegame.coffee" type="text/coffeescript"></script>
+	<!-- <script src="src/Server.coffee" type="text/coffeescript"></script> -->
+	<script src="src/World.coffee" type="text/coffeescript"></script>
 	<script src="src/main.coffee" type="text/coffeescript"></script>
 </body>
 </html>
