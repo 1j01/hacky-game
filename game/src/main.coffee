@@ -2,7 +2,7 @@
 net = require "net"
 
 # a local world, simulated for Dead Reckoning
-world = new World
+@world = new World
 
 # close any existing socket (for reloading in development)
 if global.socket
@@ -37,40 +37,3 @@ do animate = ->
 	ctx.fillRect 0, 0, canvas.width, canvas.height
 	world.step()
 	world.draw ctx
-
-# world.applyRoomUpdate
-# 	id: "first room ever"
-# 	tiles: [
-# 		[0,0,0,0,0,0,3]
-# 		[0,0,0,0,0,0,1]
-# 		[0,0,0,0,0,1,2]
-# 		[1,1,1,1,1,2,2]
-# 	]
-# 	ents: [
-# 		{x: 1, y: 1}
-# 	]
-
-console.log world
-
-# last_savegame = {}
-# 
-# setInterval ->
-# 	if textarea.value isnt last_savegame.text
-# 		save_game {text: textarea.value}, (err, savegame)->
-# 			if err
-# 				console.error err
-# 			else
-# 				last_savegame = savegame
-# , 500
-# 
-# load_game (err, savegame)->
-# 	if err
-# 		console.error err
-# 		alert "I'm sorry.\n#{err}\nGoodbye."
-# 		process.exit()
-# 	else if savegame
-# 		console.log "Game loaded successfully", savegame
-# 		textarea.value = savegame.text
-# 		last_savegame = savegame
-# 	else
-# 		console.log "Start new game"

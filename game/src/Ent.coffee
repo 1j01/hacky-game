@@ -23,23 +23,55 @@ class @Ent
 			@[k] = v
 	
 	step: (t)->
-		@x += @vx *= 0.9
-		@y += @vy += 0.05
-		# TODO: collision
-		if @y > 50
-			@y = 50
-			@vy = -Math.abs(@vy) * 0.5
-		for row, y in @getRoom().tiles
+		# TODO: move this elsewhere
+		@vx += 0.02
+		if @collision @x, @y+0.1
+			@vy = -0.56
+		# end "ai" code
+		
+		@vx *= 0.9
+		@vy += 0.05
+		for new_x in [@x..@x+@vx] by (if @vx < 0 then -0.1 else 0.1)
+			if tile = @collision new_x, @y
+				# if @vx > 0
+				# 	@x = tile.x - 1
+				# else if @vx < 0
+				# 	@x = tile.x + 1
+				@vx = 0
+				break
+			else
+				@x = new_x
+		if @collision @x, @y
+			console.warn "entered collision state"
+		for new_y in [@y..@y+@vy] by (if @vy < 0 then -0.1 else 0.1)
+			if tile = @collision @x, new_y
+				# if @vy > 0
+				# 	@y = tile.y - 1
+				# else if @vy < 0
+				# 	@y = tile.y + 1
+				@vy = 0
+				break
+			else
+				@y = new_y
+	
+	collision: (at_x, at_y)->
+		return {x: -1, y: at_y} if at_x < 0
+		return {y: -1, x: at_x} if at_y < 0
+		room = @getRoom()
+		return {x: room.width + 1, y: at_y} if at_x + 1 > room.width
+		return {y: room.height + 1, x: at_x} if at_y + 1 > room.height
+		for row, y in room.tiles
 			for tile, x in row
 				if tile.value > 0
-					if @x < x + 1 and @x + 1 > x
-						if @y < y + 1 and @y + 1 > y
-							@y = y - 1
-							# @vy = -Math.abs(@vy) * 0.5
-							@vy = 0
+					if at_x < x + 1 and at_x + 1 > x
+						if at_y < y + 1 and at_y + 1 > y
+							return tile
 	
 	draw: (ctx)->
-		ctx.fillStyle = "yellow"
-		ctx.fillRect @x*16, @y*16, @w*16, @h*16
+		ctx.fillStyle = "white"
+		# ctx.fillRect @x*16, @y*16, @w*16, @h*16
+		ctx.beginPath()
+		ctx.ellipse @x*16+16/2, @y*16+16/2, @w*16/2, @h*16/2, 0, Math.PI*2, no
+		ctx.fill()
 
 module?.exports = @Ent

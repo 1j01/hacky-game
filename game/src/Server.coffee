@@ -51,16 +51,29 @@ module.exports = class Server
 		, 500
 		
 		@world.applyRoomUpdate
-			id: "first room ever"
+			id: "the second room ever"
 			tiles: [
-				[0,0,0,0,0,0,2]
-				[0,0,0,0,0,0,1]
-				[0,0,0,0,0,1,2]
-				[1,1,1,1,1,2,2]
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
+				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
+				[0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,2]
+				[0,0,0,0,0,1,2,2,2,1,0,0,1,2,2,2]
+				[1,1,1,1,1,2,2,2,2,1,0,0,1,2,2,2]
 			]
 			ents: [
 				{x: 1, y: 1}
 			]
+		
+		# TODO: load game from exe
+		# load_game (err, savegame)->
+		# 	if err
+		# 		console.error err # TODO: visible error
+		# 	else if savegame
+		# 		console.log "Game loaded", savegame
+		# 	else
+		# 		console.log "Start new game"
 	
 	close: ->
 		@server.close()
