@@ -41,26 +41,27 @@ module.exports = class Server
 			# console.log "Server: stepping, #{clients.length} client(s) connected"
 			@world.step()
 			send_ents()
-		, 1000 / 30
+		, 1000 / 60
+		# TODO: maybe step the server from the client?
 		
 		@slower_iid = setInterval =>
 			send_all_data()
 			# TODO: save
 			# TODO: only save if there has been activity
-			# savegame.save {}, (err)->
+			# savegame.save world, (err)->
 		, 500
 		
 		@world.applyRoomUpdate
-			id: "the second room ever"
+			id: "the second room"
 			tiles: [
 				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
 				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
 				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
 				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
 				[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]
-				[0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,2]
-				[0,0,0,0,0,1,2,2,2,1,0,0,1,2,2,2]
-				[1,1,1,1,1,2,2,2,2,1,0,0,1,2,2,2]
+				[0,0,0,0,0,3,1,1,1,1,0,0,1,1,1,2]
+				[0,0,0,0,3,1,2,2,2,1,0,0,1,2,2,2]
+				[1,1,1,1,1,1,2,2,2,1,0,0,1,2,2,2]
 			]
 			ents: [
 				{id: 0, x: 1, y: 1, type: "Enemy"}

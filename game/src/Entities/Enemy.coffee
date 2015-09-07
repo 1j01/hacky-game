@@ -3,7 +3,7 @@ class @Enemy extends (require "../Ent")
 	step: (t)->
 		@vx += 0.02
 		if @collision @x, @y+0.1
-			@vy = -0.56
+			@vy = -0.46
 		super
 	draw: (ctx)->
 		ctx.fillStyle = "red"

@@ -24,27 +24,45 @@ class @Ent
 	
 	step: (t)->
 		@vx *= 0.9
-		@vy += 0.05
-		for new_x in [@x..@x+@vx] by (if @vx < 0 then -0.1 else 0.1)
+		@vy += 0.04
+		res = 0.01
+		for new_x in [@x..@x+@vx] by (if @vx < 0 then -res else res)
 			if tile = @collision new_x, @y
-				# if @vx > 0
-				# 	@x = tile.x - 1
-				# else if @vx < 0
-				# 	@x = tile.x + 1
-				@vx = 0
-				break
+				if not @collision new_x, @y - res*2
+					@x = new_x
+					# @vx -= res*2
+					# @vy -= res
+					@y -= res*2
+				else
+					if @vx > 0
+						@x = tile.x - 1
+					else if @vx < 0
+						@x = tile.x + 1
+					@vx = 0
+					break
 			else
 				@x = new_x
 		if @collision @x, @y
 			console.warn "entered collision state"
-		for new_y in [@y..@y+@vy] by (if @vy < 0 then -0.1 else 0.1)
+		for new_y in [@y..@y+@vy] by (if @vy < 0 then -res else res)
 			if tile = @collision @x, new_y
-				# if @vy > 0
-				# 	@y = tile.y - 1
-				# else if @vy < 0
-				# 	@y = tile.y + 1
-				@vy = 0
-				break
+				if not @collision @x - res*2, new_y
+					@x -= res*2
+					# @vx -= res
+					@y = new_y
+					@vy *= 0.3
+				else if not @collision @x + res*2, new_y
+					@x += res*2
+					# @vx += res
+					@y = new_y
+					@vy *= 0.3
+				else
+					# if @vy > 0
+					# 	@y = tile.y - 1
+					# else if @vy < 0
+					# 	@y = tile.y + 1
+					@vy = 0
+					break
 			else
 				@y = new_y
 	
@@ -56,7 +74,12 @@ class @Ent
 		return {y: room.height + 1, x: at_x} if at_y + 1 > room.height
 		for row, y in room.tiles
 			for tile, x in row
-				if tile.value > 0
+				if tile.value is 3
+					if at_x < x + 1 and at_x + 1 > x
+						if at_y < y + 1 and at_y + 1 > y
+							if (at_x - x + 1) + (at_y - y) > 0
+								return tile
+				else if tile.value > 0
 					if at_x < x + 1 and at_x + 1 > x
 						if at_y < y + 1 and at_y + 1 > y
 							return tile

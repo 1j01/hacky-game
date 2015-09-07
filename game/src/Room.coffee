@@ -47,12 +47,16 @@ class @Room
 			ent.step t
 	
 	draw: (ctx)->
+		ctx.fillStyle = "#111"
+		ctx.fillRect 0, 0, @width*16, @height*16
+		ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"
+		ctx.strokeRect -1.5, -1.5, @width*16+3, @height*16+3
+		
 		for row in @tiles
 			for tile in row
 				tile.draw ctx
+		
 		for ent in @ents
 			ent.draw ctx
-		ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"
-		ctx.strokeRect -1.5, -1.5, @width*16+3, @height*16+3
 
 module?.exports = @Room
