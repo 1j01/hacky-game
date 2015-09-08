@@ -27,8 +27,8 @@ class @Ent
 		@vy += 0.04
 		res = 0.01
 		for new_x in [@x..@x+@vx] by (if @vx < 0 then -res else res)
-			if tile = @collision new_x, @y, @vx, @vy
-				if not @collision new_x, @y - res*2, @vx, @vy
+			if tile = @collisionAt new_x, @y, @vx, @vy
+				if not @collisionAt new_x, @y - res*2, @vx, @vy
 					@x = new_x
 					# @vx -= res*2
 					# @vy -= res
@@ -43,16 +43,16 @@ class @Ent
 					break
 			else
 				@x = new_x
-		if @collision @x, @y
+		if @collisionAt @x, @y
 			console.warn "entered collision state"
 		for new_y in [@y..@y+@vy] by (if @vy < 0 then -res else res)
-			if tile = @collision @x, new_y, @vx, @vy
-				if not @collision @x - res*2, new_y, @vx, @vy
+			if tile = @collisionAt @x, new_y, @vx, @vy
+				if not @collisionAt @x - res*2, new_y, @vx, @vy
 					@x -= res*2
 					# @vx -= res
 					@y = new_y
 					@vy *= 0.3
-				else if not @collision @x + res*2, new_y, @vx, @vy
+				else if not @collisionAt @x + res*2, new_y, @vx, @vy
 					@x += res*2
 					# @vx += res
 					@y = new_y
@@ -69,9 +69,9 @@ class @Ent
 				@y = new_y
 	
 	grounded: ->
-		@collision @x, @y+0.1
+		@vy >= 0 and @collisionAt @x, @y+0.1
 	
-	collision: (at_x, at_y, vx=0, vy=0)->
+	collisionAt: (at_x, at_y, vx=0, vy=0)->
 		return {x: -1, y: at_y} if at_x < 0
 		return {y: -1, x: at_x} if at_y < 0 # unless open air?
 		room = @getRoom()
@@ -95,9 +95,16 @@ class @Ent
 							if (at_y - y) < 0.1 and vy >= 0
 								return tile
 				else if tile.value > 0
+					# TODO: DRY up (these two lines are repeated a lot)
 					if at_x < x + 1 and at_x + 1 > x
 						if at_y < y + 1 and at_y + 1 > y
 							return tile
+	
+	entsAt: (x, y, w, h)->
+		room = @getRoom()
+		ent for ent in room.ents when ent isnt @ and
+			x < ent.x + w and x + w > ent.x and
+			y < ent.y + h and y + h > ent.y
 	
 	draw: (ctx)->
 		ctx.fillStyle = "white"

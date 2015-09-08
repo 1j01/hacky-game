@@ -64,9 +64,18 @@ module.exports = class Server
 				[1,1,1,1,1,1,2,2,2,1,0,0,1,2,2,2]
 			]
 			ents: [
+				{id: 2, x: 2, y: 1, type: "Door", to: "the third room"}
 				{id: 0, x: 1, y: 1, type: "Enemy"}
 				{id: 1, x: 8, y: 3, type: "Player"}
 			]
+		
+		# @world.applyRoomUpdate
+		# 	id: "the third room"
+		# 	tiles: [
+		# 		[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		# 	]
+		# 	ents: [
+		# 	]
 		
 		# TODO: load game from exe
 		# load_game (err, savegame)->
