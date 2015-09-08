@@ -50,19 +50,17 @@ class @Ent
 				if not @collisionAt @x - res*2, new_y, @vx, @vy
 					@x -= res*2
 					@y = new_y
-					@vy *= 0.3
 				else if not @collisionAt @x + res*2, new_y, @vx, @vy
 					@x += res*2
 					@y = new_y
-					@vy *= 0.3
 				else
 					if tile.value in ["■", "▩"]
 						if @vy > 0
 							@y = tile.y - 1
 						else if @vy < 0
 							@y = tile.y + 1
-					@vy = 0
-					break
+				@vy = 0
+				break
 			else
 				@y = new_y
 	
@@ -89,7 +87,7 @@ class @Ent
 							when "◥"
 								return tile if x - at_x + at_y - y < +1
 							when "▬"
-								if at_y - y < 0.1 and vy >= 0
+								if at_y + 1 - y < 0.1 and vy >= 0
 									return tile
 							else # "■", "▩"
 								return tile
