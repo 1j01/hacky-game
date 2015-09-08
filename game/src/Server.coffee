@@ -120,7 +120,7 @@ module.exports = class Server
 				# {id: 0, x: 3, y: 3, type: "Door", from: "the third room"}
 				# {id: 1, x: 71, y: 3, type: "Door", to: "the third room"}
 				{id: 0, x: 15, y: 3, type: "Door", to: "the third room"}
-				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"}
+				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"} # FIXME: this door also goes to the... cave... bolder
 			]
 		
 		# hack.load (err, world)=>

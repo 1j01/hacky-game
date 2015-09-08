@@ -16,6 +16,7 @@ class @Player extends (require "../Ent")
 		just_pressed = (keyCode)=>
 			@keys[keyCode]? and not @prev_keys[keyCode]?
 		
+		# FIXME: holding down enter will go back and forth between rooms rapidly because a new Player is instantiated
 		# TODO: assign players controllers and only control one player with each input scheme
 		# TODO: gamepad support
 		move = Math.min(1, Math.max(-1, @keys[39]? - @keys[37]? + @keys[68]? - @keys[65]?))
@@ -67,5 +68,6 @@ class @Player extends (require "../Ent")
 		if door
 			reincarnation.x = door.x
 			reincarnation.y = door.y
+			world.centerViewForNewlyEnteredRoom()
 
 module?.exports = @Player
