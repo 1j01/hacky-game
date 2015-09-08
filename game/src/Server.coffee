@@ -9,6 +9,17 @@ World = require "./World"
 
 loaded = no
 
+getFreePort = do ->
+	port = 45035
+	(cb)->
+		port += 1
+		server = net.createServer()
+		server.listen port, ->
+			server.once 'close', -> cb port
+			server.close()
+		server.on 'error', (err)->
+			getPort cb
+
 module.exports =
 class Server
 	constructor: ->
@@ -26,7 +37,7 @@ class Server
 				for id, room of @world.rooms
 					c.write "#{JSON.stringify {room: {id: room.id, ents: room.ents}}}\n"
 		
-		@server = net.createServer (c)->
+		@server = net.createServer (c)=>
 			console.debug "a client connected", c
 			clients.push c
 			c.on "end", ->
@@ -34,9 +45,10 @@ class Server
 				clients.splice (clients.indexOf c), 1
 			send_all_data()
 		
-		# TODO: connect on an open port (that the client knows to connect to)
-		@server.listen 3164
-		
+		getFreePort (port)=>
+			@server.listen port
+			@port = port
+			
 		@iid = setInterval =>
 			if global.window?.CRASHED
 				console.log "Server: stopping, since the client crashed"
@@ -134,6 +146,13 @@ class Server
 		# 	else
 		# 		console.log "Start new game"
 		# 		loaded = yes
+	
+	getPort: (callback)->
+		iid = setInterval =>
+			if @port
+				clearInterval iid
+				callback @port
+		, 50
 	
 	close: ->
 		@server.close()

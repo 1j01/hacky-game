@@ -12,20 +12,21 @@ if global.socket
 	global.socket.end()
 
 # the client starts out connected to it's own server
-global.socket = socket = net.connect port: 3164
-socket.on "end", ->
-	console.warn "Disconnected from server!"
-socket.setEncoding "utf8"
-socket.on "data", (data)->
-	for json in data.trim().split "\n"
-		try
-			message = JSON.parse json
-		catch e
-			console.error "failed to parse json message", json
-		if message?.room
-			world.applyRoomUpdate message.room
-		else
-			console.warn "unknown message"
+global.server.getPort (port)->
+	global.socket = socket = net.connect {port}
+	socket.on "end", ->
+		console.warn "Disconnected from server!"
+	socket.setEncoding "utf8"
+	socket.on "data", (data)->
+		for json in data.trim().split "\n"
+			try
+				message = JSON.parse json
+			catch e
+				console.error "failed to parse json message", json
+			if message?.room
+				world.applyRoomUpdate message.room
+			else
+				console.warn "unknown message"
 
 canvas = document.createElement "canvas"
 document.body.appendChild canvas
