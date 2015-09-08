@@ -5,13 +5,6 @@ This is the start of a game involving some crazy technical jazz.
 
 There's multiple rooms, but they're all bland and grey and boring and devoid of creativity.
 
-**TODO:** monkey patch `nw-builder/lib/downloader.js` automatically
-
-```js
-// var ncp = require('graceful-ncp').ncp;
-var ncp = require('cpr');
-```
-
 ## TODO: Open Doors to Other Worlds
 
 * Local multiplayer
