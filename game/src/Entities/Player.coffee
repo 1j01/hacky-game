@@ -1,6 +1,7 @@
 
 Door = require "./Door"
 
+module.exports =
 class @Player extends (require "../Ent")
 	constructor: ->
 		super
@@ -35,7 +36,7 @@ class @Player extends (require "../Ent")
 			@prev_keys[k] = v
 		
 		door = ent for ent in @entsAt @x, @y, @w, @h when ent instanceof Door
-		if door?
+		if door?.to?
 			if @entering
 				if Math.abs(door.x - @x) < 0.1
 					@enterRoom door.to
@@ -69,5 +70,3 @@ class @Player extends (require "../Ent")
 			reincarnation.x = door.x
 			reincarnation.y = door.y
 			world.centerViewForNewlyEnteredRoom()
-
-module?.exports = @Player

@@ -1,6 +1,8 @@
 
 net = require "net"
 
+World = require "./World"
+
 # a local world, simulated for Dead Reckoning
 @world = new World
 

@@ -3,13 +3,14 @@
 # The client starts out connected to it's server
 # If a connection fails with a remote server, you get booted back to the local server
 
-World = require "./World"
-hack = require "./savegame"
 net = require "net"
+hack = require "./savegame"
+World = require "./World"
 
 loaded = no
 
-module.exports = class Server
+module.exports =
+class Server
 	constructor: ->
 		@world = new World
 		

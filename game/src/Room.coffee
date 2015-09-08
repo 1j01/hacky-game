@@ -2,6 +2,7 @@
 Tile = require "./Tile"
 Ent = require "./Ent"
 
+module.exports =
 class @Room
 	constructor: (@id, @world)->
 		@width = 0
@@ -62,5 +63,3 @@ class @Room
 		
 		for ent in @ents
 			ent.draw ctx
-
-module?.exports = @Room

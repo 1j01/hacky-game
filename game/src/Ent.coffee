@@ -1,6 +1,7 @@
 
 # Room = require "./Room"
 
+module.exports =
 class @Ent
 	constructor: (obj, room, world)->
 		@x = 0
@@ -31,8 +32,6 @@ class @Ent
 			if tile = @collisionAt new_x, @y, @vx, @vy
 				if not @collisionAt new_x, @y - res*2, @vx, @vy
 					@x = new_x
-					# @vx -= res*2
-					# @vy -= res
 					@y -= res*2
 				else
 					if tile.value in [undefined, "■", "▩"]
@@ -50,12 +49,10 @@ class @Ent
 			if tile = @collisionAt @x, new_y, @vx, @vy
 				if not @collisionAt @x - res*2, new_y, @vx, @vy
 					@x -= res*2
-					# @vx -= res
 					@y = new_y
 					@vy *= 0.3
 				else if not @collisionAt @x + res*2, new_y, @vx, @vy
 					@x += res*2
-					# @vx += res
 					@y = new_y
 					@vy *= 0.3
 				else
@@ -109,9 +106,6 @@ class @Ent
 	
 	draw: (ctx)->
 		ctx.fillStyle = "white"
-		# ctx.fillRect @x*16, @y*16, @w*16, @h*16
 		ctx.beginPath()
 		ctx.ellipse @x*16+16/2, @y*16+16/2, @w*16/2, @h*16/2, 0, Math.PI*2, no
 		ctx.fill()
-
-module?.exports = @Ent

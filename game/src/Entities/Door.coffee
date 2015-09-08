@@ -1,9 +1,10 @@
 
+module.exports =
 class @Door extends (require "../Ent")
 	step: (t)->
 		super # I guess...
 	draw: (ctx)->
-		ctx.fillStyle = "#000"
+		ctx.fillStyle = if @to then "black" else "rgba(0, 0, 0, 0.5)"
 		ctx.shadowColor = "#fff"
 		ctx.shadowBlur = 100
 		ctx.beginPath()
@@ -12,5 +13,3 @@ class @Door extends (require "../Ent")
 		ctx.lineTo @x*16, @y*16+16
 		ctx.fill()
 		ctx.shadowBlur = 0
-
-module?.exports = @Door

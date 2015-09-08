@@ -1,6 +1,7 @@
 
 Room = require "./Room"
 
+module.exports =
 class @World
 	constructor: ->
 		@rooms = {}
@@ -67,5 +68,3 @@ class @World
 			)
 			room.draw ctx
 			ctx.restore()
-
-module?.exports = @World
