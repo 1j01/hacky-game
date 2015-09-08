@@ -51,6 +51,8 @@ class @Player extends (require "../Ent")
 		leaving_room = @getRoom()
 		entering_room = world.rooms[id]
 		console.log "enter room #{id}"
+		if not entering_room?
+			console.error "Room does not exist with id #{id} in", world
 		console.log {leaving_room, entering_room}
 		world.current_room = id
 		leaving_room.ents.splice (leaving_room.ents.indexOf @), 1

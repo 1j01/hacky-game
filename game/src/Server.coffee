@@ -66,12 +66,13 @@ module.exports = class Server
 			ents: [
 				{id: 2, x: 2, y: 1, type: "Door", to: "the third room"}
 				{id: 0, x: 1, y: 1, type: "Enemy"}
-				{id: 1, x: 8, y: 3, type: "Player"}
+				{id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}
 			]
 		
 		@world.applyRoomUpdate
 			id: "the third room"
 			tiles: """
+				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 				■                                                                         ■
 				■                                                                         ■
 				■                                                                         ■
@@ -93,10 +94,29 @@ module.exports = class Server
 				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 			""" # ■▩▬◢◣◫
 			ents: [
-				{id: 0, x: 30, y: 10, type: "Door", to: "the second room"}
+				{id: 0, x: 30, y: 17, type: "Door", to: "the second room"}
 				# {id: 0, x: 20, y: 5, type: "Enemy"} hahaha
 				{id: 3, x: 20, y: 5, type: "Enemy"}
 				{id: 4, x: 10, y: 5, type: "Enemy"}
+				{id: 5, x: 71, y: 17, type: "Door", to: "the fourth room"}
+				{id: 6, x: 22, y: 17, type: "HiddenDoor", from: "the fourth room", to: "the second room"}
+			]
+		
+		@world.applyRoomUpdate
+			id: "the fourth room"
+			tiles: """
+				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+				■           ■                                                             ■
+				■           ■                                                             ■
+				■           ■                                                             ■
+				■           ■                                                             ■
+				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+			""" # ■▩▬◢◣◫
+			ents: [
+				# {id: 0, x: 3, y: 3, type: "Door", from: "the third room"}
+				# {id: 1, x: 71, y: 3, type: "Door", to: "the third room"}
+				{id: 0, x: 15, y: 3, type: "Door", to: "the third room"}
+				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"}
 			]
 		
 		# TODO: load game from exe
