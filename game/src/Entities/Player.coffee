@@ -58,7 +58,7 @@ class @Player extends (require "../Ent")
 		if not entering_room?
 			console.error "Room does not exist with id #{id} in", world
 		# console.log {leaving_room, entering_room}
-		world.current_room = id
+		world.current_room_id = id
 		leaving_room.ents.splice (leaving_room.ents.indexOf @), 1
 		reincarnation = new Player @, entering_room, world
 		entering_room.ents.push reincarnation

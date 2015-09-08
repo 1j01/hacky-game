@@ -46,6 +46,17 @@ class @Room
 	getEntByID: (id)->
 		return ent for ent in @ents when ent.id is id
 	
+	hasPlayers: ->
+		return yes for ent in @ents when ent.type is "Player"
+		return no
+	
+	getPlayers: ->
+		ent for ent in @ents when ent.type is "Player"
+	
+	getPlayer: ->
+		# TODO: return THE player
+		@getPlayers()[0]
+	
 	step: (t)->
 		# ent.beginStep? t for ent in @ents
 		ent.step t for ent in @ents
