@@ -43,8 +43,9 @@ class @Room
 		return ent for ent in @ents when ent.id is id
 	
 	step: (t)->
-		for ent in @ents
-			ent.step t
+		# ent.beginStep? t for ent in @ents
+		ent.step t for ent in @ents
+		# ent.endStep? t for ent in @ents
 	
 	draw: (ctx)->
 		ctx.fillStyle = "#111"

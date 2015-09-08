@@ -27,17 +27,18 @@ class @Ent
 		@vy += 0.04
 		res = 0.01
 		for new_x in [@x..@x+@vx] by (if @vx < 0 then -res else res)
-			if tile = @collision new_x, @y
-				if not @collision new_x, @y - res*2
+			if tile = @collision new_x, @y, @vx, @vy
+				if not @collision new_x, @y - res*2, @vx, @vy
 					@x = new_x
 					# @vx -= res*2
 					# @vy -= res
 					@y -= res*2
 				else
-					if @vx > 0
-						@x = tile.x - 1
-					else if @vx < 0
-						@x = tile.x + 1
+					if tile.value in [undefined, 1, 2]
+						if @vx > 0
+							@x = tile.x - 1
+						else if @vx < 0
+							@x = tile.x + 1
 					@vx = 0
 					break
 			else
@@ -45,30 +46,34 @@ class @Ent
 		if @collision @x, @y
 			console.warn "entered collision state"
 		for new_y in [@y..@y+@vy] by (if @vy < 0 then -res else res)
-			if tile = @collision @x, new_y
-				if not @collision @x - res*2, new_y
+			if tile = @collision @x, new_y, @vx, @vy
+				if not @collision @x - res*2, new_y, @vx, @vy
 					@x -= res*2
 					# @vx -= res
 					@y = new_y
 					@vy *= 0.3
-				else if not @collision @x + res*2, new_y
+				else if not @collision @x + res*2, new_y, @vx, @vy
 					@x += res*2
 					# @vx += res
 					@y = new_y
 					@vy *= 0.3
 				else
-					# if @vy > 0
-					# 	@y = tile.y - 1
-					# else if @vy < 0
-					# 	@y = tile.y + 1
+					if tile.value in [1, 2]
+						if @vy > 0
+							@y = tile.y - 1
+						else if @vy < 0
+							@y = tile.y + 1
 					@vy = 0
 					break
 			else
 				@y = new_y
 	
-	collision: (at_x, at_y)->
+	grounded: ->
+		@collision @x, @y+0.1
+	
+	collision: (at_x, at_y, vx=0, vy=0)->
 		return {x: -1, y: at_y} if at_x < 0
-		return {y: -1, x: at_x} if at_y < 0
+		return {y: -1, x: at_x} if at_y < 0 # unless open air?
 		room = @getRoom()
 		return {x: room.width + 1, y: at_y} if at_x + 1 > room.width
 		return {y: room.height + 1, x: at_x} if at_y + 1 > room.height
@@ -78,6 +83,16 @@ class @Ent
 					if at_x < x + 1 and at_x + 1 > x
 						if at_y < y + 1 and at_y + 1 > y
 							if (at_x - x + 1) + (at_y - y) > 0
+								return tile
+				else if tile.value is 4
+					if at_x < x + 1 and at_x + 1 > x
+						if at_y < y + 1 and at_y + 1 > y
+							if (x - at_x + 1) + (at_y - y) > 0
+								return tile
+				else if tile.value is 7
+					if at_x < x + 1 and at_x + 1 > x
+						if at_y < y + 1 and at_y + 1 > y
+							if (at_y - y) < 0.1 and vy >= 0
 								return tile
 				else if tile.value > 0
 					if at_x < x + 1 and at_x + 1 > x
