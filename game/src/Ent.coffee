@@ -76,27 +76,23 @@ class @Ent
 		return {x: room.width + 1, y: at_y} if at_x + 1 > room.width
 		return {y: room.height + 1, x: at_x} if at_y + 1 > room.height
 		for row, y in room.tiles
-			for tile, x in row
-				if tile.value is "◢"
-					if at_x < x + 1 and at_x + 1 > x
-						if at_y < y + 1 and at_y + 1 > y
-							if (at_x - x + 1) + (at_y - y) > 0
+			for tile, x in row when tile.value isnt " "
+				if at_x < x + 1 and at_x + 1 > x
+					if at_y < y + 1 and at_y + 1 > y
+						switch tile.value
+							when "◢"
+								return tile if at_x - x + at_y - y > -1
+							when "◣"
+								return tile if x - at_x + at_y - y > -1
+							when "◤"
+								return tile if at_x - x + at_y - y < +1
+							when "◥"
+								return tile if x - at_x + at_y - y < +1
+							when "▬"
+								if at_y - y < 0.1 and vy >= 0
+									return tile
+							else # "■", "▩"
 								return tile
-				else if tile.value is "◣"
-					if at_x < x + 1 and at_x + 1 > x
-						if at_y < y + 1 and at_y + 1 > y
-							if (x - at_x + 1) + (at_y - y) > 0
-								return tile
-				else if tile.value is "▬"
-					if at_x < x + 1 and at_x + 1 > x
-						if at_y < y + 1 and at_y + 1 > y
-							if (at_y - y) < 0.1 and vy >= 0
-								return tile
-				else if tile.value isnt " "
-					# TODO: DRY up (these two lines are repeated a lot)
-					if at_x < x + 1 and at_x + 1 > x
-						if at_y < y + 1 and at_y + 1 > y
-							return tile
 	
 	entsAt: (x, y, w, h)->
 		room = @getRoom()

@@ -73,13 +73,13 @@ class Server
 			tiles: """
 				              ■▩
 				              ■▩
-				▬■■           ■▩
+				▬■■◤          ■▩
 				              ■▩
 				              ■▩
 				▬    ◢■■■■  ■■■▩
 				    ◢■▩▩▩■  ■▩▩▩
 				■■■■■■▩▩▩■  ■▩▩▩
-			""" # ■▩▬◢◣◫
+			""" # ■▩▬◢◤◥◣◫
 			ents: [
 				{id: 2, x: 2, y: 1, type: "Door", to: "the third room"}
 				{id: 0, x: 1, y: 1, type: "Enemy"}
@@ -96,20 +96,20 @@ class Server
 				■                                                                         ■
 				■                                                                         ■
 				■                                                                         ■
+				■                               ◣                                         ■
+				■                               ◥■■■■■◣                                   ■
+				■                                     ◥             ◥■■■■■◤               ■
 				■                                                                         ■
-				■                                 ■■■■■                                   ■
-				■                                                  ■■■■■                  ■
 				■                                                                         ■
-				■                                                                         ■
-				■                                          ■■■■■                          ■
-				■                                                                         ■
-				■                                                   ■■■■■                 ■
-				■                 ◢■■■■■■◣                                                ■
-				■                ◢■     ■■                                                ■
-				■               ◢■ ◣    ◣■                                                ■
-				■              ◢■ ◣ ◣    ■◣                                               ■
+				■                                         ◥■■■■■                          ■
+				■                                              ■                          ■
+				■                                              ■▬▬▬▬■■■■■◤                ■
+				■                 ◢■■■■■■◣                     ■    ■                     ■
+				■                ◢■◤   ◥■■                     ■    ■                     ■
+				■               ◢■■◣    ◥■                     ◥▬▬▬▬◤                     ■
+				■              ◢■◤ ◥◣    ■                                                ■
 				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-			""" # ■▩▬◢◣◫
+			""" # ■▩▬◢◤◥◣◫
 			ents: [
 				{id: 0, x: 30, y: 17, type: "Door", to: "the second room"}
 				# {id: 0, x: 20, y: 5, type: "Enemy"} hahaha
@@ -128,12 +128,12 @@ class Server
 				■           ■                                                             ■
 				■           ■                                                             ■
 				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-			""" # ■▩▬◢◣◫
+			""" # ■▩▬◢◤◥◣◫
 			ents: [
 				# {id: 0, x: 3, y: 3, type: "Door", from: "the third room"}
 				# {id: 1, x: 71, y: 3, type: "Door", to: "the third room"}
 				{id: 0, x: 15, y: 3, type: "Door", to: "the third room"}
-				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"} # FIXME: this door also goes to the... cave... bolder
+				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"} # FIXME: this door also goes to the thing
 			]
 		
 		# hack.load (err, world)=>
