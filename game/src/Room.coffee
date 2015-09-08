@@ -38,7 +38,7 @@ class @Room
 						existing_ent
 					else
 						if ent.type and ent.type.match /\w+/
-							EntClass = require "./Entities/#{ent.type}"
+							EntClass = require "./ents/#{ent.type}"
 							new EntClass ent, @, @world
 						else
 							new Ent ent, @, @world
