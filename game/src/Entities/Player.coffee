@@ -16,6 +16,8 @@ class @Player extends (require "../Ent")
 		just_pressed = (keyCode)=>
 			@keys[keyCode]? and not @prev_keys[keyCode]?
 		
+		# TODO: assign players controllers and only control one player with each input scheme
+		# TODO: gamepad support
 		move = Math.min(1, Math.max(-1, @keys[39]? - @keys[37]? + @keys[68]? - @keys[65]?))
 		jump = (just_pressed 38) or (just_pressed 87) or (just_pressed 32)
 		enter = (just_pressed 40) or (just_pressed 83) or (just_pressed 13)

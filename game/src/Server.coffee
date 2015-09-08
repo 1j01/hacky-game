@@ -4,8 +4,10 @@
 # If a connection fails with a remote server, you get booted back to the local server
 
 World = require "./World"
-savegame = require "./savegame"
+hack = require "./savegame"
 net = require "net"
+
+loaded = no
 
 module.exports = class Server
 	constructor: ->
@@ -31,6 +33,7 @@ module.exports = class Server
 				clients.splice (clients.indexOf c), 1
 			send_all_data()
 		
+		# TODO: connect on an open port (that the client knows to connect to)
 		@server.listen 3164
 		
 		@iid = setInterval =>
@@ -38,7 +41,6 @@ module.exports = class Server
 				console.log "Server: stopping, since the client crashed"
 				@close()
 				return
-			# console.log "Server: stepping, #{clients.length} client(s) connected"
 			@world.step()
 			send_ents()
 		, 1000 / 60
@@ -48,7 +50,9 @@ module.exports = class Server
 			send_all_data()
 			# TODO: save
 			# TODO: only save if there has been activity
-			# savegame.save world, (err)->
+			# if loaded
+			# 	hack.save @world, (err)=>
+			# 		console.error err if err
 		, 500
 		
 		@world.applyRoomUpdate
@@ -119,14 +123,16 @@ module.exports = class Server
 				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"}
 			]
 		
-		# TODO: load game from exe
-		# load_game (err, savegame)->
+		# hack.load (err, world)=>
 		# 	if err
 		# 		console.error err # TODO: visible error
-		# 	else if savegame
-		# 		console.log "Game loaded", savegame
+		# 	else if world
+		# 		console.log "Game loaded", world
+		# 		@world.applyUpdate world
+		# 		loaded = yes
 		# 	else
 		# 		console.log "Start new game"
+		# 		loaded = yes
 	
 	close: ->
 		@server.close()

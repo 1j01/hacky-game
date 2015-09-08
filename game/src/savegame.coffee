@@ -26,27 +26,23 @@ find_saved_game = (callback)->
 			fs.read fd, buffer, 0, buffer_size, position, (err)->
 				return callback err if err
 				if buffer[buffer.length - 1] is "}".charCodeAt(0)
-					console.log "Executable contains save data"
 					combined = ""
 					do read_backwards_until_json_is_parsable = ->
 						buffer_str = buffer.toString "utf8"
 						
 						for char, i in buffer_str when char is "{"
 							potential_json = "#{buffer_str.substring i}#{combined}"
-							console.log "Potential JSON:", potential_json
 							try gamesave = JSON.parse potential_json
 							if gamesave
 								file_position = stats.size - Buffer.byteLength potential_json
 								return callback null, gamesave, file_position
 						
-						console.log "Didn't find full JSON in that chunk"
 						combined = "#{buffer_str}#{combined}"
 						position -= buffer_size
 						fs.read fd, buffer, 0, buffer_size, position, (err)->
 							return callback err if err
 							read_backwards_until_json_is_parsable()
 				else
-					console.log "Executable does not contain save data"
 					callback()
 
 module.exports =
@@ -55,7 +51,7 @@ module.exports =
 			return callback err if err
 			callback null, savegame?
 	
-	erase: (callback)->
+	erase: erase_game = (callback)->
 		find_saved_game (err, savegame, file_position)->
 			return callback err if err
 			return callback null unless savegame
@@ -70,6 +66,7 @@ module.exports =
 			callback null, savegame
 	
 	save: (savegame, callback)->
+		# TODO: operate atomicically
 		erase_game (err)->
 			return callback err if err
 			json = JSON.stringify savegame

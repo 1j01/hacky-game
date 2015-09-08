@@ -7,10 +7,14 @@ class @World
 		@current_room = "the second room"
 	
 	toJSON: ->
-		{@rooms}
+		{@rooms, @current_room}
+	
+	applyUpdate: ({rooms, @current_room})->
+		for room in rooms
+			@applyRoomUpdate room
 	
 	applyRoomUpdate: (room)->
-		unless room.id
+		if not room.id?
 			throw new Error "Trying to applyRoomUpdate with a room lacking an id (keys: #{Object.keys(room).join ", "})"
 		@rooms[room.id] ?= new Room room.id, @
 		@rooms[room.id].applyUpdate room
