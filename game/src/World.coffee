@@ -7,6 +7,7 @@ class @World
 		@rooms = {}
 		# TODO: rename to current_room_id
 		@current_room = "the second room"
+		# TODO: make into worldly coords?
 		@view = {cx: 0, cy: 0}
 	
 	toJSON: ->
@@ -27,21 +28,26 @@ class @World
 		for id, room of @rooms # when room.hasPlayers()
 			room.step t
 	
-	getWhereToCenterView: (room, ctx)->
+	getWhereToCenterView: (room, ctx, margin=0)->
+		cx_to = @view.cx
+		cy_to = @view.cy
 		if (
 			ctx.canvas.width >= room.width*16 and
+			# TODO: split W and H
 			ctx.canvas.height >= room.height*16
 		)
 			cx_to = (room.width*16/2)
+			# TODO: split X and Y
 			cy_to = (room.height*16/2)
 		else
 			player = ent for ent in room.ents when ent.type is "Player"
 			if player
-				cx_to = player.x * 16
-				cy_to = player.y * 16
-			else
-				cx_to = @view.cx
-				cy_to = @view.cy
+				px = (player.x + player.w/2) * 16
+				py = (player.y + player.h/2) * 16
+				cx_to = px - margin if px > @view.cx + margin
+				cx_to = px + margin if px < @view.cx - margin
+				cy_to = py - margin if py > @view.cy + margin
+				cy_to = py + margin if py < @view.cy - margin
 		{cx_to, cy_to}
 	
 	centerViewForNewlyEnteredRoom: ->
@@ -57,7 +63,7 @@ class @World
 		# TODO: handle room transitions
 		
 		for id, room of @rooms when id is @current_room
-			{cx_to, cy_to} = @getWhereToCenterView room, ctx
+			{cx_to, cy_to} = @getWhereToCenterView room, ctx, 40
 			@view.cx += (cx_to - @view.cx) / 5
 			@view.cy += (cy_to - @view.cy) / 5
 			
