@@ -3,7 +3,7 @@ Tile = require "./Tile"
 Ent = require "./Ent"
 
 class @Room
-	constructor: (@id)->
+	constructor: (@id, @world)->
 		@width = 0
 		@height = 0
 		@tiles = []
@@ -11,20 +11,23 @@ class @Room
 	
 	toJSON: ->
 		{@id, @ents, tiles:
-			for row, y in @tiles
+			(for row, y in @tiles
+				str = ""
 				for tile, x in row
-					tile.value
+					str += tile.value
+				str
+			).join "\n"
 		}
 	
 	applyUpdate: ({tiles, ents})->
 		if tiles
 			@tiles =
-				for row, y in tiles
+				for row, y in tiles.split "\n"
 					for value, x in row
 						new Tile x, y, value
 			@height = @tiles.length
 			@width = 0
-			@width = Math.max(@width, row.length) for row in tiles
+			@width = Math.max(@width, row.length) for row in @tiles
 		if ents
 			@ents =
 				for ent in ents
@@ -35,9 +38,9 @@ class @Room
 					else
 						if ent.type and ent.type.match /\w+/
 							EntClass = require "./Entities/#{ent.type}"
-							new EntClass ent, @
+							new EntClass ent, @, @world
 						else
-							new Ent ent, @
+							new Ent ent, @, @world
 	
 	getEntByID: (id)->
 		return ent for ent in @ents when ent.id is id

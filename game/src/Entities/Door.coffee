@@ -12,7 +12,5 @@ class @Door extends (require "../Ent")
 		ctx.lineTo @x*16, @y*16+16
 		ctx.fill()
 		ctx.shadowBlur = 0
-	enter: ->
-		# alert "ETNRE"
 
 module?.exports = @Door

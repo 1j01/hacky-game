@@ -2,7 +2,7 @@
 # Room = require "./Room"
 
 class @Ent
-	constructor: (obj, room)->
+	constructor: (obj, room, world)->
 		@x = 0
 		@y = 0
 		@w = @h = 1
@@ -10,6 +10,7 @@ class @Ent
 		@vy = 0
 		@applyUpdate obj
 		@getRoom = -> room
+		@getWorld = -> world
 	
 	# toJSON: ->
 	# 	o = {}
@@ -34,7 +35,7 @@ class @Ent
 					# @vy -= res
 					@y -= res*2
 				else
-					if tile.value in [undefined, 1, 2]
+					if tile.value in [undefined, "■", "▩"]
 						if @vx > 0
 							@x = tile.x - 1
 						else if @vx < 0
@@ -58,7 +59,7 @@ class @Ent
 					@y = new_y
 					@vy *= 0.3
 				else
-					if tile.value in [1, 2]
+					if tile.value in ["■", "▩"]
 						if @vy > 0
 							@y = tile.y - 1
 						else if @vy < 0
@@ -79,22 +80,22 @@ class @Ent
 		return {y: room.height + 1, x: at_x} if at_y + 1 > room.height
 		for row, y in room.tiles
 			for tile, x in row
-				if tile.value is 3
+				if tile.value is "◢"
 					if at_x < x + 1 and at_x + 1 > x
 						if at_y < y + 1 and at_y + 1 > y
 							if (at_x - x + 1) + (at_y - y) > 0
 								return tile
-				else if tile.value is 4
+				else if tile.value is "◣"
 					if at_x < x + 1 and at_x + 1 > x
 						if at_y < y + 1 and at_y + 1 > y
 							if (x - at_x + 1) + (at_y - y) > 0
 								return tile
-				else if tile.value is 7
+				else if tile.value is "▬"
 					if at_x < x + 1 and at_x + 1 > x
 						if at_y < y + 1 and at_y + 1 > y
 							if (at_y - y) < 0.1 and vy >= 0
 								return tile
-				else if tile.value > 0
+				else if tile.value isnt " "
 					# TODO: DRY up (these two lines are repeated a lot)
 					if at_x < x + 1 and at_x + 1 > x
 						if at_y < y + 1 and at_y + 1 > y
