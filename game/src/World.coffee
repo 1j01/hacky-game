@@ -23,6 +23,7 @@ class @World
 	
 	applyControl: (control)->
 		# on the server, control a player
+		# TODO!
 	
 	step: (t)->
 		for id, room of @rooms when room.hasPlayers()

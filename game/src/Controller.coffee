@@ -6,3 +6,7 @@ class @Controller
 		@jump = no
 		@enterDoor = no
 		@crouch = no
+	sendControlsToServer: ->
+		# if we're on the client
+		if self?.socket
+			self.socket.write "#{JSON.stringify {controls: @}}\n"

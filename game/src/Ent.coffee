@@ -1,24 +1,27 @@
 
-# Room = require "./Room"
+Controller = require "./Controller"
 
-module.exports =
-class @Ent
-	constructor: (obj, room, world)->
+module.exports = @Ent =
+class Ent
+	constructor: (obj, @room, @world)->
 		@x = 0
 		@y = 0
 		@w = @h = 1
 		@vx = 0
 		@vy = 0
 		@applyUpdate obj
-		@getRoom = -> room
-		@getWorld = -> world
 	
-	# toJSON: ->
-	# 	o = {}
-	# 	console.log "Room =", Room
-	# 	for k, v of @ when (typeof v isnt "function") and not (v instanceof Room)
-	# 		o[k] = v
-	# 	o
+	toJSON: ->
+		o = {}
+		for k, v of @ when not (
+			(k in ["room", "world"]) or
+			(typeof v is "function") or
+			(v instanceof Controller) or
+			(v instanceof Ent)
+		)
+			o[k] = v
+		# console.log "Ent#toJSON", o
+		o
 	
 	applyUpdate: (obj)->
 		for k, v of obj
@@ -70,7 +73,7 @@ class @Ent
 	collisionAt: (at_x, at_y, vx=0, vy=0)->
 		return {x: -1, y: at_y} if at_x < 0
 		return {y: -1, x: at_x} if at_y < 0 # unless open air?
-		room = @getRoom()
+		room = @room
 		return {x: room.width + 1, y: at_y} if at_x + 1 > room.width
 		return {y: room.height + 1, x: at_x} if at_y + 1 > room.height
 		for row, y in room.tiles
@@ -93,8 +96,7 @@ class @Ent
 								return tile
 	
 	entsAt: (x, y, w, h)->
-		room = @getRoom()
-		ent for ent in room.ents when ent isnt @ and
+		ent for ent in @room.ents when ent isnt @ and
 			x < ent.x + w and x + w > ent.x and
 			y < ent.y + h and y + h > ent.y
 	

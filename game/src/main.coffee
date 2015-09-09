@@ -13,7 +13,7 @@ if global.socket
 
 # the client starts out connected to it's own server
 global.server.getPort (port)->
-	global.socket = socket = net.connect {port}
+	global.socket = self.socket = net.connect {port}
 	socket.on "end", ->
 		console.warn "Disconnected from server!"
 	socket.setEncoding "utf8"
