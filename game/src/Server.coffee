@@ -23,7 +23,7 @@ getFreePort = do ->
 module.exports =
 class Server
 	constructor: ->
-		@world = new World
+		@world = new World onClientSide: no
 		
 		clients = []
 		
@@ -40,17 +40,17 @@ class Server
 		@server = net.createServer (c)=>
 			console.debug "a client connected", c
 			clients.push c
-			c.on "end", ->
+			c.on "end", =>
 				console.debug "a client disconnected", c
 				clients.splice (clients.indexOf c), 1
-			c.on "data", (data)->
+			c.on "data", (data)=>
 				for json in data.trim().split "\n"
 					try
 						message = JSON.parse json
 					catch e
 						console.error "failed to parse json message", json
-					if message?.control
-						world.applyControl message.control
+					if message?.controls
+						@world.applyControls message.controls
 					else
 						console.warn "unknown message"
 			c.setEncoding "utf8"

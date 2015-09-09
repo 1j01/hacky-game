@@ -2,6 +2,7 @@
 module.exports =
 class @KeyboardController extends (require "../Controller.coffee")
 	constructor: ->
+		super
 		@keys = {}
 		@prev_keys = {}
 		window.addEventListener "keydown", (e)=>

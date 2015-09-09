@@ -1,13 +1,15 @@
 
 Door = require "./Door"
-KeyboardController = require "../controllers/KeyboardController"
 
 module.exports =
 class @Player extends (require "../Ent")
 	constructor: ->
 		super
 		@entering = no
-		@controller = new KeyboardController
+		console.log "new Player", @world.onClientSide, @world
+		controller_type = if @world.onClientSide then "KeyboardController" else "RemoteController"
+		Controller = require "../controllers/#{controller_type}"
+		@controller = new Controller @, onClientSide: @world.onClientSide
 	
 	step: (t)->
 		@controller.step()
@@ -34,21 +36,26 @@ class @Player extends (require "../Ent")
 	
 	enterRoom: (id)->
 		@entering = no
+		
 		leaving_room = @room
 		entering_room = @world.rooms[id]
-		# console.log "enter room #{id}"
+		
 		if not entering_room?
 			console.error "Room does not exist with id #{id} in", @world
 			return
-		# console.log {leaving_room, entering_room}
+		
 		@world.current_room_id = id
+		
 		leaving_room.ents.splice (leaving_room.ents.indexOf @), 1
-		@room = entering_room
 		entering_room.ents.push @
+		
+		@room = entering_room
+		
 		# try to find a door that's explicitly "from" the room we're leaving
 		door = ent for ent in entering_room.ents when ent instanceof Door and ent.from is leaving_room.id
 		# if there isn't one (which is likely) find a door that would lead back
 		door ?= ent for ent in entering_room.ents when ent instanceof Door and ent.to is leaving_room.id
+		
 		if door
 			@x = door.x
 			@y = door.y

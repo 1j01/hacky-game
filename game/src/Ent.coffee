@@ -20,7 +20,6 @@ class Ent
 			(v instanceof Ent)
 		)
 			o[k] = v
-		# console.log "Ent#toJSON", o
 		o
 	
 	applyUpdate: (obj)->

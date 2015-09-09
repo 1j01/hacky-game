@@ -3,15 +3,16 @@ net = require "net"
 
 World = require "./World"
 
-# a local world, simulated for Dead Reckoning
-@world = new World
+# A local world, simulated for Dead Reckoning
+# This is the only world that is drawn
+@world = new World onClientSide: yes
 
-# close any existing socket (for reloading in development)
+# Close any existing socket (for reloading in development)
 if global.socket
 	global.socket.removeAllListeners "end"
 	global.socket.end()
 
-# the client starts out connected to it's own server
+# The client starts out connected to it's own server
 global.server.getPort (port)->
 	global.socket = self.socket = net.connect {port}
 	socket.on "end", ->

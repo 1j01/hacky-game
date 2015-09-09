@@ -1,9 +1,10 @@
 
 Room = require "./Room"
+# RemoteController = require "./controllers/RemoteController"
 
 module.exports =
 class @World
-	constructor: ->
+	constructor: ({@onClientSide})->
 		@rooms = {}
 		@current_room_id = "the second room"
 		@view = {cx: 0, cy: 0}
@@ -21,9 +22,19 @@ class @World
 		@rooms[room.id] ?= new Room room.id, @
 		@rooms[room.id].applyUpdate room
 	
-	applyControl: (control)->
-		# on the server, control a player
-		# TODO!
+	applyControls: (controls)->
+		# console.log "applyControls", controls
+		# apply controls from a client the server
+		for player in @getPlayers()
+			# if player.controller instanceof RemoteController
+			if player.id is controls.playerID
+				player.controller.applyUpdate controls
+	
+	getPlayers: ->
+		players = []
+		for id, room of @rooms
+			players = players.concat room.getPlayers()
+		players
 	
 	step: (t)->
 		for id, room of @rooms when room.hasPlayers()
