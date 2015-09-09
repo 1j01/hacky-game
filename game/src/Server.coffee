@@ -46,6 +46,7 @@ class Server
 			c.on "end", =>
 				console.debug "a client disconnected", c
 				clients.splice (clients.indexOf c), 1
+			# TODO/FIXME: handle json that spans multiple data events
 			c.on "data", (data)=>
 				for json in data.trim().split "\n"
 					try
@@ -54,6 +55,8 @@ class Server
 						console.error "failed to parse json message", json
 					if message?.controls
 						@world.applyControls message.controls
+					else if message?.enterWorld
+						@world.enterPlayer message?.enterWorld
 					else
 						console.warn "unknown message"
 			c.setEncoding "utf8"
@@ -149,34 +152,36 @@ class Server
 				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"} # FIXME: this door also goes to the thing
 			]
 		
-		current_room = @world.rooms[@world.current_room_id]
-		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, current_room, @world
-		current_room.ents.push player
+		starting_room = @world.rooms[@world.current_room_id]
+		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, starting_room, @world
+		starting_room.ents.push player
 		global.clientPlayerID = player.id
 		
 		# Find other clients and create doors to other worlds
 		interuniversal_doors = {}
-		discover (err, ports)=>
-			throw err if err
-			console.log "Other client ports:", ports
-			
-			for port, door of interuniversal_doors
-				unless port in ports
-					# TODO: animate
-					console.log "delete", door, (door.room.ents.indexOf door)
-					door.room.ents.splice (door.room.ents.indexOf door), 1
-					delete interuniversal_doors[port]
-			
-			for port in ports when not interuniversal_doors[port]
-				interuniversal_doors[port] = door = new OtherworldlyDoor {
-					port
-					id: "tcp://localhost:#{port}"
-					to: "the second room"
-					x: 12
-					y: 5
-					type: "OtherworldlyDoor"
-				}, current_room, @world
-				current_room.ents.push door
+		@discovery_iid = setInterval =>
+			discover (err, ports)=>
+				throw err if err
+				# console.log "Other client ports:", ports
+				
+				for port, door of interuniversal_doors
+					unless +port in ports
+						# TODO: animate closing
+						console.log "Close door", door
+						door.remove()
+						delete interuniversal_doors[port]
+				
+				for port in ports when not interuniversal_doors[port]
+					interuniversal_doors[port] = door = new OtherworldlyDoor {
+						port
+						id: "tcp://localhost:#{port}"
+						to: "the second room"
+						x: 12
+						y: 5
+						type: "OtherworldlyDoor"
+					}, starting_room, @world
+					starting_room.ents.push door
+		, 500
 		
 		
 		# hack.load (err, world)=>
@@ -201,3 +206,4 @@ class Server
 		@server.close()
 		clearInterval @iid
 		clearInterval @slower_iid
+		clearInterval @discovery_iid

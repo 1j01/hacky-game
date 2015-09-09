@@ -11,8 +11,6 @@ dir = path.join App.dataPath, "discovery"
 try fs.mkdirSync dir
 catch e then throw e if e.code isnt "EEXIST"
 
-clearInterval global.discoveryInterval
-
 session_id = crypto.randomBytes(20).toString('hex')
 my_json_fname = "#{process.pid}.json"
 my_json_file = path.join dir, my_json_fname
@@ -45,18 +43,18 @@ checkFile = (file, callback)->
 					console.error "Trying to clean up old discovery file", err if err
 
 module.exports = (callback)->
-	global.discoveryInterval = setInterval ->
-		fs.readdir dir, (err, fnames)->
-			return callback err if err
-			writeMyJSONFile() unless my_json_fname in fnames
-			other_fnames = (fname for fname in fnames when fname isnt my_json_fname)
-			ports = []
-			for fname in other_fnames
+	writeMyJSONFile()
+	fs.readdir dir, (err, fnames)->
+		return callback err if err
+		other_fnames = (fname for fname in fnames when fname isnt my_json_fname)
+		ports = []
+		for fname in other_fnames
+			do (fname)->
 				file = path.join dir, fname
 				checkFile file, (err, data)->
 					return callback err if err
 					ports.push data?.port
+					# console.log data
 					if ports.length is other_fnames.length
 						callback null, ports.filter (v)-> v?
-			callback null, [] if other_fnames.length is 0
-	, 1000
+		callback null, [] if other_fnames.length is 0

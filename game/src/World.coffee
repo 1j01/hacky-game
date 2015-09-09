@@ -1,17 +1,45 @@
 
+net = require "net"
 Room = require "./Room"
-# RemoteController = require "./controllers/RemoteController"
+Player = require "./ents/Player"
+
+# Keep track of sockets and close any existing ones (for reloading in development)
+global.sockets ?= []
+for socket in global.sockets
+	socket.removeAllListeners "end"
+	socket.end()
 
 module.exports =
 class @World
-	constructor: ({@onClientSide})->
+	constructor: ({@onClientSide, @serverPort})->
+		@ID_for_inspection = (require "crypto").randomBytes(10).toString("hex")
 		@rooms = {}
 		@current_room_id = "the second room"
 		@view = {cx: 0, cy: 0}
-	
+		
+		# The client starts out connected to it's own server
+		if @onClientSide
+			@socket = net.connect port: @serverPort
+			global.sockets.push @socket
+			@socket.on "end", =>
+				console.warn "Disconnected from server!"
+			@socket.setEncoding "utf8"
+			# TODO/FIXME: handle json that spans multiple data events
+			@socket.on "data", (data)=>
+				for json in data.trim().split "\n"
+					try
+						message = JSON.parse json
+					catch e
+						console.error "failed to parse json message", json
+					if message?.room
+						@applyRoomUpdate message.room
+					else
+						console.warn "unknown message"
+
 	toJSON: ->
 		{@rooms, @current_room_id}
 	
+	# TODO: change "applyUpdate"s to "fromJSON"s?
 	applyUpdate: ({rooms, @current_room_id})->
 		for room in rooms
 			@applyRoomUpdate room
@@ -22,13 +50,22 @@ class @World
 		@rooms[room.id] ?= new Room room.id, @
 		@rooms[room.id].applyUpdate room
 	
+	# TODO: should this be moved into the server?
 	applyControls: (controls)->
-		# console.log "applyControls", controls
-		# apply controls from a client the server
 		for player in @getPlayers()
-			# if player.controller instanceof RemoteController
 			if player.id is controls.playerID
 				player.controller.applyUpdate controls
+	
+	# TODO: should this be moved into the server?
+	enterPlayer: ({from, player})->
+		# TODO: dynamic room placement
+		# FIXME: don't instantiate a new Player when reentering a player's original world
+		entering_room = @rooms["the second room"]
+		player = new Player player, entering_room, @
+		door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.port is from.port
+		player.x = door.x
+		player.y = door.y
+		entering_room.ents.push player
 	
 	getPlayers: ->
 		players = []

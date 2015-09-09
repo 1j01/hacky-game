@@ -28,6 +28,10 @@ class Ent
 		for k, v of obj
 			@[k] = v
 	
+	remove: ->
+		i = @room.ents.indexOf @
+		@room.ents.splice i, 1 if i >= 0
+	
 	step: (t)->
 		@vx *= 0.9
 		@vy += 0.04
