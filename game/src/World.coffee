@@ -21,6 +21,9 @@ class @World
 		@rooms[room.id] ?= new Room room.id, @
 		@rooms[room.id].applyUpdate room
 	
+	applyControl: (control)->
+		# on the server, control a player
+	
 	step: (t)->
 		for id, room of @rooms when room.hasPlayers()
 			room.step t

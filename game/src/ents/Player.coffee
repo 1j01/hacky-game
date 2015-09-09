@@ -1,34 +1,27 @@
 
 Door = require "./Door"
+KeyboardController = require "../controllers/KeyboardController"
 
 module.exports =
 class @Player extends (require "../Ent")
 	constructor: ->
 		super
 		@entering = no
-		@keys = {}
-		@prev_keys = {}
-		window.addEventListener "keydown", (e)=>
-			@keys[e.keyCode] = on
-		window.addEventListener "keyup", (e)=>
-			delete @keys[e.keyCode]
+		@controller = new KeyboardController
+	
+	toJSON: ->
+		o = {}
+		for k, v of @ when k isnt "controller"
+			o[k] = v
+		o
 	
 	step: (t)->
-		just_pressed = (keyCode)=>
-			@keys[keyCode]? and not @prev_keys[keyCode]?
-		
-		# FIXME: holding down enter will go back and forth between rooms rapidly because a new Player is instantiated
-		# TODO: assign players controllers and only control one player with each input scheme
-		# TODO: gamepad support
-		move = Math.min(1, Math.max(-1, @keys[39]? - @keys[37]? + @keys[68]? - @keys[65]?))
-		jump = (just_pressed 38) or (just_pressed 87) or (just_pressed 32)
-		enter = (just_pressed 40) or (just_pressed 83) or (just_pressed 13)
-		crouch = @keys[40]? or @keys[83]?
+		@controller.step()
 		
 		unless @entering
-			@vx += 0.03 * move
+			@vx += 0.03 * @controller.moveX
 			
-			if jump and @grounded()
+			if @controller.jump and @grounded()
 				@vy = -0.56
 		
 		@prev_keys = {}
@@ -43,7 +36,7 @@ class @Player extends (require "../Ent")
 					@entering = no
 				else
 					@vx += 0.01 * Math.sign(door.x - @x)
-			else if enter
+			else if @controller.enterDoor
 				@entering = yes
 		else
 			@entering = no # in case you get pushed away from the door

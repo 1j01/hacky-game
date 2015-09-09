@@ -43,12 +43,23 @@ class Server
 			c.on "end", ->
 				console.debug "a client disconnected", c
 				clients.splice (clients.indexOf c), 1
+			c.on "data", (data)->
+				for json in data.trim().split "\n"
+					try
+						message = JSON.parse json
+					catch e
+						console.error "failed to parse json message", json
+					if message?.control
+						world.applyControl message.control
+					else
+						console.warn "unknown message"
+			c.setEncoding "utf8"
 			send_all_data()
 		
 		getFreePort (port)=>
 			@server.listen port
 			@port = port
-			
+		
 		@iid = setInterval =>
 			if global.window?.CRASHED
 				console.log "Server: stopping, since the client crashed"

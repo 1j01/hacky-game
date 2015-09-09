@@ -37,6 +37,12 @@ class @Room
 						existing_ent.applyUpdate ent
 						existing_ent
 					else
+						# if ent.type is "Player"
+						# 	Player = require "./ents/Player"
+						# 	Controller = require "./controllers/KeyboardController"
+						# 	player = new Player ent, @, @world
+						# 	player.controller = new Controller
+						# else if ...
 						if ent.type and ent.type.match /\w+/
 							EntClass = require "./ents/#{ent.type}"
 							new EntClass ent, @, @world
