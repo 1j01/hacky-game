@@ -63,6 +63,7 @@ class @World
 		{cx_to, cy_to}
 	
 	centerViewForNewlyEnteredRoom: ->
+		# TODO: center view at game start (once room is loaded)
 		return unless @_ctx_
 		room = @rooms[@current_room_id]
 		{cx_to, cy_to} = @getWhereToCenterView room, @_ctx_

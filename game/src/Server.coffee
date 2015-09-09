@@ -19,7 +19,7 @@ getFreePort = do ->
 			server.once 'close', -> cb port
 			server.close()
 		server.on 'error', (err)->
-			getPort cb
+			getFreePort cb
 
 module.exports =
 class Server

@@ -6,9 +6,9 @@ This is the start of a game involving some crazy technical jazz.
 The final `game.exe` is built with [nexe][].
 It downloads the [nw.js][] runtime (on first load on a computer) and extracts a zip file from [a resource in the executable][nexeres] containing the main application.
 Then it launches the game, passing in the path to the executable.
-Then the game is able to erase/read/write JSON directly from the end of the `exe` file.
+The game is able to erase/read/write JSON directly from the end of the `exe` file.
 This can be used for saving/loading.
-At the moment it's disabled.
+(At the moment it's disabled.)
 
 The game is a platformer.
 There are blocks, slopes, one-way platforms and doors.
