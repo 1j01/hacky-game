@@ -6,7 +6,7 @@ class @Player extends (require "../Ent")
 	constructor: ->
 		super
 		@entering = no
-		console.log "new Player", @world.onClientSide, @world
+		# TODO: allow gamepad controller usage
 		controller_type = if @world.onClientSide then "KeyboardController" else "RemoteController"
 		Controller = require "../controllers/#{controller_type}"
 		@controller = new Controller @, onClientSide: @world.onClientSide

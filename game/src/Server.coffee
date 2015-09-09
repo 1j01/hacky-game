@@ -6,6 +6,7 @@
 net = require "net"
 hack = require "./savegame"
 World = require "./World"
+Player = require "./ents/Player"
 
 loaded = no
 
@@ -94,7 +95,6 @@ class Server
 			ents: [
 				{id: 2, x: 2, y: 1, type: "Door", to: "the third room"}
 				{id: 0, x: 1, y: 1, type: "Enemy"}
-				{id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}
 			]
 		
 		@world.applyRoomUpdate
@@ -146,6 +146,11 @@ class Server
 				{id: 0, x: 15, y: 3, type: "Door", to: "the third room"}
 				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"} # FIXME: this door also goes to the thing
 			]
+		
+		current_room = @world.rooms[@world.current_room_id]
+		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, current_room, @world
+		current_room.ents.push player
+		global.clientPlayerID = player.id
 		
 		# hack.load (err, world)=>
 		# 	if err

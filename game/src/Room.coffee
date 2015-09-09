@@ -54,8 +54,7 @@ class @Room
 		ent for ent in @ents when ent.type is "Player"
 	
 	getPlayer: ->
-		# TODO: return THE player
-		@getPlayers()[0]
+		return ent for ent in @ents when ent.id is global.clientPlayerID
 	
 	step: (t)->
 		ent.step t for ent in @ents

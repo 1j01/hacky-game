@@ -52,14 +52,14 @@ class @World
 			px = (player.x + player.w / 2)
 			cx_to = px - margin if px > @view.cx + margin
 			cx_to = px + margin if px < @view.cx - margin
-			
+		
 		if ctx.canvas.height >= room.height * 16
 			cy_to = room.height / 2
 		else if player
 			py = (player.y + player.h / 2)
 			cy_to = py - margin if py > @view.cy + margin
 			cy_to = py + margin if py < @view.cy - margin
-			
+		
 		{cx_to, cy_to}
 	
 	centerViewForNewlyEnteredRoom: ->
