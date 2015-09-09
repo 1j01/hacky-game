@@ -29,7 +29,6 @@ checkFile = (file, callback)->
 		running data.pid, (err, is_running)->
 			return callback err if err
 			if is_running
-				# console.log "is running: #{data.pid}"
 				# TODO: prevent multiple instances from using the same executable
 				# (but first, find a good way of running multiple instances in development)
 				# if data.game_exe is game_exe
@@ -38,7 +37,6 @@ checkFile = (file, callback)->
 				callback null, data
 			else
 				callback null, null
-				# console.log "not running: #{data.pid}"
 				fs.unlink file, (err)->
 					console.error "Trying to clean up old discovery file", err if err
 
@@ -54,7 +52,6 @@ module.exports = (callback)->
 				checkFile file, (err, data)->
 					return callback err if err
 					ports.push data?.port
-					# console.log data
 					if ports.length is other_fnames.length
 						callback null, ports.filter (v)-> v?
 		callback null, [] if other_fnames.length is 0

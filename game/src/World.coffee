@@ -1,40 +1,36 @@
 
 net = require "net"
+JSONSocket = require "json-socket"
 Room = require "./Room"
 Player = require "./ents/Player"
 
 # Keep track of sockets and close any existing ones (for reloading in development)
 global.sockets ?= []
 for socket in global.sockets
-	socket.removeAllListeners "end"
+	socket._socket.removeAllListeners "end"
 	socket.end()
 
 module.exports =
 class @World
 	constructor: ({@onClientSide, @serverPort})->
-		@ID_for_inspection = (require "crypto").randomBytes(10).toString("hex")
+		@["[[ID]]"] = (require "crypto").randomBytes(10).toString("hex")
 		@rooms = {}
 		@current_room_id = "the second room"
 		@view = {cx: 0, cy: 0}
 		
 		# The client starts out connected to it's own server
 		if @onClientSide
-			@socket = net.connect port: @serverPort
+			@socket = new JSONSocket new net.Socket
+			@socket._socket.on "end", => @socket.emit "end"
+			@socket.connect @serverPort
 			global.sockets.push @socket
 			@socket.on "end", =>
 				console.warn "Disconnected from server!"
-			@socket.setEncoding "utf8"
-			# TODO/FIXME: handle json that spans multiple data events
-			@socket.on "data", (data)=>
-				for json in data.trim().split "\n"
-					try
-						message = JSON.parse json
-					catch e
-						console.error "failed to parse json message", json
-					if message?.room
-						@applyRoomUpdate message.room
-					else
-						console.warn "unknown message"
+			@socket.on "message", (message)=>
+				if message?.room
+					@applyRoomUpdate message.room
+				else
+					console.warn "unknown message"
 
 	toJSON: ->
 		{@rooms, @current_room_id}

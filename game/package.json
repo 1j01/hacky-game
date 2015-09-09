@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "coffee-script": "^1.10.0",
-    "is-running": "^1.0.5"
+    "is-running": "^1.0.5",
+    "json-socket": "^0.1.2"
   }
 }

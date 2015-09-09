@@ -47,7 +47,12 @@ class @Player extends (require "../Ent")
 		
 		on_client_side = @world.onClientSide
 		what_side = "(#{if on_client_side then "client" else "server"}-side)"
-		console.log "enter door", what_side, door
+		log = (args...)->
+			if on_client_side
+				console.debug "%c#{what_side}", "color:#05F", args...
+			else
+				console.log "%c#{what_side}", "color:gray", args...
+		log "Enter door", door
 		
 		leaving_room = @room
 		leaving_world = @world
@@ -56,12 +61,12 @@ class @Player extends (require "../Ent")
 		entering_room_id = door.to
 		entering_world =
 			if door.port
-				console.log "leaving world", what_side, leaving_world
+				log "Leaving world", leaving_world
 				if on_client_side
 					World = World.World ? World # XXX: Why is require() returning an Object?
 					window.worlds_by_port[door.port] ?= new World onClientSide: yes, serverPort: door.port
 					window.world = window.worlds_by_port[door.port]
-					console.log "entering world", what_side, window.world
+					log "Entering world", window.world
 					window.world
 			else
 				@world
@@ -73,7 +78,7 @@ class @Player extends (require "../Ent")
 			# That way the server could have time to send the room data for the next room.
 			# (Rooms won't always all be loaded.)
 			if entering_world isnt leaving_world
-				entering_world.socket.write "#{JSON.stringify {enterWorld: {from: {port: leaving_world.serverPort}, player: @}}}\n"
+				entering_world.socket.sendMessage {enterWorld: {from: {port: leaving_world.serverPort}, player: @}}
 		
 		if not entering_world?
 			if @world.onClientSide
@@ -81,7 +86,7 @@ class @Player extends (require "../Ent")
 			return
 		entering_room = entering_world.rooms[entering_room_id]
 		if not entering_room?
-			console.error "Room does not exist with id #{entering_room_id} in", entering_world, what_side
+			console.error "Room does not exist with id '#{entering_room_id}' in", entering_world, what_side
 			return
 		
 		entering_room.ents.push @
@@ -94,7 +99,7 @@ class @Player extends (require "../Ent")
 		# if there isn't one (which is likely) find a door that would lead back
 		exit_door ?= ent for ent in entering_room.ents when ent instanceof Door and ent.to is leaving_room.id
 		
-		console.log "exit door", what_side, exit_door
+		log "Exit door", exit_door
 		
 		if exit_door
 			@x = exit_door.x

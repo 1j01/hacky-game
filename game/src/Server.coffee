@@ -4,6 +4,7 @@
 # If a connection fails with a remote server, you get booted back to the local server
 
 net = require "net"
+JSONSocket = require "json-socket"
 hack = require "./savegame"
 discover = require "./discover"
 World = require "./World"
@@ -33,38 +34,31 @@ class Server
 		send_all_data = =>
 			for c in clients
 				for id, room of @world.rooms
-					c.write "#{JSON.stringify {room}}\n"
+					c.sendMessage {room}
 		
 		send_ents = =>
 			for c in clients
 				for id, room of @world.rooms
-					c.write "#{JSON.stringify {room: {id: room.id, ents: room.ents}}}\n"
+					c.sendMessage {room: {id: room.id, ents: room.ents}}
 		
-		@server = net.createServer (c)=>
-			console.debug "a client connected", c
+		@server = net.createServer (socket)=>
+			c = new JSONSocket socket
+			# console.debug "a client connected", c
 			clients.push c
 			c.on "end", =>
-				console.debug "a client disconnected", c
+				# console.debug "a client disconnected", c
 				clients.splice (clients.indexOf c), 1
-			# TODO/FIXME: handle json that spans multiple data events
-			c.on "data", (data)=>
-				for json in data.trim().split "\n"
-					try
-						message = JSON.parse json
-					catch e
-						console.error "failed to parse json message", json
-					if message?.controls
-						@world.applyControls message.controls
-					else if message?.enterWorld
-						@world.enterPlayer message?.enterWorld
-					else
-						console.warn "unknown message"
-			c.setEncoding "utf8"
+			c.on "message", (message)=>
+				if message?.controls
+					@world.applyControls message.controls
+				else if message?.enterWorld
+					@world.enterPlayer message?.enterWorld
+				else
+					console.warn "unknown message"
 			send_all_data()
 		
-		getFreePort (port)=>
-			@server.listen port
-			@port = port
+		getFreePort (@port)=>
+			@server.listen @port
 		
 		@iid = setInterval =>
 			if global.window?.CRASHED

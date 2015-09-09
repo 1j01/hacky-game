@@ -13,6 +13,6 @@ class @Controller
 	
 	sendControlsToServer: ->
 		if @world.socket
-			@world.socket.write "#{JSON.stringify {controls: @}}\n"
+			@world.socket.sendMessage {controls: @}
 	
 	step: ->
