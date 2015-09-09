@@ -54,6 +54,5 @@
     "prepublish": "coffee -c wrapper.coffee",
     "build": "coffee -c wrapper.coffee & coffee make-wrapper.coffee",
     "postinstall": "coffee monkey-patch.coffee"
-  },
-  "main": "game.html"
+  }
 }
