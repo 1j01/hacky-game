@@ -155,7 +155,7 @@ class Server
 		interuniversal_doors = {}
 		@discovery_iid = setInterval =>
 			discover (err, ports)=>
-				throw err if err
+				return console.error err if err
 				# console.log "Other client ports:", ports
 				
 				for port, door of interuniversal_doors

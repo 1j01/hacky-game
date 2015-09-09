@@ -9,7 +9,7 @@ running = require "is-running"
 game_exe = require "./exe-file"
 dir = path.join App.dataPath, "discovery"
 try fs.mkdirSync dir
-catch e then throw e if e.code isnt "EEXIST"
+catch err then throw err if err.code isnt "EEXIST"
 
 session_id = crypto.randomBytes(20).toString('hex')
 my_json_fname = "#{process.pid}.json"
@@ -20,12 +20,16 @@ writeMyJSONFile = ->
 		data = {session_id, game_exe, pid: process.pid, port}
 		json = JSON.stringify data
 		fs.writeFile my_json_file, json, "utf8", (err)->
-			throw err if err
+			console.error err if err
 
 checkFile = (file, callback)->
 	fs.readFile file, "utf8", (err, json)->
 		return callback err if err
-		data = JSON.parse json
+		try
+			data = JSON.parse json
+		catch err
+			# Sometimes the file comes up empty
+			callback err
 		running data.pid, (err, is_running)->
 			return callback err if err
 			if is_running
