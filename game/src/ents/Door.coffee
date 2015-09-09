@@ -13,3 +13,4 @@ class @Door extends (require "../Ent")
 		ctx.lineTo @x*16, @y*16+16
 		ctx.fill()
 		ctx.shadowBlur = 0
+	zIndex: 0

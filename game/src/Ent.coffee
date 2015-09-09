@@ -11,6 +11,8 @@ class Ent
 		@vy = 0
 		@applyUpdate obj
 	
+	zIndex: 10
+	
 	toJSON: ->
 		o = {}
 		for k, v of @ when not (

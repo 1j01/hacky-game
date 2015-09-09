@@ -5,8 +5,10 @@
 
 net = require "net"
 hack = require "./savegame"
+discover = require "./discover"
 World = require "./World"
 Player = require "./ents/Player"
+OtherworldlyDoor = require "./ents/OtherworldlyDoor"
 
 loaded = no
 
@@ -151,6 +153,31 @@ class Server
 		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, current_room, @world
 		current_room.ents.push player
 		global.clientPlayerID = player.id
+		
+		# Find other clients and create doors to other worlds
+		interuniversal_doors = {}
+		discover (err, ports)=>
+			throw err if err
+			console.log "Other client ports:", ports
+			
+			for port, door of interuniversal_doors
+				unless port in ports
+					# TODO: animate
+					console.log "delete", door, (door.room.ents.indexOf door)
+					door.room.ents.splice (door.room.ents.indexOf door), 1
+					delete interuniversal_doors[port]
+			
+			for port in ports when not interuniversal_doors[port]
+				interuniversal_doors[port] = door = new OtherworldlyDoor {
+					port
+					id: "tcp://localhost:#{port}"
+					to: "the second room"
+					x: 12
+					y: 5
+					type: "OtherworldlyDoor"
+				}, current_room, @world
+				current_room.ents.push door
+		
 		
 		# hack.load (err, world)=>
 		# 	if err

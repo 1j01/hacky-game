@@ -57,7 +57,7 @@ class @Room
 		return ent for ent in @ents when ent.id is global.clientPlayerID
 	
 	step: (t)->
-		ent.step t for ent in @ents
+		ent.step t for ent in @ents by -1
 	
 	draw: (ctx)->
 		ctx.fillStyle = "#111"
@@ -69,5 +69,5 @@ class @Room
 			for tile in row
 				tile.draw ctx
 		
-		for ent in @ents
+		for ent in (@ents.sort (e1, e2)-> e1.zIndex - e2.zIndex)
 			ent.draw ctx
