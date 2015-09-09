@@ -1,6 +1,6 @@
 
 net = require "net"
-
+discover = require "./discover"
 World = require "./World"
 
 # A local world, simulated for Dead Reckoning
@@ -29,6 +29,12 @@ global.server.getPort (port)->
 			else
 				console.warn "unknown message"
 
+# Find other clients
+discover (err, ports)->
+	throw err if err
+	console.log "PORTS:", ports
+
+# Create the drawing surface and animate and step the game
 canvas = document.createElement "canvas"
 document.body.appendChild canvas
 ctx = canvas.getContext "2d"

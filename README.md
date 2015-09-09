@@ -25,10 +25,7 @@ a basic implementation of [client-side prediction][].
 
 * Local multiplayer
 
-	* Discover other clients through the filesystem
-
-	* Allow the app (with the id `hacky-game`) to be launched multiple times,
-	  but prevent multiple instances from using the same executable
+	* Discover other clients through the filesystem **[DONE]**
 
 	* Manage input methods for multiple players
 	  (You'll want to be able to play with two people on one keyboard (or use gamepads),

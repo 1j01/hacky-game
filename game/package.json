@@ -42,12 +42,14 @@
   },
   "main": "game.html",
   "node-main": "src/server.js",
+  "single-instance": false,
   "window": {
     "toolbar": false,
     "icon": "images/icon-32.png",
     "title": "Hacky Game"
   },
   "dependencies": {
-    "coffee-script": "^1.10.0"
+    "coffee-script": "^1.10.0",
+    "is-running": "^1.0.5"
   }
 }
