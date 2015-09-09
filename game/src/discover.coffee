@@ -29,7 +29,7 @@ checkFile = (file, callback)->
 			data = JSON.parse json
 		catch err
 			# Sometimes the file comes up empty
-			callback err
+			return callback err
 		running data.pid, (err, is_running)->
 			return callback err if err
 			if is_running
