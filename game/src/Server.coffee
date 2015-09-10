@@ -8,8 +8,9 @@ JSONSocket = require "json-socket"
 hack = require "./savegame"
 discover = require "./discover"
 World = require "./World"
-Player = require "./ents/Player"
+Door = require "./ents/Door"
 OtherworldlyDoor = require "./ents/OtherworldlyDoor"
+Player = require "./ents/Player"
 
 loaded = no
 
@@ -50,11 +51,31 @@ class Server
 				clients.splice (clients.indexOf c), 1
 			c.on "message", (message)=>
 				if message?.controls
-					@world.applyControls message.controls
-				else if message?.enterWorld
-					@world.enterPlayer message?.enterWorld
+					{controls} = message
+					for player in @world.getPlayers()
+						if player.id is controls.playerID
+							player.controller.applyUpdate controls
+				else if message?.enterDoor
+					{from, to, player} = message?.enterDoor
+					entering_room = @world.rooms[to.room_id]
+					player = new Player player, entering_room, @world
+					entering_room.ents.push player
+					
+					# if going between worlds
+					if to.port isnt from.port
+						# find an otherworldly door
+						exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.port is from.port
+					else
+						# try to find a door that's explicitly "from" the room we're leaving
+						exit_door = ent for ent in entering_room.ents when ent instanceof Door and ent.from is from.room_id
+						# if there isn't one (which is likely) find a door that would lead back
+						exit_door ?= ent for ent in entering_room.ents when ent instanceof Door and ent.to is from.room_id
+					
+					if exit_door
+						player.x = exit_door.x
+						player.y = exit_door.y
 				else
-					console.warn "unknown message"
+					console.warn "Unhandled message:", message
 			send_all_data()
 		
 		getFreePort (@port)=>

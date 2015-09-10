@@ -21,6 +21,7 @@ class @Room
 		}
 	
 	applyUpdate: ({tiles, ents})->
+		# console.log "Room#applyUpdate", @id, @world["[[ID]]"]
 		if tiles
 			@tiles =
 				for row, y in tiles.split "\n"

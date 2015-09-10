@@ -12,7 +12,7 @@ for socket in global.sockets
 
 module.exports =
 class @World
-	constructor: ({@onClientSide, @serverPort})->
+	constructor: ({@onClientSide, @serverPort, @players={}})->
 		@["[[ID]]"] = (require "crypto").randomBytes(10).toString("hex")
 		@rooms = {}
 		@current_room_id = "the second room"
@@ -30,7 +30,7 @@ class @World
 				if message?.room
 					@applyRoomUpdate message.room
 				else
-					console.warn "unknown message"
+					console.warn "Unhandled message:", message
 
 	toJSON: ->
 		{@rooms, @current_room_id}
@@ -46,28 +46,14 @@ class @World
 		@rooms[room.id] ?= new Room room.id, @
 		@rooms[room.id].applyUpdate room
 	
-	# TODO: should this be moved into the server?
-	applyControls: (controls)->
-		for player in @getPlayers()
-			if player.id is controls.playerID
-				player.controller.applyUpdate controls
-	
-	# TODO: should this be moved into the server?
-	enterPlayer: ({from, player})->
-		# TODO: dynamic room placement
-		# FIXME: don't instantiate a new Player when reentering a player's original world
-		entering_room = @rooms["the second room"]
-		player = new Player player, entering_room, @
-		door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.port is from.port
-		player.x = door.x
-		player.y = door.y
-		entering_room.ents.push player
-	
 	getPlayers: ->
 		players = []
 		for id, room of @rooms
 			players = players.concat room.getPlayers()
 		players
+	
+	getPlayer: (id)->
+		@players[id]
 	
 	step: (t)->
 		for id, room of @rooms when room.hasPlayers()
@@ -97,6 +83,7 @@ class @World
 	
 	centerViewForNewlyEnteredRoom: ->
 		# TODO: center view at game start (once room is loaded)
+		# TODO: center view when entering rooms (once again)
 		return unless @_ctx_
 		room = @rooms[@current_room_id]
 		{cx_to, cy_to} = @getWhereToCenterView room, @_ctx_

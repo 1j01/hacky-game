@@ -21,18 +21,21 @@ The world is simulated locally independent of the server,
 a basic implementation of [client-side prediction][].
 
 
-## TODO: Open Doors to Other Worlds
+## Open Doors to Other Worlds
 
 * Local multiplayer
 
-	* Discover other clients through the filesystem **[DONE]**
+	* Discovers other clients through the filesystem
 
-	* Manage input methods for multiple players
-	  (You'll want to be able to play with two people on one keyboard (or use gamepads),
-	  and you won't be able to send input to two windows at once.)
+	* **TODO:**
+	  Manage input methods for multiple players.
+	  You'll want to be able to play with two people on one keyboard
+	  or use one or more gamepads,
+	  and you won't be able to send input to two windows at once.
 
 
-* Multiplayer over LAN
+* **TODO:**
+  Multiplayer over LAN
 
 	* Discover other clients with SSDP
 
