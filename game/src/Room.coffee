@@ -30,8 +30,9 @@ class @Room
 			@height = @tiles.length
 			@width = 0
 			@width = Math.max(@width, row.length) for row in @tiles
-			delete @tiles_canvas
-			delete @tiles_ctx
+			# TODO: reenable when there are actual updates
+			# delete @tiles_canvas
+			# delete @tiles_ctx
 		
 		if ents
 			@ents =
@@ -63,11 +64,60 @@ class @Room
 	step: (t)->
 		ent.step t for ent in @ents by -1
 	
+	collisionAt: (at_x, at_y, at_w, at_h, vx=0, vy=0)->
+		return {x: -1, y: at_y} if at_x < 0
+		return {y: -1, x: at_x} if at_y < 0 # unless open air?
+		return {x: @width + at_w, y: at_y} if at_x + at_w > @width
+		return {y: @height + at_h, x: at_x} if at_y + at_h > @height
+		for row, y in @tiles
+			for tile, x in row when tile.value isnt " "
+				if at_x < x + 1 and at_x + at_w > x
+					if at_y < y + 1 and at_y + at_h > y
+						switch tile.value
+							when "◢"
+								return tile if at_x + at_w - x + at_y + at_h - y > 1
+							when "◣"
+								return tile if x - at_x + at_y + at_h - y > 0
+							when "◤"
+								return tile if at_x - x + at_y - y < +1
+							when "◥"
+								return tile if x - at_x + at_y - y < +1
+							when "▬"
+								if at_y + at_h - y < 0.1 and vy >= 0
+									return tile
+							else # "■", "▩"
+								return tile
+	
 	draw: (ctx)->
-		ctx.fillStyle = "#111"
-		ctx.fillRect 0, 0, @width*16, @height*16
 		ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"
 		ctx.strokeRect -1.5, -1.5, @width*16+3, @height*16+3
+		
+		# ctx.fillStyle = "#000" #"#70D870" #"#5ef"
+		# ctx.fillRect 0, 0, @width*16, @height*16
+		
+		unless @bg_img
+			@bg_img = new window.Image
+			@bg_img.onload = =>
+				@bg = ctx.createPattern @bg_img, 'repeat'
+			@bg_img.src = "images/bg.png"
+		
+		# ctx.imageSmoothingEnabled = off
+		# ctx.drawImage @bg_img, 0, 0, @bg_img.width * 2, @bg_img.height * 2
+		
+		# ctx.rect 0, 0, @width*16, @height*16
+		# ctx.clip()
+		# ctx.drawImage @bg_img, 0, 0, @bg_img.width, @bg_img.height
+		
+		# ctx.fillStyle = @bg
+		# ctx.fillRect 0, 0, @width*16, @height*16
+		
+		ctx.save()
+		ctx.fillStyle = @bg
+		vx = ~~(@world.view.cx*16 / 2)
+		vy = ~~(@world.view.cy*16 / 2)
+		ctx.translate vx, vy
+		ctx.fillRect -vx, -vy, @width*16, @height*16
+		ctx.restore()
 		
 		unless @tiles_canvas
 			@tiles_canvas = ctx.canvas.ownerDocument.createElement "canvas"
@@ -76,9 +126,43 @@ class @Room
 			@tiles_canvas.height = @height * 16
 			for row in @tiles
 				for tile in row
+					@tiles_ctx.save()
+					@tiles_ctx.translate(
+						~~(tile.x * 16)
+						~~(tile.y * 16)
+					)
 					tile.draw @tiles_ctx
+					@tiles_ctx.restore()
+			
+			for row in @tiles
+				for tile in row when tile.value isnt " "
+					for [0..15]
+						x = tile.x + Math.random()
+						y = tile.y - Math.random()
+						if @collisionAt x, y, 1/16, 1/16
+							for [0..10]
+								y += 1/16
+								break if @collisionAt x, y-1/16, 1/16, 1/16
+							if @collisionAt x, y, 1/16, 1/16
+								continue # what a poorly named statement
+						for [0..10]
+							y += 1/16
+							break if @collisionAt x, y-1/16, 1/16, 1/16
+						if ground = @collisionAt x, y+1/16, 1/16, 1/16
+							unless ground.value is "▬"
+								@tiles_ctx.strokeStyle = if Math.random() < 0.4 then "#99E550" else "#4B692F"
+								@tiles_ctx.beginPath()
+								@tiles_ctx.moveTo(x * 16, y * 16)
+								@tiles_ctx.lineTo(x * 16 + (Math.random() * 2 - 1), y * 16 - Math.random() * 5 - 2)
+								@tiles_ctx.stroke()
 		
 		ctx.drawImage @tiles_canvas, 0, 0
 		
 		for ent in (@ents.sort (e1, e2)-> e1.zIndex - e2.zIndex)
+			ctx.save()
+			ctx.translate(
+				~~(ent.x * 16)
+				~~(ent.y * 16)
+			)
 			ent.draw ctx
+			ctx.restore()

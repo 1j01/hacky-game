@@ -76,29 +76,7 @@ class Ent
 		@vy >= 0 and @collisionAt @x, @y+0.1
 	
 	collisionAt: (at_x, at_y, vx=0, vy=0)->
-		return {x: -1, y: at_y} if at_x < 0
-		return {y: -1, x: at_x} if at_y < 0 # unless open air?
-		room = @room
-		return {x: room.width + 1, y: at_y} if at_x + 1 > room.width
-		return {y: room.height + 1, x: at_x} if at_y + 1 > room.height
-		for row, y in room.tiles
-			for tile, x in row when tile.value isnt " "
-				if at_x < x + 1 and at_x + 1 > x
-					if at_y < y + 1 and at_y + 1 > y
-						switch tile.value
-							when "◢"
-								return tile if at_x - x + at_y - y > -1
-							when "◣"
-								return tile if x - at_x + at_y - y > -1
-							when "◤"
-								return tile if at_x - x + at_y - y < +1
-							when "◥"
-								return tile if x - at_x + at_y - y < +1
-							when "▬"
-								if at_y + 1 - y < 0.1 and vy >= 0
-									return tile
-							else # "■", "▩"
-								return tile
+		@room.collisionAt at_x, at_y, @w, @h, vx, vy
 	
 	entsAt: (x, y, w, h)->
 		ent for ent in @room.ents when ent isnt @ and
@@ -106,7 +84,9 @@ class Ent
 			y < ent.y + h and y + h > ent.y
 	
 	draw: (ctx)->
-		ctx.fillStyle = "white"
+		ctx.fillStyle = "#FBF236"
+		ctx.strokeStyle = "#8F974A"
 		ctx.beginPath()
-		ctx.ellipse @x*16+16/2, @y*16+16/2, @w*16/2, @h*16/2, 0, Math.PI*2, no
+		ctx.ellipse 16/2, 16/2, @w*16/2+0.5, @h*16/2+0.5, 0, Math.PI*2, no
 		ctx.fill()
+		ctx.stroke()

@@ -92,30 +92,3 @@ class @Player extends (require "../Ent")
 					player: @
 					from: room_id: leaving_room.id, port: leaving_world.serverPort
 					to: room_id: entering_room_id, port: entering_world.serverPort
-		
-		# if not entering_world?
-		# 	if @world.onClientSide
-		# 		console.error "World does not exist with port #{door.port}", what_side
-		# 	return
-		# entering_room = entering_world.rooms[entering_room_id]
-		# if not entering_room?
-		# 	console.error "Room does not exist with id '#{entering_room_id}' in", entering_world, what_side
-		# 	return
-		
-		# entering_room.ents.push @
-		# 
-		# @room = entering_room
-		# @world = entering_world
-		# @controller.world = entering_world
-		# 
-		# # try to find a door that's explicitly "from" the room we're leaving
-		# exit_door = ent for ent in entering_room.ents when ent instanceof Door and ent.from is leaving_room.id
-		# # if there isn't one (which is likely) find a door that would lead back
-		# exit_door ?= ent for ent in entering_room.ents when ent instanceof Door and ent.to is leaving_room.id
-		# 
-		# log "Exit door", exit_door
-		# 
-		# if exit_door
-		# 	@x = exit_door.x
-		# 	@y = exit_door.y
-		# 	@world.centerViewForNewlyEnteredRoom()

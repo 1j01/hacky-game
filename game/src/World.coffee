@@ -101,8 +101,8 @@ class @World
 			
 			ctx.save()
 			ctx.translate(
-				ctx.canvas.width / 2 - @view.cx * 16
-				ctx.canvas.height / 2 - @view.cy * 16
+				~~(ctx.canvas.width / 2 - @view.cx * 16)
+				~~(ctx.canvas.height / 2 - @view.cy * 16)
 			)
 			room.draw ctx
 			ctx.restore()
