@@ -30,6 +30,9 @@ class @Room
 			@height = @tiles.length
 			@width = 0
 			@width = Math.max(@width, row.length) for row in @tiles
+			delete @tiles_canvas
+			delete @tiles_ctx
+		
 		if ents
 			@ents =
 				for ent in ents
@@ -66,9 +69,16 @@ class @Room
 		ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"
 		ctx.strokeRect -1.5, -1.5, @width*16+3, @height*16+3
 		
-		for row in @tiles
-			for tile in row
-				tile.draw ctx
+		unless @tiles_canvas
+			@tiles_canvas = ctx.canvas.ownerDocument.createElement "canvas"
+			@tiles_ctx = @tiles_canvas.getContext "2d"
+			@tiles_canvas.width = @width * 16
+			@tiles_canvas.height = @height * 16
+			for row in @tiles
+				for tile in row
+					tile.draw @tiles_ctx
+		
+		ctx.drawImage @tiles_canvas, 0, 0
 		
 		for ent in (@ents.sort (e1, e2)-> e1.zIndex - e2.zIndex)
 			ent.draw ctx
