@@ -50,8 +50,10 @@
   },
   "dependencies": {
     "coffee-script": "^1.10.0",
+    "ip": "^1.0.1",
     "is-running": "^1.0.5",
-    "json-socket": "^0.1.2"
+    "json-socket": "^0.1.2",
+    "super-ssdp": "0.0.3"
   },
   "chromium-args": "--disable-canvas-aa"
 }

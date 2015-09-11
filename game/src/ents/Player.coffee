@@ -74,12 +74,12 @@ class @Player extends (require "../Ent")
 		
 		entering_room_id = door.to
 		entering_world =
-			if door.port
+			if door.address
 				log "Leaving world", leaving_world
 				if on_client_side and @id is global.clientPlayerID
 					World = World.World ? World # XXX: Why is require() returning an Object?
-					window.worlds_by_port[door.port] ?= new World onClientSide: yes, serverPort: door.port, players: @world.players
-					window.world = window.worlds_by_port[door.port]
+					window.worlds_by_address[door.address] ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
+					window.world = window.worlds_by_address[door.address]
 					log "Entering world", window.world
 					window.world
 			else
@@ -90,5 +90,5 @@ class @Player extends (require "../Ent")
 			entering_world.socket.sendMessage
 				enterDoor:
 					player: @
-					from: room_id: leaving_room.id, port: leaving_world.serverPort
-					to: room_id: entering_room_id, port: entering_world.serverPort
+					from: room_id: leaving_room.id, address: leaving_world.serverAddress
+					to: room_id: entering_room_id, address: entering_world.serverAddress

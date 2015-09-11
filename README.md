@@ -12,13 +12,16 @@ This can be used for saving/loading.
 
 The game is a platformer.
 There are blocks, slopes, one-way platforms and doors.
-There are several rooms, but they're all bland and grey and boring and devoid of creativity.
-Everything is basic shapes at this point.
+There are several rooms, but they're pretty boring.
+The art is preliminary.
 
-The game is painstakingly architected for multiplayer.
-The client hosts a server and communicates with it locally over TCP.
+The game supports LAN multiplayer.
+Even in single player the client hosts a server and communicates with it locally over TCP.
 The world is simulated locally independent of the server,
 a basic implementation of [client-side prediction][].
+When other servers are discovered,
+a magic door is opened to another world.
+A sort of portal. A doortal.
 
 
 ## Open Doors to Other Worlds
@@ -34,19 +37,25 @@ a basic implementation of [client-side prediction][].
 	  and you won't be able to send input to two windows at once.
 
 
-* **TODO:**
-  Multiplayer over LAN
+* Multiplayer over LAN
 
-	* Discover other clients with SSDP
+	* Discovers other clients with SSDP
 
-	* ~~I have two computers right next two each other, but they can't ping each other.~~
-	  I've set up [LogMeIn Hamachi][] and it works great! Also enjoying [Synergy][] at the moment.
-	  Now I can work on this!
+	* **TODO/FIXME:**
+	  Handle connection ending
+	  (don't crash on `ECONNRESET`, boot you from the world with a nice animation)
+	
+	* **TODO:**
+	  Get booted if server isn't responding
+		
+	* **FIXME:**
+	  Repeated `EADDRINUSE` errors from `super-ssdp` module
+	
+	* **FIXME:**
+	  Disparity between `localhost` and the IP address used when reentering your own world
 
 
 [nexe]: https://github.com/jaredallard/nexe
 [nexeres]: https://github.com/jaredallard/nexe/pull/93
 [nw.js]: https://github.com/nwjs/nw.js/
 [client-side prediction]: https://en.wikipedia.org/wiki/Client-side_prediction
-[LogMeIn Hamachi]: https://secure.logmein.com/products/hamachi/
-[Synergy]: http://synergy-project.org/

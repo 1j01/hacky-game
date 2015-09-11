@@ -12,7 +12,7 @@ for socket in global.sockets
 
 module.exports =
 class @World
-	constructor: ({@onClientSide, @serverPort, @players={}})->
+	constructor: ({@onClientSide, @serverAddress, @players={}})->
 		@["[[ID]]"] = (require "crypto").randomBytes(10).toString("hex")
 		@rooms = {}
 		@current_room_id = "the second room"
@@ -22,7 +22,8 @@ class @World
 		if @onClientSide
 			@socket = new JSONSocket new net.Socket
 			@socket._socket.on "end", => @socket.emit "end"
-			@socket.connect @serverPort
+			[host, port] = (@serverAddress.replace /tcp:(\/\/)?/, "").split ":"
+			@socket.connect {host, port}
 			global.sockets.push @socket
 			@socket.on "end", =>
 				console.warn "Disconnected from server!"

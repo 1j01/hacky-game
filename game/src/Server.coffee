@@ -62,9 +62,11 @@ class Server
 					entering_room.ents.push player
 					
 					# if going between worlds
-					if to.port isnt from.port
+					if to.address isnt from.address
 						# find an otherworldly door
-						exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.port is from.port
+						# FIXME: from.address which will be a local/private address
+						# exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.address is from.address
+						exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor"
 					else
 						# try to find a door that's explicitly "from" the room we're leaving
 						exit_door = ent for ent in entering_room.ents when ent instanceof Door and ent.from is from.room_id
@@ -175,21 +177,22 @@ class Server
 		# Find other clients and create doors to other worlds
 		interuniversal_doors = {}
 		@discovery_iid = setInterval =>
-			discover (err, ports)=>
+			discover (err, addresses)=>
 				return console.error err if err
-				# console.log "Other client ports:", ports
 				
-				for port, door of interuniversal_doors
-					unless +port in ports
+				# console.log "Other client addresses:", addresses
+				
+				for address, door of interuniversal_doors
+					unless address in addresses
 						# TODO: animate closing
 						console.log "Close door", door
 						door.remove()
-						delete interuniversal_doors[port]
+						delete interuniversal_doors[address]
 				
-				for port in ports when not interuniversal_doors[port]
-					interuniversal_doors[port] = door = new OtherworldlyDoor {
-						port
-						id: "tcp://localhost:#{port}"
+				for address in addresses when not interuniversal_doors[address]
+					interuniversal_doors[address] = door = new OtherworldlyDoor {
+						address
+						id: address
 						to: "the second room"
 						x: 12
 						y: 5

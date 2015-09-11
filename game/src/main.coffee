@@ -18,12 +18,12 @@ animate = ->
 	ctx.fillStyle = "black"
 	ctx.fillRect 0, 0, canvas.width, canvas.height
 	world.draw ctx
-	
 	ctx2x.imageSmoothingEnabled = off
 	ctx2x.drawImage canvas, 0, 0, canvas2x.width, canvas2x.height
 
-@worlds_by_port = {}
+@worlds_by_address = {}
 global.server.getPort (port)=>
-	@worlds_by_port[port] =
-	@world = new World onClientSide: yes, serverPort: port
+	address = "tcp://localhost:#{port}"
+	@worlds_by_address[address] =
+	@world = new World onClientSide: yes, serverAddress: address
 	animate()
