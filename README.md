@@ -55,7 +55,21 @@ A sort of portal. A doortal.
 	  Disparity between `localhost` and the IP address used when reentering your own world
 
 
+* **TODO:**
+  Implement [client-side prediction][] smoothing
+
+
+* **FIXME:**
+  There is a [race condition][] when going back and forth between rooms
+  where you can get viewing a room that you aren't in,
+  because entering a door involves sending a command the server
+  but you switch the room you're viewing instantly.
+
+
+
 [nexe]: https://github.com/jaredallard/nexe
 [nexeres]: https://github.com/jaredallard/nexe/pull/93
 [nw.js]: https://github.com/nwjs/nw.js/
 [client-side prediction]: https://en.wikipedia.org/wiki/Client-side_prediction
+[race condition]: https://en.wikipedia.org/wiki/Race_condition
+
