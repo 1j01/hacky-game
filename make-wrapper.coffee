@@ -1,5 +1,6 @@
 
 path = require "path"
+{spawn} = require "child_process"
 nexe = require "nexe"
 zip = require "zip-folder"
 winresourcer = require "nw-builder/node_modules/winresourcer"
@@ -45,4 +46,17 @@ zip game_folder, zip_file, (err)->
 						lang: 1033
 						(err)->
 							throw err if err
-							console.log "Done"
+							console.log "Make the exe into a GUI app so it doesn't show the console"
+							py = spawn "python.exe", ["pe.py", game_exe]
+							py.on "error", (err)->
+								throw err
+							output = ""
+							py.stderr.on "data", (data)->
+								output += data
+							py.stdout.on "data", (data)->
+								output += data
+							py.on "close", (exit_code)->
+								if exit_code is 0
+									console.log "Done"
+								else
+									console.error "Python exited with code #{exit_code}:\n#{output}"
