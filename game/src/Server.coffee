@@ -32,9 +32,14 @@ class Server
 		
 		@clients = []
 		
-		send_all_data = =>
-			for c in @clients
-				for id, room of @world.rooms
+		send_all_data_to_new_client = (c)=>
+			for id, room of @world.rooms
+				c.sendMessage {room}
+		
+		send_world_updates = =>
+			# NOTE: currently nothing makes a room "active"
+			for id, room of @world.rooms when room.active
+				for c in @clients
 					c.sendMessage {room}
 		
 		send_ents = =>
@@ -79,7 +84,7 @@ class Server
 						player.y = exit_door.y
 				else
 					console.warn "Unhandled message:", message
-			send_all_data()
+			send_all_data_to_new_client(c)
 		
 		@_getPort_callbacks = []
 		getFreePort (@port)=>
@@ -87,6 +92,7 @@ class Server
 				return callback(err) if err
 				for getPort_cb in @_getPort_callbacks
 					getPort_cb(@port)
+				@_getPort_callbacks = [] # unref
 				callback()
 		
 		@iid = setInterval =>
@@ -101,9 +107,8 @@ class Server
 		# TODO: maybe step the server from the client?
 		
 		@slower_iid = setInterval =>
-			send_all_data()
-			# TODO: save
-			# TODO: only save if there has been activity
+			send_world_updates()
+			# TODO: save (only if there has been activity)
 			# if loaded
 			# 	hack.save @world, (err)=>
 			# 		console.error err if err
