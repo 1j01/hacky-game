@@ -1,5 +1,5 @@
 
-{App} = window.require "nw.gui"
+{App} = nw ? window.require "nw.gui"
 [game_exe] = App.argv
 
 if game_exe is "--enable-logging"

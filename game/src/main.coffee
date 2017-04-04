@@ -11,6 +11,7 @@ animate = ->
 	return if window.CRASHED
 	requestAnimationFrame animate
 	world.step()
+	# global.server?.world.step()
 	canvas2x.width = innerWidth if canvas2x.width isnt innerWidth
 	canvas2x.height = innerHeight if canvas2x.height isnt innerHeight
 	canvas.width = Math.ceil(innerWidth / 2) if canvas.width isnt Math.ceil(innerWidth / 2)

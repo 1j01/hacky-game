@@ -16,6 +16,7 @@ class @World
 		@["[[ID]]"] = (require "crypto").randomBytes(10).toString("hex")
 		@rooms = {}
 		@current_room_id = "the second room" # XXX: hardcoded separately from world data
+		# @current_room_id = null
 		@view = {cx: 0, cy: 0}
 		
 		# The client starts out connected to its own server
@@ -87,6 +88,7 @@ class @World
 		# TODO: center view when entering rooms (once again)
 		return unless @_ctx_
 		room = @rooms[@current_room_id]
+		return unless room
 		{cx_to, cy_to} = @getWhereToCenterView room, @_ctx_
 		@view.cx = cx_to
 		@view.cy = cy_to
@@ -95,7 +97,9 @@ class @World
 		@_ctx_ = ctx
 		# TODO: room transitions
 		
-		for id, room of @rooms when id is @current_room_id
+		# for id, room of @rooms when id is @current_room_id
+		room = @rooms[@current_room_id]
+		if room?
 			{cx_to, cy_to} = @getWhereToCenterView room, ctx, 2.5
 			@view.cx += (cx_to - @view.cx) / 5
 			@view.cy += (cy_to - @view.cy) / 5

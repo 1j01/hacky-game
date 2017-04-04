@@ -8,6 +8,7 @@ JSONSocket = require "json-socket"
 hack = require "./savegame"
 discover = require "./discovery/discover"
 World = require "./World"
+{initWorld} = require "./world-data"
 Door = require "./ents/Door"
 OtherworldlyDoor = require "./ents/OtherworldlyDoor"
 Player = require "./ents/Player"
@@ -105,6 +106,9 @@ class Server
 			send_ents()
 		, 1000 / 60
 		# TODO: maybe step the server from the client?
+		# @iid = setInterval =>
+		# 	send_ents()
+		# , 1000 / 1
 		
 		@slower_iid = setInterval =>
 			send_world_updates()
@@ -114,81 +118,14 @@ class Server
 			# 		console.error err if err
 		, 500
 		
-		
-		# TODO: move this world definition stuff elsewhere
-		
-		@world.applyRoomUpdate
-			id: "the second room"
-			tiles: """
-				              ■▩
-				              ■▩
-				▬■■◤          ■▩
-				              ■▩
-				              ■▩
-				▬    ◢■■■■  ■■■▩
-				    ◢■▩▩▩■  ■▩▩▩
-				■■■■■■▩▩▩■  ■▩▩▩
-			""" # ■▩▬◢◤◥◣◫
-			ents: [
-				{id: 2, x: 2, y: 1, type: "Door", to: "the third room"}
-				{id: 0, x: 1, y: 1, type: "Enemy"}
-			]
-		
-		@world.applyRoomUpdate
-			id: "the third room"
-			tiles: """
-				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-				■                                                                         ■
-				■                                                                         ■
-				■                                                                         ■
-				■                                                                         ■
-				■                                                                         ■
-				■                                                                         ■
-				■                               ◣                                         ■
-				■                               ◥■■■■■◣                                   ■
-				■                                     ◥             ◥■■■■■◤               ■
-				■                                                                         ■
-				■                                                                         ■
-				■                                         ◥■■■■■                          ■
-				■                                              ■                          ■
-				■                                              ■▬▬▬▬■■■■■◤                ■
-				■                 ◢■■■■■■◣                     ■    ■                     ■
-				■                ◢■◤   ◥■■                     ■    ■                     ■
-				■               ◢■■◣    ◥■                     ◥▬▬▬▬◤                     ■
-				■              ◢■◤ ◥◣    ■                                                ■
-				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-			""" # ■▩▬◢◤◥◣◫
-			ents: [
-				{id: 0, x: 30, y: 17, type: "Door", to: "the second room"}
-				# {id: 0, x: 20, y: 5, type: "Enemy"} hahaha
-				{id: 3, x: 20, y: 5, type: "Enemy"}
-				{id: 4, x: 10, y: 5, type: "Enemy"}
-				{id: 5, x: 71, y: 17, type: "Door", to: "the fourth room"}
-				{id: 6, x: 22, y: 17, type: "HiddenDoor", from: "the fourth room", to: "the second room"}
-			]
-		
-		@world.applyRoomUpdate
-			id: "the fourth room"
-			tiles: """
-				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-				■           ■                                                             ■
-				■           ■                                                             ■
-				■           ■                                                             ■
-				■           ■                                                             ■
-				■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-			""" # ■▩▬◢◤◥◣◫
-			ents: [
-				# {id: 0, x: 3, y: 3, type: "Door", from: "the third room"}
-				# {id: 1, x: 71, y: 3, type: "Door", to: "the third room"}
-				{id: 0, x: 15, y: 3, type: "Door", to: "the third room"}
-				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"} # FIXME: this door also goes to the thing
-			]
+		initWorld(@world)
 		
 		# TODO: set current_room_id when adding the player
 		starting_room = @world.rooms[@world.current_room_id]
 		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, starting_room, @world
 		starting_room.ents.push player
 		global.clientPlayerID = player.id
+		
 		
 		# Find other clients and create doors to other worlds
 		interuniversal_doors = {}

@@ -8,7 +8,7 @@ ssdp = require "./super-ssdp"
 # discover = require "nanodiscover"
 # discover = require "./nanodiscover"
 game_exe = require "../exe-file"
-{App} = window.require "nw.gui"
+{App} = nw ? window.require "nw.gui"
 
 dir = path.join App.dataPath, "discovery"
 try fs.mkdirSync dir
