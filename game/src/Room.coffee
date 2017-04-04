@@ -69,8 +69,16 @@ class @Room
 		return {y: -1, x: at_x} if at_y < 0 # unless open air?
 		return {x: @width + at_w, y: at_y} if at_x + at_w > @width
 		return {y: @height + at_h, x: at_x} if at_y + at_h > @height
-		for row, y in @tiles
-			for tile, x in row when tile.value isnt " "
+		for y_off in [0, Math.ceil(at_h)]
+			y = ~~at_y + y_off
+			row = @tiles[y]
+			continue unless row?
+			for x_off in [0, Math.ceil(at_w)]
+			# for tile, x in row when tile.value isnt " "
+				x = ~~at_x + x_off
+				tile = row[x]
+				continue unless tile?
+				continue if tile.value is " "
 				if at_x < x + 1 and at_x + at_w > x
 					if at_y < y + 1 and at_y + at_h > y
 						switch tile.value
