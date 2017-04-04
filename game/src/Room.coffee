@@ -74,7 +74,6 @@ class @Room
 			row = @tiles[y]
 			continue unless row?
 			for x_off in [0, Math.ceil(at_w)]
-			# for tile, x in row when tile.value isnt " "
 				x = ~~at_x + x_off
 				tile = row[x]
 				continue unless tile?
@@ -93,14 +92,14 @@ class @Room
 							when "▬"
 								if at_y + at_h - y < 0.1 and vy >= 0
 									return tile
-							else # "■", "▩"
+							else # "■", "▩"...
 								return tile
 	
 	draw: (ctx)->
 		ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"
 		ctx.strokeRect -1.5, -1.5, @width*16+3, @height*16+3
 		
-		# ctx.fillStyle = "#000" #"#70D870" #"#5ef"
+		# ctx.fillStyle = "#000"
 		# ctx.fillRect 0, 0, @width*16, @height*16
 		
 		unless @bg_img
@@ -108,16 +107,6 @@ class @Room
 			@bg_img.onload = =>
 				@bg = ctx.createPattern @bg_img, 'repeat'
 			@bg_img.src = "images/bg.png"
-		
-		# ctx.imageSmoothingEnabled = off
-		# ctx.drawImage @bg_img, 0, 0, @bg_img.width * 2, @bg_img.height * 2
-		
-		# ctx.rect 0, 0, @width*16, @height*16
-		# ctx.clip()
-		# ctx.drawImage @bg_img, 0, 0, @bg_img.width, @bg_img.height
-		
-		# ctx.fillStyle = @bg
-		# ctx.fillRect 0, 0, @width*16, @height*16
 		
 		ctx.save()
 		ctx.fillStyle = @bg

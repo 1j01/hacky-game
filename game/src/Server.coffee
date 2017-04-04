@@ -70,7 +70,7 @@ class Server
 					# if going between worlds
 					if to.address isnt from.address
 						# find an otherworldly door
-						# TODO: support more than two 
+						# TODO: support connecting more than two worlds together
 						# FIXME: from.address will be a local/private address so this wouldn't work
 						# exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.address is from.address
 						exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor"

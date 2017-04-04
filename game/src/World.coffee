@@ -97,7 +97,6 @@ class @World
 		@_ctx_ = ctx
 		# TODO: room transitions
 		
-		# for id, room of @rooms when id is @current_room_id
 		room = @rooms[@current_room_id]
 		if room?
 			{cx_to, cy_to} = @getWhereToCenterView room, ctx, 2.5

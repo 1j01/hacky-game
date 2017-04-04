@@ -53,6 +53,7 @@ class @Player extends (require "../Ent")
 				@entering = yes
 		else
 			@entering = no # in case you get pushed away from the door
+			# it would be weird if you automatically entered indefinitely later
 		
 		super
 	
@@ -60,12 +61,12 @@ class @Player extends (require "../Ent")
 		@entering = no
 		
 		on_client_side = @world.onClientSide
-		what_side = "(#{if on_client_side then "client" else "server"}-side)"
+		server_or_client_side_indication = "(#{if on_client_side then "client" else "server"}-side)"
 		log = (args...)->
 			if on_client_side
-				console.debug "%c#{what_side}", "color:#05F", args...
+				console.debug "%c#{server_or_client_side_indication}", "color:#05F", args...
 			else
-				console.log "%c#{what_side}", "color:gray", args...
+				console.log "%c#{server_or_client_side_indication}", "color:gray", args...
 		log "Enter door", door
 		
 		leaving_room = @room

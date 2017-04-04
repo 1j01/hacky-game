@@ -1,5 +1,5 @@
 
-# Maybe "RemoteController" isn't the best name
+# Maybe "NetworkedController" would be a better name
 # This is the Controller used on the server
 # It receives remote controls from clients
 

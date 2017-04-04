@@ -8,12 +8,9 @@ class @Tile
 			when "▩" then "#2a0a00"
 			else "#310"
 		
-		
 		fill = =>
 			ctx.fill()
 			ctx.clip()
-			# for [0..10]
-			# 	ctx.beginPath()
 			for [0..10]
 				if Math.random() < 0.5
 					ctx.fillStyle = "rgba(55, 55, 55, 0.2)"
@@ -30,12 +27,6 @@ class @Tile
 			ctx.lineTo 16*x2, 16*y2
 			ctx.lineTo 16*x3, 16*y3
 			fill()
-			# ctx.beginPath()
-			# ctx.moveTo 16*x1, 16*y1
-			# ctx.lineTo 16*x3, 16*y3
-			# ctx.strokeStyle = "#6A2415"
-			# ctx.lineWidth = 1
-			# ctx.stroke()
 		
 		switch @value
 			when " "
@@ -58,5 +49,3 @@ class @Tile
 				ctx.beginPath()
 				ctx.rect 0, 0, 16, 16
 				fill()
-		
-		# ctx.clip()

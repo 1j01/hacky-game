@@ -4,8 +4,6 @@ class @Door extends (require "../Ent")
 	step: (t)->
 		super # I guess...
 	draw: (ctx)->
-		# ctx.shadowColor = "#fff"
-		# ctx.shadowBlur = 100
 		ctx.beginPath()
 		ctx.ellipse 16/2-0.5, 0, @w*16/2, @h*16/2, 0, Math.PI*1, no
 		ctx.lineTo 16, 16
@@ -16,5 +14,4 @@ class @Door extends (require "../Ent")
 		ctx.fill()
 		ctx.strokeStyle = "#E5461D"
 		ctx.stroke()
-		# ctx.shadowBlur = 0
 	zIndex: 0

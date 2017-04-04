@@ -5,7 +5,6 @@ crypto = require "crypto"
 ip = require "ip"
 running = require "is-running"
 ssdp = require "./super-ssdp"
-# discover = require "nanodiscover"
 # discover = require "./nanodiscover"
 game_exe = require "../exe-file"
 {App} = nw ? window.require "nw.gui"
@@ -101,7 +100,8 @@ global.peer = null
 setTimeout ->
 	global.wait_for_local_server_port (port)->
 		options =
-			name: "HackyGame"
+			name: App.manifest.name
+			version: App.manifest.version
 			url: "tcp://#{ip.address()}:#{port}"
 		console.log "ssdp.createPeer", options
 		peer = global.peer = ssdp.createPeer(options)

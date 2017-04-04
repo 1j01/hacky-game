@@ -13,9 +13,9 @@ rooms =
 		    ◢■▩▩▩■  ■▩▩▩
 		■■■■■■▩▩▩■  ■▩▩▩
 		""" # ■▩▬◢◤◥◣◫
-		# TODO: define spawn points for OtherworldlyDoors and enemies in the world data
+		# TODO: define spawn points for OtherworldlyDoors and enemies in the room data
 		# with single-character IDs ("ABC...")
-		# or with a level editor
+		# or use a level editor
 		ents: [
 			{id: 2, x: 3, y: 1, type: "Door", to: "the third room"}
 			{id: 0, x: 2, y: 1, type: "Enemy"}

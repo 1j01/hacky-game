@@ -7,7 +7,7 @@ class @GamepadController extends (require "../Controller.coffee")
 		
 		{axes} = @gamepad
 		
-		# assuming (@gamepad.mapping is "standard")
+		# assuming @gamepad.mapping is "standard"
 		
 		@moveX = axes[0]
 		@move_y = axes[1]
