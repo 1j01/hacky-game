@@ -22,7 +22,8 @@ animate = ->
 	ctx2x.drawImage canvas, 0, 0, canvas2x.width, canvas2x.height
 
 @worlds_by_address = {}
-global.server.getPort (port)=>
+
+global.wait_for_local_server_port (port)->
 	address = "tcp://localhost:#{port}"
 	@worlds_by_address[address] =
 	@world = new World onClientSide: yes, serverAddress: address

@@ -16,6 +16,9 @@ find_saved_game = (callback)->
 			buffer = new Buffer(buffer_size)
 			position = stats.size - buffer_size
 			
+			# TODO: instead of reading backwards until the json is parsable
+			# store the length and/or start of the save data at the very end of the file
+			# could then use BSON or another format to store the save data, possibly gzipped
 			fs.read fd, buffer, 0, buffer_size, position, (err)->
 				return callback err if err
 				if buffer[buffer.length - 1] is "}".charCodeAt(0)
@@ -59,7 +62,7 @@ module.exports =
 			callback null, savegame
 	
 	save: (savegame, callback)->
-		# TODO: operate atomicically
+		# TODO: operate atomically
 		erase_game (err)->
 			return callback err if err
 			json = JSON.stringify savegame

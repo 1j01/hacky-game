@@ -4,11 +4,12 @@ path = require "path"
 crypto = require "crypto"
 ip = require "ip"
 running = require "is-running"
-ssdp = require "super-ssdp"
+ssdp = require "./super-ssdp"
 # discover = require "nanodiscover"
 # discover = require "./nanodiscover"
-game_exe = require "./exe-file"
+game_exe = require "../exe-file"
 {App} = window.require "nw.gui"
+
 dir = path.join App.dataPath, "discovery"
 try fs.mkdirSync dir
 catch err then throw err if err.code isnt "EEXIST"
@@ -18,7 +19,7 @@ my_json_fname = "#{process.pid}.json"
 my_json_file = path.join dir, my_json_fname
 
 writeMyJSONFile = ->
-	global.server.getPort (port)->
+	global.wait_for_local_server_port (port)->
 		data = {session_id, game_exe, pid: process.pid, port}
 		json = JSON.stringify data
 		fs.writeFile my_json_file, json, "utf8", (err)->
@@ -27,10 +28,16 @@ writeMyJSONFile = ->
 checkFile = (file, callback)->
 	fs.readFile file, "utf8", (err, json)->
 		return callback err if err
+		# Sometimes the file comes up empty
+		if json.length is 0
+			fs.unlink file, (err)->
+				console.error "Trying to clean up empty discovery file", err if err
+			callback null, null
+			return
 		try
 			data = JSON.parse json
 		catch err
-			# Sometimes the file comes up empty
+			# If the file is corrupted, but not empty, we leave it in case it can be recovered.
 			return callback err
 		running data.pid, (err, is_running)->
 			return callback err if err
@@ -53,8 +60,8 @@ checkFile = (file, callback)->
 
 peer_addresses = []
 # {name, version} = App.manifest
-# setTimeout ->
-# 	global.server.getPort (port)->
+# ->
+# 	wait_for_local_server_port (port)->
 # 		global.announcer = discover.createAnnouncer name, version, "tcp://#{ip.address()}:#{port}"
 # 		global.browser = browser = discover.createBrowser name, version
 # 		# peer_addresses = browser.peers
@@ -78,6 +85,8 @@ module.exports = (callback)->
 			do (fname)->
 				file = path.join dir, fname
 				checkFile file, (err, data)->
+					# XXX FIXME: could callback multiple times
+					# also, TODO: should probably more or less ignore these errors
 					return callback err if err
 					checked += 1
 					if data?.port?
@@ -86,17 +95,16 @@ module.exports = (callback)->
 						callback null, local_addresses.concat peer_addresses
 		callback null, peer_addresses if other_fnames.length is 0
 
-# TODO: fork super-ssdp and add a stop/end/close method?
-# global.peer?.stop?()
+global.peer?.close()
+global.peer = null
 
 setTimeout ->
-	global.server.getPort (port)->
-		console.log "ssdp.createPeer",
+	global.wait_for_local_server_port (port)->
+		options =
 			name: "HackyGame"
 			url: "tcp://#{ip.address()}:#{port}"
-		peer = global.peer = ssdp.createPeer 
-			name: "HackyGame"
-			url: "tcp://#{ip.address()}:#{port}"
+		console.log "ssdp.createPeer", options
+		peer = global.peer = ssdp.createPeer(options)
 		peer.start()
 		peer.on "found", (address)->
 			console.log "Found peer!", address

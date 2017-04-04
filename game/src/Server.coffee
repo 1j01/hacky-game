@@ -1,12 +1,13 @@
 
 # Each client hosts a server
-# The client starts out connected to it's server
-# If a connection fails with a remote server, you get booted back to the local server
+# The client starts out connected to its local server
+# If a connection fails with a remote server, you'll get booted back to the local server
 
 net = require "net"
 JSONSocket = require "json-socket"
+enableDestroy = require "server-destroy"
 hack = require "./savegame"
-discover = require "./discover"
+discover = require "./discovery/discover"
 World = require "./World"
 Door = require "./ents/Door"
 OtherworldlyDoor = require "./ents/OtherworldlyDoor"
@@ -27,7 +28,7 @@ getFreePort = do ->
 
 module.exports =
 class Server
-	constructor: ->
+	constructor: (callback)->
 		@world = new World onClientSide: no
 		
 		clients = []
@@ -64,7 +65,8 @@ class Server
 					# if going between worlds
 					if to.address isnt from.address
 						# find an otherworldly door
-						# FIXME: from.address which will be a local/private address
+						# TODO: support more than two 
+						# FIXME: from.address will be a local/private address so this wouldn't work
 						# exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.address is from.address
 						exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor"
 					else
@@ -80,13 +82,21 @@ class Server
 					console.warn "Unhandled message:", message
 			send_all_data()
 		
+		enableDestroy(@server)
+		
+		@_getPort_callbacks = []
 		getFreePort (@port)=>
-			@server.listen @port
+			@server.listen @port, (err)=>
+				return callback(err) if err
+				for getPort_cb in @_getPort_callbacks
+					getPort_cb(@port)
+				callback()
 		
 		@iid = setInterval =>
 			if global.window?.CRASHED
 				console.log "Server: stopping, since the client crashed"
-				@close()
+				@close ->
+					console.log "Server: stopped"
 				return
 			@world.step()
 			send_ents()
@@ -101,6 +111,9 @@ class Server
 			# 	hack.save @world, (err)=>
 			# 		console.error err if err
 		, 500
+		
+		
+		# TODO: move this world definition stuff elsewhere
 		
 		@world.applyRoomUpdate
 			id: "the second room"
@@ -169,6 +182,7 @@ class Server
 				{id: 1, x: 71, y: 3, type: "Door", to: "the third room", from: "the third room"} # FIXME: this door also goes to the thing
 			]
 		
+		# TODO: set current_room_id when adding the player
 		starting_room = @world.rooms[@world.current_room_id]
 		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, starting_room, @world
 		starting_room.ents.push player
@@ -214,14 +228,17 @@ class Server
 		# 		loaded = yes
 	
 	getPort: (callback)->
-		iid = setInterval =>
-			if @port
-				clearInterval iid
-				callback @port
-		, 50
+		if @port
+			callback(@port)
+		else
+			@_getPort_callbacks.push(callback)
 	
-	close: ->
-		@server.close()
+	close: (callback)->
+		# console.log("Server::close", @server, callback)
+		# @server.close (err)->
+		@server.destroy (err)->
+			# console.log "Server should be closed", err
+			callback(err)
 		clearInterval @iid
 		clearInterval @slower_iid
 		clearInterval @discovery_iid

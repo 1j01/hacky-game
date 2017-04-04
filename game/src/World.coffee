@@ -15,14 +15,14 @@ class @World
 	constructor: ({@onClientSide, @serverAddress, @players={}})->
 		@["[[ID]]"] = (require "crypto").randomBytes(10).toString("hex")
 		@rooms = {}
-		@current_room_id = "the second room"
+		@current_room_id = "the second room" # XXX: hardcoded separately from world data
 		@view = {cx: 0, cy: 0}
 		
-		# The client starts out connected to it's own server
+		# The client starts out connected to its own server
 		if @onClientSide
 			@socket = new JSONSocket new net.Socket
-			@socket._socket.on "end", => @socket.emit "end"
-			[host, port] = (@serverAddress.replace /tcp:(\/\/)?/, "").split ":"
+			# @socket._socket.on "end", => @socket.emit "end"
+			[host, port] = @serverAddress.replace(/tcp:(\/\/)?/, "").split(":")
 			@socket.connect {host, port}
 			global.sockets.push @socket
 			@socket.on "end", =>

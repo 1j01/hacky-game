@@ -16,7 +16,13 @@
 			script.src = src
 			document.head.appendChild script
 	</script>
-	<script>process.mainModule.exports.init(window);</script>
+	<script>
+		process.mainModule.exports.init(window, function (err){
+			if (err) {
+				console.error(err);
+			}
+		});
+	</script>
 	<!-- <script src="src/MultiHowl.coffee" type="text/coffeescript"></script> -->
 	<!-- <script src="src/helpers.coffee" type="text/coffeescript"></script> -->
 	<script src="src/main.coffee" type="text/coffeescript"></script>
