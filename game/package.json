@@ -54,8 +54,7 @@
     "ip": "^1.0.1",
     "is-running": "^1.0.5",
     "json-socket": "^0.1.2",
-    "peer-ssdp": "0.0.5",
-    "server-destroy": "^1.0.1"
+    "peer-ssdp": "0.0.5"
   },
   "chromium-args": "--disable-canvas-aa"
 }

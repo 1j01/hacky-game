@@ -5,7 +5,6 @@
 
 net = require "net"
 JSONSocket = require "json-socket"
-enableDestroy = require "server-destroy"
 hack = require "./savegame"
 discover = require "./discovery/discover"
 World = require "./World"
@@ -31,25 +30,25 @@ class Server
 	constructor: (callback)->
 		@world = new World onClientSide: no
 		
-		clients = []
+		@clients = []
 		
 		send_all_data = =>
-			for c in clients
+			for c in @clients
 				for id, room of @world.rooms
 					c.sendMessage {room}
 		
 		send_ents = =>
-			for c in clients
+			for c in @clients
 				for id, room of @world.rooms
 					c.sendMessage {room: {id: room.id, ents: room.ents}}
 		
 		@server = net.createServer (socket)=>
 			c = new JSONSocket socket
 			# console.debug "a client connected", c
-			clients.push c
+			@clients.push(c)
 			c.on "end", =>
 				# console.debug "a client disconnected", c
-				clients.splice (clients.indexOf c), 1
+				@clients.splice(@clients.indexOf(c), 1)
 			c.on "message", (message)=>
 				if message?.controls
 					{controls} = message
@@ -81,8 +80,6 @@ class Server
 				else
 					console.warn "Unhandled message:", message
 			send_all_data()
-		
-		enableDestroy(@server)
 		
 		@_getPort_callbacks = []
 		getFreePort (@port)=>
@@ -234,11 +231,9 @@ class Server
 			@_getPort_callbacks.push(callback)
 	
 	close: (callback)->
-		# console.log("Server::close", @server, callback)
-		# @server.close (err)->
-		@server.destroy (err)->
-			# console.log "Server should be closed", err
-			callback(err)
-		clearInterval @iid
-		clearInterval @slower_iid
-		clearInterval @discovery_iid
+		for c in @clients
+			c._socket.destroy()
+		@server.close(callback)
+		clearInterval(@iid)
+		clearInterval(@slower_iid)
+		clearInterval(@discovery_iid)
