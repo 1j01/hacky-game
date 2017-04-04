@@ -2,7 +2,11 @@
 path = require "path"
 nexe = require "nexe"
 zip = require "zip-folder"
-winresourcer = require "nw-builder/node_modules/winresourcer"
+winresourcer =
+	if (try require.resolve "winresourcer")
+		require "winresourcer"
+	else
+		require "nw-builder/node_modules/winresourcer"
 change_exe_subsystem = require './subsystem'
 
 game_folder = "game"
