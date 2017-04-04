@@ -11,10 +11,10 @@ animate = ->
 	return if window.CRASHED
 	requestAnimationFrame animate
 	world.step()
-	canvas2x.width = innerWidth
-	canvas2x.height = innerHeight
-	canvas.width = Math.ceil innerWidth / 2
-	canvas.height = Math.ceil innerHeight / 2
+	canvas2x.width = innerWidth if canvas2x.width isnt innerWidth
+	canvas2x.height = innerHeight if canvas2x.height isnt innerHeight
+	canvas.width = Math.ceil(innerWidth / 2) if canvas.width isnt Math.ceil(innerWidth / 2)
+	canvas.height = Math.ceil(innerHeight / 2) if canvas.height isnt Math.ceil(innerHeight / 2)
 	ctx.fillStyle = "black"
 	ctx.fillRect 0, 0, canvas.width, canvas.height
 	world.draw ctx
