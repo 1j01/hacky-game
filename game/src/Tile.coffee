@@ -17,8 +17,9 @@ class @Tile
 				else
 					ctx.fillStyle = "rgba(0, 0, 0, 0.2)"
 				ctx.beginPath()
-				r = Math.random() * 1 + 1
-				ctx.ellipse 16*Math.random(), 24*Math.random()-3, r, r, 0, Math.PI*2, no
+				w = ~~(Math.random() * 1) + 1
+				h = ~~(Math.random() * 1) + 1
+				ctx.ellipse ~~(16*Math.random()), ~~(24*Math.random()-3), w, h, 0, Math.PI*2, no
 				ctx.fill()
 		
 		tri = (x1,y1, x2,y2, x3,y3)=>

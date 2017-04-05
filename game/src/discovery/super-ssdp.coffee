@@ -46,7 +46,7 @@ SuperSSDP::start = ->
 			onReady()
 			@emit 'found', headers.LOCATION
 	).on('close', =>
-		# console.log("[SSDP] closing")
+		# console.log("[SSDP] closed")
 		@emit 'close'
 	).on('ready', ->
 		onReady()

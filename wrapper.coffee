@@ -8,7 +8,7 @@ datadir = path.datadir "hacky-game"
 zip_file = path.join datadir, "game.zip"
 nwjs_dl_folder = path.join datadir, "nw.js"
 nwjs_exe = path.join nwjs_dl_folder, "nw.exe"
-nwjs_url = "http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-win-x64.zip"
+nwjs_url = "http://dl.nwjs.io/v0.21.3/nwjs-v0.21.3-win-x64.zip"
 try fs.mkdirSync datadir
 try fs.mkdirSync nwjs_dl_folder
 

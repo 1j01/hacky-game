@@ -147,11 +147,13 @@ class @Room
 							break if @collisionAt x, y-1/16, 1/16, 1/16
 						if ground = @collisionAt x, y+1/16, 1/16, 1/16
 							unless ground.value is "▬"
-								@tiles_ctx.strokeStyle = if Math.random() < 0.4 then "#99E550" else "#4B692F"
-								@tiles_ctx.beginPath()
-								@tiles_ctx.moveTo(x * 16, y * 16)
-								@tiles_ctx.lineTo(x * 16 + (Math.random() * 2 - 1), y * 16 - Math.random() * 5 - 2)
-								@tiles_ctx.stroke()
+								line(@tiles_ctx,
+									if Math.random() < 0.4 then "#99E550" else "#4B692F"
+									~~(x * 16)
+									~~(y * 16)
+									~~(x * 16 + Math.random() * 2 - 1)
+									~~(y * 16 - Math.random() * 5 - 2)
+								)
 		
 		ctx.drawImage @tiles_canvas, 0, 0
 		

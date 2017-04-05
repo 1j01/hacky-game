@@ -5,9 +5,10 @@ class @KeyboardController extends (require "../Controller.coffee")
 		super
 		@keys = {}
 		@prev_keys = {}
-		window.addEventListener "keydown", (e)=>
+		# XXX: this shouldn't be running under node's context
+		client_window.addEventListener "keydown", (e)=>
 			@keys[e.keyCode] = on
-		window.addEventListener "keyup", (e)=>
+		client_window.addEventListener "keyup", (e)=>
 			delete @keys[e.keyCode]
 	
 	justPressed: (keyCode)=>
