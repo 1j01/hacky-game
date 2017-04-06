@@ -20,22 +20,21 @@ Single player is treated the same: the client hosts a server and communicates wi
 This might change.
 
 When other servers are discovered,
-a magic door is opened to another world.
+a door is opened to another world.
 
-Players can travel between each other's worlds,
+Players can travel between worlds,
 and you can even have two players in each other's worlds.
 (But the player's client has to be online for their world to be available.)
 
 You should be able to get a feel for the game in single-player,
 with a substantial world to explore, but
-I think multiplayer will be the real focal point of the game
+I think multiplayer will be the real focus of the game
 and I think it would be interesting to have parts of the world that you can only explore with a friend.
 
 Oh, did I mention the worlds are gonna be procedurally generated?
 That's probably kind of important.
-It might have a good amount of pre-made/human-formulated content,
-maybe some areas that are the same in all worlds, like a tutorial level,
-or just fairly similar but still functionally identical.
+It might have some areas that are the same in all worlds, like a tutorial level,
+or perhaps just fairly similar and functionally identical.
 
 Both players should gain from exploring either players world.
 It should be like the worlds combined make up the space to explore,
@@ -66,25 +65,26 @@ I did a tech demo of this first, but there are no persistent elements to the wor
 * Local multiplayer
 
 	* Discovers other clients through tiny JSON files stored with ports and PIDs.
-	(**NOTE**: Will need to choose a new directory when updating `nw` from `0.12.x`;
-	the `single-instance` option is deprecated and you have to pass separate `--user-data-dir` values
-	which the directory is currently based on)
-
+	
 	* **TODO**:
-	  Remove the need for client-side prediction on the client's own server;
-	  maybe fully merge the client and the server so they use one `World`,
-	  or at least try stepping the server from the client.
+	Choose a new directory since I updated `nw` from `0.12.x`;
+	the `single-instance` option is deprecated and you have to pass separate `--user-data-dir` values;
+	and the directory is currently based on the user data directory.
 
 	* **TODO:**
 	  Manage input methods for multiple players.
-	  You'll want to be able to play with two people on one keyboard
-	  or use one or more gamepads,
+	  You should be able to play with two people on one keyboard,
 	  and you won't be able to send input to two windows at once.
+		<!-- sending inputs to one window but two clients. -->
+
+	* Could try to do single window splitscreen ("normal" local multiplayer) instead.
 
 
 * Multiplayer over LAN
 
 	* Discovers other clients with [SSDP][]
+
+	* You can use [Hamachi](https://www.vpn.net/) to establish connections between computers if LAN doesn't work for you
 
 	* **TODO/FIXME:**
 	  Handle connection ending
@@ -92,10 +92,6 @@ I did a tech demo of this first, but there are no persistent elements to the wor
 	
 	* **TODO:**
 	  Get booted if server isn't responding
-	
-	<!-- * **FIXME:**
-	  Repeated `EADDRINUSE` errors from `super-ssdp` module -->
-	<!-- This may be fixed, but I probably broke discovery entirely -->
 	
 	* **FIXME:**
 	  Disparity between `localhost` and the IP address used when reentering your own world
@@ -112,8 +108,45 @@ I did a tech demo of this first, but there are no persistent elements to the wor
   Entering a door involves sending a command to the server
   but you switch the room you're viewing instantly.
 
+* **TODO**:
+  Remove the need for client-side prediction on the client's own server;
+  maybe merge the client and the server so they use one `World`
+
+* **TODO:**
+  Use random seeds to render the exact same blades of grass etc. as another client for the same world.
 
 
+## Install and run
+
+Builds of the game will be easy to run, but there's not much of a point yet.
+For now you'll need to install the project.
+
+You'll need [Node.js][].
+[Clone the project][cloning a repo]
+and then, in a terminal/command prompt in the project's directory,
+run:
+
+	npm install ; cd game ; npm install ; cd ..
+
+You can now run the game with:
+
+	npm start
+
+On the first run, it'll download the [nw.js][] runtime.
+
+
+## Building
+
+The game implements saving game data directly to the executable binary,
+which is very platform specific.
+This is only implemented for Windows so far.
+It should be feasible on at least some other systems
+
+
+
+
+[cloning a repo]: https://help.github.com/articles/cloning-a-repository/
+[Node.js]: https://nodejs.org
 [nexe]: https://github.com/jaredallard/nexe
 [nexeres]: https://github.com/jaredallard/nexe/pull/93
 [nw.js]: https://github.com/nwjs/nw.js/

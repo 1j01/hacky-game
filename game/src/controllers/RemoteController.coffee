@@ -1,7 +1,8 @@
 
-# Maybe "NetworkedController" would be a better name
 # This is the Controller used on the server
 # It receives remote controls from clients
+
+# Maybe "NetworkedController" or "ServersideController" would be a better name
 
 module.exports =
 class @RemoteController extends (require "../Controller.coffee")

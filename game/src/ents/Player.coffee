@@ -21,6 +21,12 @@ class @Player extends (require "../Ent")
 		
 		@entering = no
 		
+		# FIXME: holding a key while going to another World
+		# I want it to be *seamless*!
+		# (just need to reuse a single KeyboardController instance)
+		# (and give it an up-to-date World instance)
+		# NOTE: ideally this would use dependency injection,
+		# but I'm not sure how that would work when ents can be created generically
 		# TODO: gamepad controller support
 		if @world.onClientSide
 			if @id is global.clientPlayerID

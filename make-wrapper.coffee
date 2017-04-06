@@ -14,6 +14,8 @@ game_exe = "game.exe"
 zip_file = "game.zip"
 win_ico = "#{game_folder}/images/game.ico"
 
+# NOTE: could avoid callback indentation
+
 console.log "Zip", game_folder, "to", zip_file
 
 zip game_folder, zip_file, (err)->
