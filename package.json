@@ -52,6 +52,7 @@
   },
   "scripts": {
     "start": "nwbuild -v 0.21.3 -r game",
+    "build-simple": "nwbuild -v 0.21.3 game",
     "prepublish": "coffee -c wrapper.coffee",
     "build": "coffee -c wrapper.coffee & coffee make-wrapper.coffee"
   }

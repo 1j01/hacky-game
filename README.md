@@ -116,10 +116,10 @@ I did a tech demo of this first, but there are no persistent elements to the wor
   Use random seeds to render the exact same blades of grass etc. as another client for the same world.
 
 
-## Install and run
+## Install
 
-Builds of the game will be easy to run, but there's not much of a point yet.
-For now you'll need to install the project.
+Final builds of the game will be standalone executables,
+but there's not much of a point yet to trying to release builds.
 
 You'll need [Node.js][].
 [Clone the project][cloning a repo]
@@ -128,21 +128,29 @@ run:
 
 	npm install ; cd game ; npm install ; cd ..
 
-You can now run the game with:
+## Run
+
+After installing, you can run the game with:
 
 	npm start
 
 On the first run, it'll download the [nw.js][] runtime.
 
 
-## Building
+## Build
 
-The game implements saving game data directly to the executable binary,
-which is very platform specific.
-This is only implemented for Windows so far.
-It should be feasible on at least some other systems
+The game implements hackily saving game data directly to the executable binary,
+which is rather platform specific.
+This is only implemented for Windows so far,
+but it should be feasible on at least some other systems.
 
+On Windows:
 
+	npm run build
+
+On other platforms, for now:
+
+	npm run build-simple
 
 
 [cloning a repo]: https://help.github.com/articles/cloning-a-repository/
