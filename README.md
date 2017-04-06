@@ -42,8 +42,11 @@ It should be like the worlds combined make up the space to explore,
 and which one to do first shouldn't feel contentious.
 
 There could be doors that require multiple keys, that you need to get from several people.
-There could be keys that belong to random other worlds and you have to find the one player that 
-There could be halves of items (including keys)
+There could be keys that belong to random other worlds and you have to find the one player whose world contains the door.
+There could be halves of items (including keys).
+
+Keys could be 2D "pin arrays", where locks run a game-of-life simulation for a number of iterations.
+This would work well for a 1BPP game, as alternative to using color to distinguish keys.
 
 The game runs in [nw.js][] (so it can include both client and server),
 but the final `game.exe` is a wrapper.

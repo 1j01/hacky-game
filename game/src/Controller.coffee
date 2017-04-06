@@ -12,6 +12,7 @@ class @Controller
 		{@moveX, @jump, @enterDoor, @crouch, @playerID}
 	
 	sendControlsToServer: ->
+		# FIXME: write after end will crash client
 		if @world.socket
 			@world.socket.sendMessage {controls: @}
 	

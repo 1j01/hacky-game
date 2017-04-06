@@ -142,12 +142,12 @@ class Server
 						door.remove()
 						delete interuniversal_doors[address]
 				
-				for address in addresses when not interuniversal_doors[address]
+				for address, i in addresses when not interuniversal_doors[address]
 					interuniversal_doors[address] = door = new OtherworldlyDoor {
 						address
 						id: address
 						to: "the second room"
-						x: 12
+						x: 12-i*3
 						y: 5
 						type: "OtherworldlyDoor"
 					}, starting_room, @world

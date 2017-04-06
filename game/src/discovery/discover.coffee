@@ -26,6 +26,7 @@ writeMyJSONFile = ->
 
 checkFile = (file, callback)->
 	fs.readFile file, "utf8", (err, json)->
+		# TODO: no error if err.code is "ENOENT" (race condition)
 		return callback err if err
 		# Sometimes the file comes up empty
 		if json.length is 0
@@ -75,6 +76,7 @@ peer_addresses = []
 
 module.exports = (callback)->
 	writeMyJSONFile()
+	# TODO: would be cleaner with a separate function like `checkFiles`
 	fs.readdir dir, (err, fnames)->
 		return callback err if err
 		other_fnames = (fname for fname in fnames when fname isnt my_json_fname)
@@ -84,7 +86,9 @@ module.exports = (callback)->
 			do (fname)->
 				file = path.join dir, fname
 				checkFile file, (err, data)->
-					# XXX FIXME: could callback multiple times
+					# XXX: looks like it could callback multiple times
+					# (but I think it shouldn't since `checked` wouldn't reach `other_fnames.length`
+					# since its incremented after the return)
 					# also, TODO: should probably more or less ignore these errors
 					return callback err if err
 					checked += 1
