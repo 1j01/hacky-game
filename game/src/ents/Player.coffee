@@ -79,10 +79,11 @@ class @Player extends (require "../Ent")
 				log "Leaving world", leaving_world
 				if on_client_side and @id is global.clientPlayerID
 					World = World.World ? World # XXX: Why is require() returning an Object?
-					window.worlds_by_address[door.address] ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
-					window.world = window.worlds_by_address[door.address]
-					log "Entering world", window.world
-					window.world
+					# FIXME: shouldn't be running in node context on the client side
+					client_window.worlds_by_address[door.address] ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
+					client_window.world = client_window.worlds_by_address[door.address]
+					log "Entering world", client_window.world
+					client_window.world
 			else
 				@world
 		

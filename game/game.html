@@ -17,7 +17,7 @@
 			document.head.appendChild script
 	</script>
 	<script>
-		global.client_window = window;
+		global.client_window = client_window = window;
 		process.mainModule.exports.init(window, function (err){
 			if (err) {
 				console.error(err);
