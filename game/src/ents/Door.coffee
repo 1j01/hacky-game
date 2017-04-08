@@ -2,7 +2,7 @@
 module.exports =
 class @Door extends (require "./Ent")
 	step: (t)->
-		super # I guess...
+		super # Sure, have physics
 	draw: (ctx)->
 		ctx.beginPath()
 		ctx.ellipse 16/2-0.5, 0, @w*16/2, @h*16/2, 0, Math.PI*1, no

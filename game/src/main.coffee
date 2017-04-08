@@ -22,7 +22,6 @@ animate = ->
 	ctx2x.imageSmoothingEnabled = off
 	ctx2x.drawImage canvas, 0, 0, canvas2x.width, canvas2x.height
 
-# TODO: make this a Map
 window.worlds_by_address = new Map
 
 global.wait_for_local_server_address (address)->

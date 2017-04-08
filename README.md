@@ -99,7 +99,10 @@ I did a tech demo of this first, but there are no persistent elements to the wor
 
 	* **TODO:**
 	  Get booted if server doesn't respond for some time
-	
+
+	* **TODO:**
+	  Remove `Player` entities from the world if they get disconnected
+
 	* **FIXME:**
 	  Disparity between `localhost` and the IP address used when reentering your own world
 

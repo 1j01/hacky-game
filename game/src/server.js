@@ -19,7 +19,6 @@ global.wait_for_local_server_address = function(callback){
 };
 
 exports.init = function(window, callback){
-	var console = window.console;
 	var log = function (text){
 		console.log("%cserver.js:%c " + text, "font-size:1.5em;color:gray","font-size:1.3em;font-family:sans-serif");;
 	};

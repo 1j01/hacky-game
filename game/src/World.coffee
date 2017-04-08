@@ -22,12 +22,9 @@ class @World
 		# The client starts out connected to its own server
 		if @onClientSide
 			@socket = new JSONSocket new net.Socket
-			# @socket._socket.on "end", => @socket.emit "end"
 			[host, port] = @serverAddress.replace(/tcp:(\/\/)?/, "").split(":")
 			@socket.connect {host, port}
 			global.sockets.push @socket
-			# @socket.on "end", =>
-			# 	console.warn "Disconnected from server! (end)"
 			@socket.on "close", =>
 				console.warn "Disconnected from server! (socket close)"
 				@bootPlayerToLocalWorld()
