@@ -99,7 +99,7 @@ class @Player extends (require "./Ent")
 		if on_client_side and @id is global.clientPlayerID
 			entering_world.current_room_id = entering_room_id
 			entering_world.socket.sendMessage
-				enterDoor:
+				enterRoom:
 					player: @
 					from: room_id: leaving_room.id, address: leaving_world.serverAddress
 					to: room_id: entering_room_id, address: entering_world.serverAddress

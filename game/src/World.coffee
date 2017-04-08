@@ -58,7 +58,7 @@ class @World
 			client_window.world = entering_world
 			entering_world.current_room_id = entering_room_id
 			entering_world.socket.sendMessage
-				enterDoor:
+				enterRoom:
 					player: player
 					from: booted: yes, address: leaving_world.serverAddress
 					to: room_id: entering_room_id, address: entering_world.serverAddress

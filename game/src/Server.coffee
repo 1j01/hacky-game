@@ -61,14 +61,12 @@ class Server
 					for player in @world.getPlayers()
 						if player.id is controls.playerID
 							player.controller.applyUpdate controls
-				else if message?.enterDoor
-					# TODO: rename this enterRoom
-					# if you're booted from a world, there's no specific door you're entering
-					# but there is a room you're entering (and a door you're exiting from, TODO: briefly)
-					{from, to, player} = message?.enterDoor
+				else if message?.enterRoom
+					{from, to, player} = message?.enterRoom
 					entering_room = @world.rooms[to.room_id]
 					player = new Player player, entering_room, @world
 					entering_room.ents.push player
+					# c.player = player
 					
 					# if going between worlds
 					if to.address isnt from.address
