@@ -6,6 +6,8 @@ Controller = require "../controllers/Controller"
 KeyboardController = require "../controllers/KeyboardController"
 ServersideController = require "../controllers/ServersideController"
 
+keyboard_controller = new KeyboardController
+
 module.exports =
 class @Player extends (require "./Ent")
 	constructor: (props, room, world)->
@@ -25,20 +27,18 @@ class @Player extends (require "./Ent")
 		
 		@entering = no
 		
-		# FIXME: holding a key while going to another World
-		# I want it to be *seamless*!
-		# (just need to reuse a single KeyboardController instance)
-		# (and give it an up-to-date World instance)
-		# NOTE: ideally this would use dependency injection,
+		# NOTE: ideally @controller would be an injected dependency,
 		# but I'm not sure how that would work when ents can be created generically
 		# TODO: gamepad controller support
 		if @world.onClientSide
 			if @id is global.clientPlayerID
-				@controller = new KeyboardController @, @world
+				@controller = keyboard_controller
 			else
-				@controller = new Controller @, @world
+				@controller = new Controller
 		else
-			@controller = new ServersideController @, @world
+			@controller = new ServersideController
+		
+		@controller.setPlayer(@)
 	
 	step: (t)->
 		@controller.step()

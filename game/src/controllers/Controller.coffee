@@ -1,18 +1,20 @@
 
 module.exports =
 class @Controller
-	constructor: (player, @world)->
+	constructor: ->
 		@moveX = 0
 		@jump = no
 		@enterDoor = no
 		@crouch = no
+	
+	setPlayer: (player)->
 		@playerID = player.id
+		@world = player.world
 	
 	toJSON: ->
 		{@moveX, @jump, @enterDoor, @crouch, @playerID}
 	
 	sendControlsToServer: ->
-		# NOTE: I might make @world change, keeping the same controller
 		if @world.socket
 			@world.socket.sendMessage {controls: @}
 	

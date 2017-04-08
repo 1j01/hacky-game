@@ -50,12 +50,12 @@ class Server
 		
 		@server = net.createServer (socket)=>
 			c = new JSONSocket socket
-			console.debug "a client connected", c
+			# console.debug "a client connected", c
 			@clients.push(c)
 			c.on "close", =>
-				console.debug "a client disconnected", c
+				# console.debug "a client disconnected", c
 				@clients.splice(@clients.indexOf(c), 1)
-				console.debug "removing player", c.player
+				console.debug "player disconnected, removing", c.player
 				c.player?.remove()
 			c.on "error", (err)=>
 				console.error "Serverside socket error: ", err, "for client", c
