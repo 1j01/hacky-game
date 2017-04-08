@@ -23,9 +23,10 @@ animate = ->
 	ctx2x.drawImage canvas, 0, 0, canvas2x.width, canvas2x.height
 
 # TODO: make this a Map
-window.worlds_by_address = {}
+window.worlds_by_address = new Map
 
 global.wait_for_local_server_address (address)->
-	window.worlds_by_address[address] =
-	window.world = new World onClientSide: yes, serverAddress: address
+	world = new World onClientSide: yes, serverAddress: address
+	window.worlds_by_address.set(address, world)
+	window.world = world
 	animate()

@@ -34,7 +34,7 @@ class @World
 				# XXX: client_window gets set to a new window when reloading
 				# and reloading means we get a close
 				if client_window.worlds_by_address?
-					delete client_window.worlds_by_address[@serverAddress]
+					client_window.worlds_by_address.delete(@serverAddress)
 			@socket.on "message", (message)=>
 				if message?.room
 					@applyRoomUpdate message.room
@@ -51,7 +51,7 @@ class @World
 				console.error "Would boot player to the local server #{address} but they're already there"
 				return
 			console.warn "Booting player to #{address}"
-			entering_world = client_window.worlds_by_address[address]
+			entering_world = client_window.worlds_by_address.get(address)
 			unless entering_world
 				console.error "No world #{address} in", client_window.worlds_by_address
 				return
