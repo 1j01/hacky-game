@@ -50,11 +50,15 @@ class Server
 		
 		@server = net.createServer (socket)=>
 			c = new JSONSocket socket
-			# console.debug "a client connected", c
+			console.debug "a client connected", c
 			@clients.push(c)
-			c.on "end", =>
-				# console.debug "a client disconnected", c
+			c.on "close", =>
+				console.debug "a client disconnected", c
 				@clients.splice(@clients.indexOf(c), 1)
+				console.debug "removing player", c.player
+				c.player?.remove()
+			c.on "error", (err)=>
+				console.error "Serverside socket error: ", err, "for client", c
 			c.on "message", (message)=>
 				if message?.controls
 					{controls} = message
@@ -65,8 +69,8 @@ class Server
 					{from, to, player} = message?.enterRoom
 					entering_room = @world.rooms[to.room_id]
 					player = new Player player, entering_room, @world
+					c.player = player
 					entering_room.ents.push player
-					# c.player = player
 					
 					# if going between worlds
 					if to.address isnt from.address
