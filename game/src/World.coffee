@@ -26,13 +26,45 @@ class @World
 			[host, port] = @serverAddress.replace(/tcp:(\/\/)?/, "").split(":")
 			@socket.connect {host, port}
 			global.sockets.push @socket
-			@socket.on "end", =>
-				console.warn "Disconnected from server!"
+			# @socket.on "end", =>
+			# 	console.warn "Disconnected from server! (end)"
+			@socket.on "close", =>
+				console.warn "Disconnected from server! (socket close)"
+				@bootPlayerToLocalWorld()
+				# XXX: client_window gets set to a new window when reloading
+				# and reloading means we get a close
+				if client_window.worlds_by_address?
+					delete client_window.worlds_by_address[@serverAddress]
 			@socket.on "message", (message)=>
 				if message?.room
 					@applyRoomUpdate message.room
 				else
 					console.warn "Unhandled message:", message
+			@socket.on "error", (err)=>
+				# ECONNRESET, ECONNREFUSED, ETIMEDOUT, EPIPE...
+				console.error "Socket error: #{err}"
+
+	bootPlayerToLocalWorld: ->
+		player = @getPlayer(global.clientPlayerID)
+		global.wait_for_local_server_address (address)=>
+			if address is @serverAddress
+				console.error "Would boot player to the local server #{address} but they're already there"
+				return
+			console.warn "Booting player to #{address}"
+			entering_world = client_window.worlds_by_address[address]
+			unless entering_world
+				console.error "No world #{address} in", client_window.worlds_by_address
+				return
+			entering_room_id = "the second room" # XXX: hardcoded (and silly) value
+			leaving_world = @
+			# TODO: remove player from this world
+			client_window.world = entering_world
+			entering_world.current_room_id = entering_room_id
+			entering_world.socket.sendMessage
+				enterDoor:
+					player: player
+					from: booted: yes, address: leaving_world.serverAddress
+					to: room_id: entering_room_id, address: entering_world.serverAddress
 
 	toJSON: ->
 		{@rooms, @current_room_id}

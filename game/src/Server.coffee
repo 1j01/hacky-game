@@ -62,6 +62,9 @@ class Server
 						if player.id is controls.playerID
 							player.controller.applyUpdate controls
 				else if message?.enterDoor
+					# TODO: rename this enterRoom
+					# if you're booted from a world, there's no specific door you're entering
+					# but there is a room you're entering (and a door you're exiting from, TODO: briefly)
 					{from, to, player} = message?.enterDoor
 					entering_room = @world.rooms[to.room_id]
 					player = new Player player, entering_room, @world
@@ -74,6 +77,9 @@ class Server
 						# FIXME: from.address will be a local/private address so this wouldn't work
 						# exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.address is from.address
 						exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor"
+						if exit_door and from.booted
+							player.vx = -0.4
+							player.vy = -0.3
 					else
 						# try to find a door that's explicitly "from" the room we're leaving
 						exit_door = ent for ent in entering_room.ents when ent instanceof Door and ent.from is from.room_id

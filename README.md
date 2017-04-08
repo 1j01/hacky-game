@@ -47,6 +47,14 @@ There could be halves of items (including keys).
 Keys could be 2D "pin arrays", where locks run a game-of-life simulation for a number of iterations.
 This would work well for a 1BPP game, as alternative to using color to distinguish keys.
 
+There could be portals that you can pick up and place, including between worlds.
+
+There should be limits on the viewport,
+maybe fixed but not necessarily;
+it could have a maximum viewport size, and the ability to look in a direction,
+and then the total amount you could look could be fixed
+while allowing for a range of screen sizes on handheld systems etc.
+
 The game runs in [nw.js][] (so it can include both client and server),
 but the final `game.exe` is a wrapper.
 The wrapper currently built with [nexe][],
@@ -75,7 +83,7 @@ I did a tech demo of this first, but there are no persistent elements to the wor
 	  Manage input methods for multiple players.
 	  You should be able to play with two people on one keyboard,
 	  and you won't be able to send input to two windows at once.
-		<!-- sending inputs to one window but two clients. -->
+	  <!-- sending inputs to one window but two clients. -->
 
 	* Could try to do single window splitscreen ("normal" local multiplayer) instead.
 
@@ -86,12 +94,11 @@ I did a tech demo of this first, but there are no persistent elements to the wor
 
 	* You can use [Hamachi](https://www.vpn.net/) to establish connections between computers if LAN doesn't work for you
 
-	* **TODO/FIXME:**
-	  Handle connection ending
-	  (don't crash on `ECONNRESET`, boot you from the world with a nice animation)
-	
 	* **TODO:**
-	  Get booted if server isn't responding
+	  When booted from a server, have the world door sputter out behind you
+
+	* **TODO:**
+	  Get booted if server doesn't respond for some time
 	
 	* **FIXME:**
 	  Disparity between `localhost` and the IP address used when reentering your own world
@@ -114,6 +121,9 @@ I did a tech demo of this first, but there are no persistent elements to the wor
 
 * **TODO:**
   Use random seeds to render the exact same blades of grass etc. as another client for the same world.
+  (Also, with pixi.js, it'll probably be fast enough to render the grass dynamically, so there could be wind and stuff,
+  rustling through the grass as you move,
+  explosions sending waves of air...)
 
 
 ## Install

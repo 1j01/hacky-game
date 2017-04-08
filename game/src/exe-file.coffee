@@ -1,10 +1,13 @@
 
+path = require "path"
 {App} = nw ? window.require "nw.gui"
 
-[game_exe] = App.argv
-running_from_npm_start = game_exe is "--enable-logging"
+[arg] = App.argv
+running_from_npm_start = arg is "--enable-logging"
 
-if running_from_npm_start
-	game_exe = "../game.exe"
-
-module.exports = game_exe
+# Return the path to the executable binary
+module.exports =
+	if running_from_npm_start
+		path.resolve("../game.exe")
+	else
+		arg

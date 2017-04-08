@@ -9,6 +9,14 @@ global.wait_for_local_server_port = function(callback){
 		}
 	}, 50);
 };
+global.wait_for_local_server_address = function(callback){
+	// NOTE: should probably use #{ip.address()}
+	// so it can be given to peers in discovery.coffee
+	global.wait_for_local_server_port(function(port) {
+		var address = `tcp://localhost:${port}`;
+		callback(address);
+	});
+};
 
 exports.init = function(window, callback){
 	var console = window.console;

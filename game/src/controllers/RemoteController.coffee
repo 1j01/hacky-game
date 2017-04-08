@@ -3,6 +3,7 @@
 # It receives remote controls from clients
 
 # Maybe "NetworkedController" or "ServersideController" would be a better name
+# I guess "ServersideController" since every `Controller` is somewhat networked with `Controller::sendControlsToServer`
 
 module.exports =
 class @RemoteController extends (require "../Controller.coffee")
