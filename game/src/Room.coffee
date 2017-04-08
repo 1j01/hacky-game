@@ -1,6 +1,6 @@
 
 Tile = require "./Tile"
-Ent = require "./Ent"
+Ent = require "./ents/Ent"
 
 module.exports =
 class @Room

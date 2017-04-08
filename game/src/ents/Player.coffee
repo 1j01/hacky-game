@@ -2,8 +2,12 @@
 Door = require "./Door"
 World = require "../World"
 
+Controller = require "../controllers/Controller"
+KeyboardController = require "../controllers/KeyboardController"
+ServersideController = require "../controllers/ServersideController"
+
 module.exports =
-class @Player extends (require "../Ent")
+class @Player extends (require "./Ent")
 	constructor: (props, room, world)->
 		# existing_player = world.getPlayer props.id
 		# if existing_player
@@ -30,14 +34,11 @@ class @Player extends (require "../Ent")
 		# TODO: gamepad controller support
 		if @world.onClientSide
 			if @id is global.clientPlayerID
-				KeyboardController = require "../controllers/KeyboardController"
 				@controller = new KeyboardController @, @world
 			else
-				Controller = require "../Controller"
 				@controller = new Controller @, @world
 		else
-			RemoteController = require "../controllers/RemoteController"
-			@controller = new RemoteController @, @world
+			@controller = new ServersideController @, @world
 	
 	step: (t)->
 		@controller.step()

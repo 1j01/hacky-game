@@ -1,6 +1,6 @@
 
 module.exports =
-class @Door extends (require "../Ent")
+class @Door extends (require "./Ent")
 	step: (t)->
 		super # I guess...
 	draw: (ctx)->

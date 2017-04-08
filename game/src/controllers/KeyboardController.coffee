@@ -1,6 +1,6 @@
 
 module.exports =
-class @KeyboardController extends (require "../Controller.coffee")
+class @KeyboardController extends (require "./Controller.coffee")
 	constructor: ->
 		super
 		@keys = {}

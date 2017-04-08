@@ -1,6 +1,6 @@
 
 module.exports =
-class @Enemy extends (require "../Ent")
+class @Enemy extends (require "./Ent")
 	step: (t)->
 		@vx += 0.02
 		if @grounded()

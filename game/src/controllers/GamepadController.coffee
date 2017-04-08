@@ -1,6 +1,6 @@
 
 module.exports =
-class @GamepadController extends (require "../Controller.coffee")
+class @GamepadController extends (require "./Controller.coffee")
 	precision = 0.09
 	constructor: (@gamepad)->
 		super

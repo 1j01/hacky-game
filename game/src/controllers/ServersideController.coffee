@@ -2,11 +2,8 @@
 # This is the Controller used on the server
 # It receives remote controls from clients
 
-# Maybe "NetworkedController" or "ServersideController" would be a better name
-# I guess "ServersideController" since every `Controller` is somewhat networked with `Controller::sendControlsToServer`
-
 module.exports =
-class @RemoteController extends (require "../Controller.coffee")
+class @ServersideController extends (require "./Controller.coffee")
 	constructor: ->
 		super
 		@willJump = no

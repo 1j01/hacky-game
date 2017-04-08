@@ -1,5 +1,5 @@
 
-Controller = require "./Controller"
+Controller = require "../controllers/Controller"
 
 module.exports = @Ent =
 class Ent
