@@ -1,4 +1,9 @@
 
+// TODO: rename to node-main.js
+// and use coffeescript since we use it for *all other source code*
+
+var ip_address = require("ip").address();
+
 global.wait_for_local_server_port = function(callback){
 	var wait_for_server_iid = setInterval(function (){
 		if(global.server){
@@ -10,10 +15,8 @@ global.wait_for_local_server_port = function(callback){
 	}, 50);
 };
 global.wait_for_local_server_address = function(callback){
-	// NOTE: should probably use #{ip.address()}
-	// so it can be given to peers in discovery.coffee
 	global.wait_for_local_server_port(function(port) {
-		var address = `tcp://localhost:${port}`;
+		var address = `tcp://${ip_address}:${port}`;
 		callback(address);
 	});
 };

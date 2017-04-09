@@ -17,13 +17,13 @@ session_id = crypto.randomBytes(20).toString('hex')
 my_discovery_file_name = "#{process.pid}.json"
 my_discovery_file_path = path.join dir, my_discovery_file_name
 
-waiting_for_port = no
+waiting_for_address = no
 writeMyDiscoveryFile = ->
-	return if waiting_for_port
-	waiting_for_port = yes
-	global.wait_for_local_server_port (port)->
-		waiting_for_port = no
-		data = {session_id, game_exe, pid: process.pid, port}
+	return if waiting_for_address
+	waiting_for_address = yes
+	global.wait_for_local_server_address (address)->
+		waiting_for_address = no
+		data = {session_id, game_exe, pid: process.pid, address}
 		json = JSON.stringify data
 		fs.writeFile my_discovery_file_path, json, "utf8", (err)->
 			console.error err if err
@@ -48,7 +48,7 @@ checkDiscoveryFile = (file_path, callback)->
 		running data.pid, (err, is_running)->
 			return callback err if err
 			if is_running
-				# TODO: prevent multiple instances from using the same executable
+				# TODO: prevent multiple instances from using the same built game executable
 				# (but first, find a good way of running multiple instances in development)
 				# if data.game_exe is game_exe
 				# 	window.alert "This game is already running. Please start a new game.exe."
@@ -116,11 +116,11 @@ global.peer?.close()
 global.peer = null
 
 setTimeout ->
-	global.wait_for_local_server_port (port)->
+	global.wait_for_local_server_address (address)->
 		options =
 			name: App.manifest.name
 			version: App.manifest.version
-			url: "tcp://#{ip.address()}:#{port}"
+			url: address
 		console.log "ssdp.createPeer", options
 		peer = global.peer = ssdp.createPeer(options)
 		peer.start()

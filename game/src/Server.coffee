@@ -75,14 +75,18 @@ class Server
 					# if going between worlds
 					if to.address isnt from.address
 						# find an otherworldly door
-						# TODO: support connecting more than two worlds together
-						# FIXME: from.address will be a local/private address so this wouldn't work
-						# exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.address is from.address
-						exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor"
+						exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.address is from.address
+						# TODO: handle no exit door; is this a situation that can come up with some network configurations?
+						# I guess if you connect to a remote server, and on that server there's a door to another server,
+						# if you go to that server and then get gooted, there won't necessarily be a door in your home world
+						# that corresponds to that server
+						# Or generally
+						# exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor"
 						if exit_door and from.booted
 							player.vx = -0.4
 							player.vy = -0.3
 					else
+						# TODO: we should probably just have door IDs and link to specific doors
 						# try to find a door that's explicitly "from" the room we're leaving
 						exit_door = ent for ent in entering_room.ents when ent instanceof Door and ent.from is from.room_id
 						# if there isn't one (which is likely) find a door that would lead back
@@ -157,7 +161,7 @@ class Server
 						to: "the second room"
 						x: 12-i*3
 						y: 5
-						type: "OtherworldlyDoor"
+						type: "OtherworldlyDoor" # XXX: is this really necessary?
 					}, starting_room, @world
 					starting_room.ents.push door
 		, 500

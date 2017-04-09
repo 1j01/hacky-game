@@ -52,8 +52,12 @@
   },
   "scripts": {
     "start": "nwbuild -v 0.21.3 -r game",
+    "start-secondary": "node_modules\\nw-builder\\cache\\0.21.3-sdk\\win64\\nw.exe --user-data-dir=\"temp/secondary-instance\" \"game\"",
+    "start-tertiary": "node_modules\\nw-builder\\cache\\0.21.3-sdk\\win64\\nw.exe --user-data-dir=\"temp/tertiary-instance\" \"game\"",
     "build-simple": "nwbuild -v 0.21.3 game",
     "prepublish": "coffee -c wrapper.coffee",
-    "build": "coffee -c wrapper.coffee & coffee make-wrapper.coffee"
+    "build": "coffee -c wrapper.coffee & coffee make-wrapper.coffee",
+    "build-debug": "coffee -c wrapper.coffee & coffee --nodejs debug make-wrapper.coffee",
+    "build-inspect": "coffee -c wrapper.coffee & coffee --nodejs --inspect --nodejs --debug-brk make-wrapper.coffee"
   }
 }

@@ -42,9 +42,7 @@
   },
   "main": "game.html",
   "node-main": "src/server.js",
-  "single-instance": false,
   "window": {
-    "toolbar": false,
     "icon": "images/icon-32.png",
     "title": "Hacky Game",
     "id": "hacky-game"

@@ -7,7 +7,7 @@ winresourcer =
 		require "winresourcer"
 	else
 		require "nw-builder/node_modules/winresourcer"
-change_exe_subsystem = require './subsystem'
+change_exe_subsystem = require "./subsystem"
 
 game_folder = "game"
 game_exe = "game.exe"
@@ -20,7 +20,7 @@ console.log "Zip", game_folder, "to", zip_file
 
 zip game_folder, zip_file, (err)->
 	throw err if err
-	console.log "Compile ./wrapper.js to #{game_exe} with nexe"
+	console.log "Compile ./wrapper.js with #{zip_file} to #{game_exe} with nexe"
 	nexe.compile
 		input: "./wrapper.js"
 		output: game_exe

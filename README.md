@@ -72,18 +72,14 @@ I did a tech demo of this first, but there are no persistent elements to the wor
 
 * Local multiplayer
 
-	* Discovers other clients through tiny JSON files stored with ports and PIDs.
-	
-	* **TODO**:
-	Choose a new directory since I updated `nw` from `0.12.x`;
-	the `single-instance` option is deprecated and you have to pass separate `--user-data-dir` values;
-	and the directory is currently based on the user data directory.
+	* ~~Discovers other clients through tiny JSON files stored with ports and PIDs.~~
+	  Discovers other clients through [SSDP][]
 
 	* **TODO:**
 	  Manage input methods for multiple players.
 	  You should be able to play with two people on one keyboard,
-	  and you won't be able to send input to two windows at once.
-	  <!-- sending inputs to one window but two clients. -->
+	  without some program to send input to two windows at once.
+	  <!-- sending inputs to two clients through one window. -->
 
 	* Could try to do single window splitscreen ("normal" local multiplayer) instead.
 
@@ -100,11 +96,6 @@ I did a tech demo of this first, but there are no persistent elements to the wor
 	* **TODO:**
 	  Get booted if server doesn't respond for some time
 
-	* **FIXME:**
-	  Disparity between `localhost` and the IP address used when reentering your own world
-
-
-<!-- would indent this but currently it applies even to single player: -->
 
 * **TODO:**
   Implement [client-side prediction][] smoothing
@@ -145,6 +136,14 @@ After installing, you can run the game with:
 	npm start
 
 On the first run, it'll download the [nw.js][] runtime.
+
+There are also scripts to run multiple instances of the game:
+
+	npm run start-secondary
+	npm run start-tertiary
+
+These only work on Windows, but I could update them to work cross-platform,
+and to allow any number of instances.
 
 
 ## Build
