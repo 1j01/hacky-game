@@ -133,38 +133,39 @@ class Server
 		initWorld(@world)
 		
 		# TODO: set current_room_id when adding the player
-		starting_room = @world.rooms[@world.current_room_id]
-		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, starting_room, @world
-		starting_room.ents.push player
+		hub_room = @world.rooms[@world.current_room_id]
+		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, hub_room, @world
+		hub_room.ents.push player
 		global.clientPlayerID = player.id
 		
 		
 		# Find other clients and create doors to other worlds
-		interuniversal_doors = {}
-		@discovery_iid = setInterval =>
-			discover (err, addresses)=>
-				return console.error err if err
-				
-				# console.log "Other client addresses:", addresses
-				
-				for address, door of interuniversal_doors
-					unless address in addresses
-						# TODO: animate closing
-						console.log "Close door", door
-						door.remove()
-						delete interuniversal_doors[address]
-				
-				for address, i in addresses when not interuniversal_doors[address]
-					interuniversal_doors[address] = door = new OtherworldlyDoor {
+		otherworldly_doors = new Map
+		door_placement_x = 12
+		# discover (err, addresses)=>
+		# 	return console.error err if err
+		# 	# console.log "Other client addresses:", addresses
+		# 	for address, door of otherworldly_doors
+		# 		unless address in addresses
+		# 			# TODO: animate closing
+		# 			console.log "Close door", door
+		# 			door.remove()
+		# 			delete otherworldly_doors[address]
+		discover (peer)=>
+			peer.on "found", (address)->
+				unless otherworldly_doors.has(address)
+					door = new OtherworldlyDoor {
 						address
 						id: address
 						to: "the second room"
-						x: 12-i*3
+						x: door_placement_x
 						y: 5
 						type: "OtherworldlyDoor" # XXX: is this really necessary?
-					}, starting_room, @world
-					starting_room.ents.push door
-		, 500
+					}, hub_room, @world
+					door_placement_x -= 3
+					otherworldly_doors.set(address, door)
+					hub_room.ents.push(door)
+			# TODO: unfind peers
 		
 		
 		# hack.load (err, world)=>

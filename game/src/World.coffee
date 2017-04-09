@@ -26,12 +26,14 @@ class @World
 			@socket.connect {host, port}
 			global.sockets.push @socket
 			@socket.on "close", =>
-				console.warn "Disconnected from server! (socket close)"
-				@bootPlayerToLocalWorld()
 				# XXX: client_window gets set to a new window when reloading
 				# and reloading means we get a close
 				if client_window.worlds_by_address?
+					console.warn "Disconnected from server! (socket close)"
 					client_window.worlds_by_address.delete(@serverAddress)
+					@bootPlayerToLocalWorld()
+				else
+					console.warn "Disconnected from server during reload (socket close)"
 			@socket.on "message", (message)=>
 				if message?.room
 					@applyRoomUpdate message.room

@@ -1,14 +1,14 @@
 
-fs = require "fs"
-path = require "path"
-crypto = require "crypto"
-ip = require "ip"
-running = require "is-running"
+# fs = require "fs"
+# path = require "path"
+# crypto = require "crypto"
+# ip = require "ip"
+# running = require "is-running"
 ssdp = require "./super-ssdp"
-# discover = require "./nanodiscover"
-game_exe = require "../exe-file"
+# game_exe = require "../exe-file"
 {App} = nw ? window.require "nw.gui"
 
+###
 dir = path.join App.dataPath, "discovery"
 try fs.mkdirSync dir
 catch err then throw err if err.code isnt "EEXIST"
@@ -60,6 +60,32 @@ checkDiscoveryFile = (file_path, callback)->
 					console.error "Failed to clean up old discovery file (process #{data.pid} no longer running)", err if err
 				return callback null, null
 
+checkDiscoveryFiles = (callback)->
+	fs.readdir dir, (err, fnames)->
+		return callback err if err
+		other_fnames = (fname for fname in fnames when fname isnt my_discovery_file_name)
+		local_addresses = []
+		checked = 0
+		for fname in other_fnames
+			do (fname)->
+				file_path = path.join dir, fname
+				checkDiscoveryFile file_path, (err, data)->
+					# XXX: looks like it could callback multiple times
+					# (but I think it shouldn't since `checked` wouldn't reach `other_fnames.length`
+					# since its incremented after the return)
+					# also, TODO: should probably more or less ignore these errors
+					return callback err if err
+					checked += 1
+					if data?.address?
+						local_addresses.push data.address
+					if checked is other_fnames.length
+						callback null, local_addresses
+		callback null, local_addresses if other_fnames.length is 0
+
+# NOTE: if fs-based discovery is needed, it could use fs watching
+# (plus a fallback interval)
+###
+
 # global.announcer?.socket?.close?()
 # global.browser?.socket?.close?()
 # global.announcer?.close?()
@@ -81,52 +107,29 @@ peer_addresses = []
 # 			peer_addresses.splice (peer_addresses.indexOf data), 1 if data in peer_addresses
 # 			console.log "peerDown", address, peer_addresses
 
-checkDiscoveryFiles = (callback)->
-	fs.readdir dir, (err, fnames)->
-		return callback err if err
-		other_fnames = (fname for fname in fnames when fname isnt my_discovery_file_name)
-		local_addresses = []
-		checked = 0
-		for fname in other_fnames
-			do (fname)->
-				file_path = path.join dir, fname
-				checkDiscoveryFile file_path, (err, data)->
-					# XXX: looks like it could callback multiple times
-					# (but I think it shouldn't since `checked` wouldn't reach `other_fnames.length`
-					# since its incremented after the return)
-					# also, TODO: should probably more or less ignore these errors
-					return callback err if err
-					checked += 1
-					if data?.port?
-						local_addresses.push "tcp://localhost:#{data.port}"
-					if checked is other_fnames.length
-						callback null, local_addresses
-		callback null, local_addresses if other_fnames.length is 0
 
-module.exports = (callback)->
-	writeMyDiscoveryFile()
-	checkDiscoveryFiles (err, local_addresses)->
-		addresses = local_addresses.concat(peer_addresses)
-		callback null, addresses
-	# TODO: callback right away when new peers found
-	# not based on the local discovery interval
-	# which btw could use fs watching (if not rely on it)
+# module.exports = (callback)->
+# 	writeMyDiscoveryFile()
+# 	checkDiscoveryFiles (err, local_addresses)->
+# 		addresses = local_addresses.concat(peer_addresses)
+# 		callback null, addresses
 
 global.peer?.close()
 global.peer = null
 
-setTimeout ->
+module.exports = (callback)->
 	global.wait_for_local_server_address (address)->
 		options =
 			name: App.manifest.name
 			version: App.manifest.version
 			url: address
-		console.log "ssdp.createPeer", options
+		console.log "Broadcasting to find peers", options
 		peer = global.peer = ssdp.createPeer(options)
 		peer.start()
-		peer.on "found", (address)->
-			console.log "Found peer!", address
-			unless address in peer_addresses
-				peer_addresses.push address
+		callback(peer)
+		# peer.on "found", (address)->
+		# 	console.log "Found peer!", address
+		# 	callback(address)
+		# 	# unless address in peer_addresses
+		# 	# 	peer_addresses.push address
 		# TODO: "unfind" peers
-, 200
