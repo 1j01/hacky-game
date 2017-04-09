@@ -3,6 +3,7 @@ module.exports =
 class @OtherworldlyDoor extends (require "./Door")
 	draw: (ctx)->
 		ctx.save()
+		ctx.save()
 		ctx.globalAlpha = Math.random() * 2
 		ctx.fillStyle = if @to then "black" else "rgba(0, 0, 0, 0.5)"
 		ctx.shadowColor = "rgba(0, 155, 255, 1)"
@@ -23,4 +24,9 @@ class @OtherworldlyDoor extends (require "./Door")
 			ctx.fill()
 		ctx.shadowBlur = 0
 		ctx.globalAlpha = 1
+		ctx.restore()
+		if localStorage.debug_mode is "true"
+			ctx.fillStyle = "white"
+			ctx.rotate(-0.3)
+			ctx.fillText(@address, 0, 0)
 		ctx.restore()
