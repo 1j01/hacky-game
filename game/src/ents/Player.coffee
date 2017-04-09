@@ -90,6 +90,8 @@ class @Player extends (require "./Ent")
 					world = client_window.worlds_by_address.get(door.address)
 					world ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
 					client_window.worlds_by_address.set(door.address, world)
+					# TODO: instead of setting this directly, start a transition
+					# and wait for a signal from the new world's socket before switching
 					client_window.world = world
 					log "Entering world", world
 					world

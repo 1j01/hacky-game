@@ -97,6 +97,8 @@ class @Room
 	
 	draw: (ctx)->
 		ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"
+		if localStorage.debug_mode is "true"
+			ctx.strokeStyle = client_window.simple_color_hash(@world.serverAddress)
 		ctx.strokeRect -1.5, -1.5, @width*16+3, @height*16+3
 		
 		# ctx.fillStyle = "#000"

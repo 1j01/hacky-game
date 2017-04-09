@@ -27,6 +27,8 @@ class @OtherworldlyDoor extends (require "./Door")
 		ctx.restore()
 		if localStorage.debug_mode is "true"
 			ctx.fillStyle = "white"
+			# XXX: node context
+			ctx.fillStyle = client_window.simple_color_hash(@address)
 			ctx.rotate(-0.3)
 			ctx.fillText(@address, 0, 0)
 		ctx.restore()
