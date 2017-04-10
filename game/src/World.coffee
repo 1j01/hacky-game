@@ -40,7 +40,7 @@ class @World
 
 	bootPlayerToLocalWorld: ->
 		player = @getPlayer(global.clientPlayerID)
-		global.wait_for_local_server_address (address)=>
+		global.server.getAddress (address)=>
 			if address is @serverAddress
 				console.error "Would boot player to the local server #{address} but they're already there"
 				return

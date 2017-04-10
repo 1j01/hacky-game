@@ -4,14 +4,17 @@
 # If a connection fails with a remote server, you'll get booted back to the local server
 
 net = require "net"
+ip_address = require("ip").address()
 JSONSocket = require "json-socket"
+ssdp = require "./discovery/super-ssdp"
+{App} = nw
 hack = require "./savegame"
-discover = require "./discovery/discover"
 World = require "./World"
 {initWorld} = require "./world-data"
 Door = require "./ents/Door"
 OtherworldlyDoor = require "./ents/OtherworldlyDoor"
 Player = require "./ents/Player"
+
 
 loaded = no
 
@@ -104,9 +107,13 @@ class Server
 			window.peer?.close()
 		
 		@_getPort_callbacks = []
-		getFreePort (@port)=>
-			@server.listen @port, (err)=>
+		getFreePort (port)=>
+			@server.listen port, (err)=>
 				return callback(err) if err
+				# NOTE: not setting @port until now where we callback
+				# because otherwise there'll be a race condition
+				# since @getPort would callback immediately
+				@port = port
 				for getPort_cb in @_getPort_callbacks
 					getPort_cb(@port)
 				@_getPort_callbacks = [] # unref
@@ -146,16 +153,15 @@ class Server
 		# Find other clients and create doors to other worlds
 		otherworldly_doors = new Map
 		door_placement_x = 12
-		# discover (err, addresses)=>
-		# 	return console.error err if err
-		# 	# console.log "Other client addresses:", addresses
-		# 	for address, door of otherworldly_doors
-		# 		unless address in addresses
-		# 			# TODO: animate closing
-		# 			console.log "Close door", door
-		# 			door.remove()
-		# 			delete otherworldly_doors[address]
-		discover (peer)=>
+		
+		@getAddress (address)->
+			options =
+				name: App.manifest.name
+				version: App.manifest.version
+				url: address
+				serviceType: "urn:1j01-github-io:service:game-server:1"
+			peer = global.peer = ssdp.createPeer(options)
+			peer.start()
 			peer.on "found", (address)=>
 				if otherworldly_doors.has(address)
 					door = otherworldly_doors.get(address)
@@ -194,6 +200,11 @@ class Server
 			callback(@port)
 		else
 			@_getPort_callbacks.push(callback)
+	
+	getAddress: (callback)->
+		@getPort (port)->
+			address = "tcp://#{ip_address}:#{port}"
+			callback address
 	
 	close: (callback)->
 		for c in @clients

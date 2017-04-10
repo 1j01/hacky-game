@@ -27,7 +27,7 @@ animate = ->
 
 window.worlds_by_address = new Map
 
-global.wait_for_local_server_address (address)->
+global.server.getAddress (address)->
 	world = new World onClientSide: yes, serverAddress: address
 	window.worlds_by_address.set(address, world)
 	window.world = world
