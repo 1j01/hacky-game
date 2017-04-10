@@ -12,15 +12,12 @@ forEachPointOnLine = (x0, y0, x1, y1, callback)->
 		if (e2 >-dy) then (err -= dy; x0 += sx)
 		if (e2 < dx) then (err += dx; y0 += sy)
 
-# XXX: have to use global, not window or @ because basically everything is in Node's context
-# the drawing stuff I feel like should *really* not be
-# alternatively, could import/require things from helpers.coffee
-global.line = (ctx, color, x0, y0, x1, y1)->
+@line = (ctx, color, x0, y0, x1, y1)->
 	ctx.fillStyle = color
 	forEachPointOnLine x0, y0, x1, y1, (x, y)->
 		ctx.fillRect(x, y, 1, 1)
 
-global.simple_color_hash = (str)->
+@simple_color_hash = (str)->
 	n = 0
 	for c, i in str
 		n = ((n ^ c) ** i) %% 0xFFFFFF

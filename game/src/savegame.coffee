@@ -1,6 +1,6 @@
 
 fs = require "fs"
-game_exe = require "./exe-file"
+game_exe = require "./exe-file-path"
 
 find_saved_game = (callback)->
 	fs.stat game_exe, (err, stats)->

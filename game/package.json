@@ -55,5 +55,5 @@
     "peer-ssdp": "0.0.5",
     "uuid": "^3.0.1"
   },
-  "chromium-args": "--disable-canvas-aa"
+  "chromium-args": "--mixed-context --disable-canvas-aa"
 }

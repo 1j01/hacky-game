@@ -2,9 +2,6 @@
 ssdp = require "./super-ssdp"
 {App} = nw
 
-global.peer?.close()
-global.peer = null
-
 module.exports = (callback)->
 	global.wait_for_local_server_address (address)->
 		options =

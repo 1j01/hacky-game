@@ -19,17 +19,8 @@ exports.init = ->
 	log = (text) ->
 		console.log "%cserver-main:%c #{text}", "font-size:1.5em;color:gray", "font-size:1.3em;font-family:sans-serif"
 
-	start_sever = ->
+	do start_sever = ->
 		Server = require "./Server.coffee"
 		log "start new server"
 		global.server = new Server (err)->
 			console.error err if err
-
-	old_server = global.server
-	if old_server
-		log "close old server"
-		global.server = null
-		old_server.close start_sever
-	else
-		log "no old server"
-		start_sever()

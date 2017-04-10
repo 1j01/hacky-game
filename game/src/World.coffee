@@ -26,14 +26,9 @@ class @World
 			@socket.connect {host, port}
 			global.sockets.push @socket
 			@socket.on "close", =>
-				# XXX: client_window gets set to a new window when reloading
-				# and reloading means we get a close
-				if client_window.worlds_by_address?
-					console.warn "Disconnected from server! (socket close)"
-					client_window.worlds_by_address.delete(@serverAddress)
-					@bootPlayerToLocalWorld()
-				else
-					console.warn "Disconnected from server during reload (socket close)"
+				console.warn "Disconnected from server! (socket close)"
+				window.worlds_by_address.delete(@serverAddress)
+				@bootPlayerToLocalWorld()
 			@socket.on "message", (message)=>
 				if message?.room
 					@applyRoomUpdate message.room
@@ -50,14 +45,13 @@ class @World
 				console.error "Would boot player to the local server #{address} but they're already there"
 				return
 			console.warn "Booting player to #{address}"
-			entering_world = client_window.worlds_by_address.get(address)
+			entering_world = window.worlds_by_address.get(address)
 			unless entering_world
-				console.error "No world #{address} in", client_window.worlds_by_address
+				console.error "No world #{address} in", window.worlds_by_address
 				return
 			entering_room_id = "the second room" # XXX: hardcoded (and silly) value
 			leaving_world = @
-			# TODO: remove player from this world
-			client_window.world = entering_world
+			window.world = entering_world
 			entering_world.current_room_id = entering_room_id
 			entering_world.socket.sendMessage
 				enterRoom:
