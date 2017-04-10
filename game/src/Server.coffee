@@ -152,12 +152,11 @@ class Server
 		# 			door.remove()
 		# 			delete otherworldly_doors[address]
 		discover (peer)=>
-			peer.on "found", (address)->
-				# console.log "Found peer!", address
+			peer.on "found", (address)=>
 				if otherworldly_doors.has(address)
 					door = otherworldly_doors.get(address)
 					if door.locked
-						console.log "Unlock", door, "(might be viable again)"
+						console.log "Unlock", door, "(#{address} might be viable again)"
 						door.locked = no
 				else
 					door = new OtherworldlyDoor {
@@ -169,6 +168,7 @@ class Server
 						type: "OtherworldlyDoor" # XXX: is this really necessary?
 					}, hub_room, @world
 					door_placement_x -= 3
+					console.log "Found peer, opening", door
 					otherworldly_doors.set(address, door)
 					hub_room.ents.push(door)
 			# TODO: unfind peers

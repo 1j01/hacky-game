@@ -123,7 +123,7 @@ module.exports = (callback)->
 			name: App.manifest.name
 			version: App.manifest.version
 			url: address
-		console.log "Broadcasting to find peers", options
+			serviceType: "urn:1j01-github-io:service:game-server:1"
 		peer = global.peer = ssdp.createPeer(options)
 		peer.start()
 		callback(peer)

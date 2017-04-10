@@ -3,15 +3,21 @@ os = require('os')
 util = require('util')
 
 ssdp = require('peer-ssdp')
+uuid_v4 = require('uuid/v4')
 
 SuperSSDP = (options)->
 	@peer = ssdp.createPeer()
 	@locations = []
-	@service_location = options.url
 	@service_name = options.name
-	@service_version = options.version
+	@service_version = options.version ? "0.0.0"
+	# @extra_headers = options.headers ? {}
+	@uuid = options.uuid ? uuid_v4()
+	@LOCATION = options.url
 	@SERVER = "#{os.type()}/#{os.release()} UPnP/1.1 #{@service_name}/#{@service_version}"
-	@uuid = @service_name
+	# should we use "urn:schemas-upnp-org:service:a-unique-name-assigned-by-a-UPnP-forum-working-committee:1"?
+	# it would be heterological and amusingly recalcitrant
+	@ST = options.serviceType ? "upnp:rootdevice"
+	@USN = "uuid:#{@uuid}"
 	return
 
 util.inherits SuperSSDP, EventEmitter
@@ -19,7 +25,7 @@ util.inherits SuperSSDP, EventEmitter
 SuperSSDP::start = ->
 	search = =>
 		# console.log("[SSDP] searching for peers...")
-		@peer.search ST: 'upnp:rootdevice'
+		@peer.search ST: @ST
 		return
 
 	@peer
@@ -27,11 +33,12 @@ SuperSSDP::start = ->
 		# console.log("[SSDP] responding to search by: #{address.address}", headers)
 		ST = headers.ST
 		reply_headers =
-			LOCATION: @service_location
+			LOCATION: @LOCATION
 			SERVER: @SERVER
-			ST: "upnp:rootdevice"
-			USN: "uuid:#{@uuid}::upnp:rootdevice"
-			'BOOTID.UPNP.ORG': 1
+			ST: @ST
+			USN: @USN
+		# for k, v of @extra_headers
+		# 	reply_headers[k] = v
 		# console.log("[SSDP] responding with", reply_headers)
 		@peer.reply reply_headers, address
 		return
@@ -39,21 +46,24 @@ SuperSSDP::start = ->
 		# console.log("[SSDP] found:", headers)
 		if (
 			# @locations.indexOf(headers.LOCATION) < 0 and
-			headers.LOCATION isnt @service_location and
+			headers.LOCATION isnt @LOCATION and
+			# should the above be `headers.USN isnt @USN and`?
 			headers.SERVER.indexOf(@service_name) >= 0
 		)
 			# @locations.push headers.LOCATION
 			# search()
 			@emit 'found', headers.LOCATION
 	.on 'notify', (headers, address)=>
-		console.log("[SSDP] recieved notify:", headers)
-		search()
+		# console.log("[SSDP] recieved notify:", headers)
+		# NOTE: timeout to theoretically thwart network congestion
+		setTimeout search, Math.random() * 100
 	.on 'close', =>
 		# console.log("[SSDP] closed")
 		@emit 'close'
 	.on 'ready', =>
+		console.log("[SSDP] broadcasting")
 		search()
-		@peer.notify({})
+		@peer.alive({})
 		@interval = setInterval search, 3000
 	.start()
 
