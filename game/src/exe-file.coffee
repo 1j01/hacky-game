@@ -1,6 +1,6 @@
 
 path = require "path"
-{App} = nw ? window.require "nw.gui"
+{App} = nw
 
 [arg] = App.argv
 running_from_npm_start = arg is "--enable-logging"

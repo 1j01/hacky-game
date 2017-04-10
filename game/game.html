@@ -18,11 +18,7 @@
 	</script>
 	<script>
 		global.client_window = client_window = window;
-		process.mainModule.exports.init(window, function (err){
-			if (err) {
-				console.error(err);
-			}
-		});
+		process.mainModule.exports.init();
 	</script>
 	<!-- <script src="src/MultiHowl.coffee" type="text/coffeescript"></script> -->
 	<script src="src/helpers.coffee" type="text/coffeescript"></script>
