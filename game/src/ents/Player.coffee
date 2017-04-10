@@ -66,6 +66,7 @@ class @Player extends (require "./Ent")
 	
 	enterDoor: (door)->
 		@entering = no
+		return if door.locked
 		
 		on_client_side = @world.onClientSide
 		server_or_client_side_indication = "(#{if on_client_side then "client" else "server"}-side)"

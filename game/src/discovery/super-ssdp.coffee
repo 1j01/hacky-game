@@ -1,5 +1,5 @@
 os = require('os')
-events = require('events')
+{EventEmitter} = require('events')
 util = require('util')
 
 ssdp = require('peer-ssdp')
@@ -14,16 +14,16 @@ SuperSSDP = (options)->
 	@uuid = @service_name
 	return
 
-util.inherits SuperSSDP, events.EventEmitter
+util.inherits SuperSSDP, EventEmitter
 
 SuperSSDP::start = ->
-	onReady = =>
+	search = =>
 		# console.log("[SSDP] searching for peers...")
 		@peer.search ST: 'upnp:rootdevice'
 		return
 
 	@peer
-	.on('search', (headers, address)=>
+	.on 'search', (headers, address)=>
 		# console.log("[SSDP] responding to search by: #{address.address}", headers)
 		ST = headers.ST
 		reply_headers =
@@ -35,25 +35,30 @@ SuperSSDP::start = ->
 		# console.log("[SSDP] responding with", reply_headers)
 		@peer.reply reply_headers, address
 		return
-	).on('found', (headers, address)=>
+	.on 'found', (headers, address)=>
 		# console.log("[SSDP] found:", headers)
 		if (
-			@locations.indexOf(headers.LOCATION) < 0 and
+			# @locations.indexOf(headers.LOCATION) < 0 and
 			headers.LOCATION isnt @service_location and
 			headers.SERVER.indexOf(@service_name) >= 0
 		)
-			@locations.push headers.LOCATION
-			onReady()
+			# @locations.push headers.LOCATION
+			# search()
 			@emit 'found', headers.LOCATION
-	).on('close', =>
+	.on 'notify', (headers, address)=>
+		console.log("[SSDP] recieved notify:", headers)
+		search()
+	.on 'close', =>
 		# console.log("[SSDP] closed")
 		@emit 'close'
-	).on('ready', ->
-		onReady()
-		setInterval onReady, 3000
-	).start()
+	.on 'ready', =>
+		search()
+		@peer.notify({})
+		@interval = setInterval search, 3000
+	.start()
 
 SuperSSDP::close = (callback)->
+	clearInterval @interval
 	@once('close', callback) if callback
 	@peer.close()
 

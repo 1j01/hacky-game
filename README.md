@@ -142,8 +142,9 @@ There are also scripts to run multiple instances of the game:
 	npm run start-secondary
 	npm run start-tertiary
 
-These only work on Windows, but I could update them to work cross-platform,
-and to allow any number of instances.
+These only work on Windows, but I could make a CLI script that works cross-platform,
+and allows any number of instances,
+plus other options like `--enable-logging`.
 
 
 ## Build

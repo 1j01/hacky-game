@@ -14,6 +14,7 @@ forEachPointOnLine = (x0, y0, x1, y1, callback)->
 
 # XXX: have to use global, not window or @ because basically everything is in Node's context
 # the drawing stuff I feel like should *really* not be
+# alternatively, could import/require things from helpers.coffee
 global.line = (ctx, color, x0, y0, x1, y1)->
 	ctx.fillStyle = color
 	forEachPointOnLine x0, y0, x1, y1, (x, y)->

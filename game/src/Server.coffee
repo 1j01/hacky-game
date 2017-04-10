@@ -80,11 +80,11 @@ class Server
 						# I guess if you connect to a remote server, and on that server there's a door to another server,
 						# if you go to that server and then get gooted, there won't necessarily be a door in your home world
 						# that corresponds to that server
-						# Or generally
 						# exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor"
 						if exit_door and from.booted
 							player.vx = -0.4
 							player.vy = -0.3
+							exit_door.locked = yes
 					else
 						# TODO: we should probably just have door IDs and link to specific doors
 						# try to find a door that's explicitly "from" the room we're leaving
@@ -153,7 +153,13 @@ class Server
 		# 			delete otherworldly_doors[address]
 		discover (peer)=>
 			peer.on "found", (address)->
-				unless otherworldly_doors.has(address)
+				# console.log "Found peer!", address
+				if otherworldly_doors.has(address)
+					door = otherworldly_doors.get(address)
+					if door.locked
+						console.log "Unlock", door, "(might be viable again)"
+						door.locked = no
+				else
 					door = new OtherworldlyDoor {
 						address
 						id: address
