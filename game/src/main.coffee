@@ -1,5 +1,7 @@
 
-World = require "./World"
+require "coffee-script/register"
+World = require "./src/World"
+Server = require "./src/Server"
 
 canvas = document.createElement "canvas"
 ctx = canvas.getContext "2d"
@@ -26,6 +28,16 @@ animate = ->
 # can contain worlds_by_address and handle transitions
 
 window.worlds_by_address = new Map
+
+window.addEventListener "unload", =>
+	global.server?.close()
+	global.peer?.close()
+	worlds_by_address.forEach (world)->
+		world.socket?._socket.destroy()
+
+console.log "Starting server"
+global.server = new Server (err)->
+	console.error err if err
 
 global.server.getAddress (address)->
 	world = new World onClientSide: yes, serverAddress: address

@@ -41,7 +41,6 @@
     "url": "https://github.com/1j01/hacky-game/issues"
   },
   "main": "game.html",
-  "node-main": "src/node-main.js",
   "window": {
     "icon": "images/icon-32.png",
     "title": "Hacky Game",

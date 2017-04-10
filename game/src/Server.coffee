@@ -102,10 +102,6 @@ class Server
 					console.warn "Unhandled message:", message
 			send_all_data_to_new_client(c)
 		
-		window.addEventListener "unload", =>
-			@close()
-			window.peer?.close()
-		
 		@_getPort_callbacks = []
 		getFreePort (port)=>
 			@server.listen port, (err)=>
