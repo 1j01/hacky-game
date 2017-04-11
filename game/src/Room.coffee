@@ -58,8 +58,8 @@ class @Room
 	getPlayers: ->
 		ent for ent in @ents when ent.type is "Player"
 	
-	getPlayer: ->
-		return ent for ent in @ents when ent.id is global.clientPlayerID
+	getPlayer: (id = global.clientPlayerID)->
+		@getEntByID(id)
 	
 	step: (t)->
 		ent.step t for ent in @ents by -1

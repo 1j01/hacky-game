@@ -39,7 +39,7 @@ class @World
 				console.error "Socket error: #{err}"
 
 	bootPlayerToLocalWorld: ->
-		player = @getPlayer(global.clientPlayerID)
+		player = @getPlayer()
 		global.server.getAddress (address)=>
 			if address is @serverAddress
 				console.error "Would boot player to the local server #{address} but they're already there"
@@ -62,7 +62,8 @@ class @World
 	toJSON: ->
 		{@rooms, @current_room_id}
 	
-	# TODO: change "applyUpdate"s to "fromJSON"s?
+	# TODO: rename "applyUpdate" methods to "fromJSON"?
+	# to match toJSON methods and to better connote the implicit creation
 	applyUpdate: ({rooms, @current_room_id})->
 		for room in rooms
 			@applyRoomUpdate room
@@ -73,13 +74,7 @@ class @World
 		@rooms[room.id] ?= new Room room.id, @
 		@rooms[room.id].applyUpdate room
 	
-	getPlayers: ->
-		players = []
-		for id, room of @rooms
-			players = players.concat room.getPlayers()
-		players
-	
-	getPlayer: (id)->
+	getPlayer: (id = global.clientPlayerID)->
 		@players[id]
 	
 	step: (t)->

@@ -3,7 +3,9 @@ Controller = require "../controllers/Controller"
 
 module.exports = @Ent =
 class Ent
-	constructor: (obj, @room, @world)->
+	constructor: (obj, room, world)->
+		@unsynced_props = ["unsynced_props"]
+		@unsynced {room, world}
 		@x = 0
 		@y = 0
 		@w = @h = 1
@@ -13,13 +15,16 @@ class Ent
 	
 	zIndex: 10
 	
+	unsynced: (obj)->
+		for k, v of obj
+			@unsynced_props.push(k)
+			@[k] = v
+	
 	toJSON: ->
 		o = {}
 		for k, v of @ when not (
-			(k in ["room", "world"]) or
-			(typeof v is "function") or
-			(v instanceof Controller) or
-			(v instanceof Ent)
+			(k in @unsynced_props) or
+			(typeof v is "function")
 		)
 			o[k] = v
 		o

@@ -24,8 +24,12 @@ animate = ->
 	ctx2x.imageSmoothingEnabled = off
 	ctx2x.drawImage canvas, 0, 0, canvas2x.width, canvas2x.height
 
+# transitioning_from = null
+# transitioning_to = null
+
 # TODO: maybe have a Client or Game class
-# can contain worlds_by_address and handle transitions
+# can contain `world` and `worlds_by_address` and handle transitions
+# especially `world` because it's easy to typo `@world` as `world` on the server
 
 window.worlds_by_address = new Map
 

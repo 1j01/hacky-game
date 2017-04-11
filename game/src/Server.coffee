@@ -65,9 +65,8 @@ class Server
 			c.on "message", (message)=>
 				if message?.controls
 					{controls} = message
-					for player in @world.getPlayers()
-						if player.id is controls.playerID
-							player.controller.applyUpdate controls
+					player = @world.getPlayer(controls.playerID)
+					player?.controller.applyUpdate controls
 				else if message?.enterRoom
 					{from, to, player} = message?.enterRoom
 					entering_room = @world.rooms[to.room_id]
@@ -151,12 +150,11 @@ class Server
 		door_placement_x = 12
 		
 		@getAddress (address)->
-			options =
+			peer = global.peer = ssdp.createPeer
 				name: App.manifest.name
 				version: App.manifest.version
 				url: address
 				serviceType: "urn:1j01-github-io:service:game-server:1"
-			peer = global.peer = ssdp.createPeer(options)
 			peer.start()
 			peer.on "found", (address)=>
 				if otherworldly_doors.has(address)

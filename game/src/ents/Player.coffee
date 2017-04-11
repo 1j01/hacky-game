@@ -30,13 +30,15 @@ class @Player extends (require "./Ent")
 		# NOTE: ideally @controller would be an injected dependency,
 		# but I'm not sure how that would work when ents can be created generically
 		# TODO: gamepad controller support
-		if @world.onClientSide
-			if @id is global.clientPlayerID
-				@controller = keyboard_controller
-			else
-				@controller = new Controller
-		else
-			@controller = new ServersideController
+		@unsynced
+			controller:
+				if @world.onClientSide
+					if @id is global.clientPlayerID
+						keyboard_controller
+					else
+						new Controller
+				else
+					new ServersideController
 		
 		@controller.setPlayer(@)
 	
@@ -86,7 +88,7 @@ class @Player extends (require "./Ent")
 			if door.address
 				log "Leaving world", leaving_world
 				if on_client_side and @id is global.clientPlayerID
-					World = World.World ? World # XXX: Why is require() returning an Object?
+					{World} = World if World.World # XXX: Why is require() returning an Object?
 					world = window.worlds_by_address.get(door.address)
 					world ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
 					window.worlds_by_address.set(door.address, world)
