@@ -73,6 +73,7 @@ class Server
 					player = new Player player, entering_room, @world
 					c.player = player
 					entering_room.ents.push player
+					# TODO: send a message back confirming the entrance
 					
 					# if going between worlds
 					if to.address isnt from.address

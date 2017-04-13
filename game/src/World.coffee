@@ -51,7 +51,7 @@ class @World
 				return
 			entering_room_id = "the second room" # XXX: hardcoded (and silly) value
 			leaving_world = @
-			window.world = entering_world
+			window.visible_world = entering_world
 			entering_world.current_room_id = entering_room_id
 			entering_world.socket.sendMessage
 				enterRoom:

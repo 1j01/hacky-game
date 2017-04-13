@@ -92,15 +92,20 @@ class @Player extends (require "./Ent")
 					world = window.worlds_by_address.get(door.address)
 					world ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
 					window.worlds_by_address.set(door.address, world)
-					# TODO: instead of setting this directly, start a transition
-					# and wait for a signal from the new world's socket before switching
-					window.world = world
+					# window.visible_world = world
 					log "Entering world", world
 					world
 			else
 				@world
 		
 		if on_client_side and @id is global.clientPlayerID
+			# NOTE: we don't a Room to set window.transitioning_to_room to at this point
+			window.transitioning_from_room = @room
+			window.transitioning_from_world = @world
+			window.transitioning_from_door = door
+			window.transitioning_to_world = world
+			window.transition = "portal"
+			# TODO: wait for a signal from the new world's socket before switching visible worlds
 			entering_world.current_room_id = entering_room_id
 			entering_world.socket.sendMessage
 				enterRoom:
