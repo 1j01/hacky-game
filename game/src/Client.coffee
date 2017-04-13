@@ -42,7 +42,6 @@ class Client
 			return
 		requestAnimationFrame @animate
 		@visible_world.step()
-		# global.server?.world.step()
 		@canvas2x.width = innerWidth if @canvas2x.width isnt innerWidth
 		@canvas2x.height = innerHeight if @canvas2x.height isnt innerHeight
 		@canvas.width = Math.ceil(innerWidth / 2) if @canvas.width isnt Math.ceil(innerWidth / 2)
@@ -88,8 +87,8 @@ class Client
 				else
 					throw new Error "Unknown transition type '#{@transition}'"
 			
-			# unless localStorage.enable_transitions is "true"
-			# 	transition_duration = 0
+			unless localStorage.enable_transitions is "true"
+				transition_duration = 0
 			
 			@transition_time += 1 / (1 + transition_duration)
 			t = @transition_time
@@ -106,29 +105,16 @@ class Client
 			for i in [0..data.length] by 4
 				x = (i/4) % width
 				y = (i/4) // width
-				# if fn(x / id.width, y / id.height, t)
 				if fn(x, y, t, width, height, door_x, door_y)
 					# data[i+0] = 0
 					# data[i+1] = 0
 					# # data[i+2] = 0
 					data[i+3] = 0
 			
-			# @ctx.fillStyle = "black"
-			# @ctx.fillRect 0, 0, @canvas.width, @canvas.height
 			@ctx.putImageData(id, 0, 0)
 			
 			if @transition_time >= 1
 				@transition_time = 0
-				# @transition =
-				# 	switch @transition
-				# 		when "enter-door"
-				# 			"exit-door"
-				# 		when "enter-portal"
-				# 			"exit-portal"
-				# 		when "getting-booted"
-				# 			"booted-exit"
-				# 		else
-				# 			null
 				if @transition?.match("exit")
 					@transition = null
 				else
@@ -137,14 +123,15 @@ class Client
 					@visible_world = @transitioning_to_world
 					@transitioning_to_world = null
 					# TODO: find exit door if applicable
-					# TODO: transition back if failed to load world (with our player in it)
+					# TODO: transition back if failed to load world or our player isn't in it
 		
 		@ctx2x.fillStyle = "black"
 		@ctx2x.fillRect 0, 0, @canvas2x.width, @canvas2x.height
 		@ctx2x.imageSmoothingEnabled = off
 		@ctx2x.drawImage @canvas, 0, 0, @canvas2x.width, @canvas2x.height
 		
-		shown_room = @visible_world.rooms[@visible_world]
-		if @last_shown_room isnt shown_room
-			@visible_world.centerViewForNewlyEnteredRoom()
-			@last_shown_room = shown_room
+		# doesn't work
+		# shown_room = @visible_world.rooms[@visible_world]
+		# if @last_shown_room isnt shown_room
+		# 	@visible_world.centerViewForNewlyEnteredRoom()
+		# 	@last_shown_room = shown_room

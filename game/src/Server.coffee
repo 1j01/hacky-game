@@ -116,7 +116,7 @@ class Server
 				callback()
 		
 		@iid = setInterval =>
-			if window?.CRASHED
+			if window.CRASHED
 				# TODO: not in production?
 				console.log "Server: stopping because of an error"
 				@close ->

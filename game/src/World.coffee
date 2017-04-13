@@ -4,12 +4,6 @@ JSONSocket = require "json-socket"
 Room = require "./Room"
 Player = require "./ents/Player"
 
-# Keep track of sockets and close any existing ones (for reloading in development)
-global.sockets ?= []
-for socket in global.sockets
-	socket._socket.removeAllListeners "end"
-	socket.end()
-
 module.exports =
 class @World
 	constructor: ({@onClientSide, @serverAddress, @players={}})->
@@ -24,7 +18,6 @@ class @World
 			@socket = new JSONSocket new net.Socket
 			[host, port] = @serverAddress.replace(/tcp:(\/\/)?/, "").split(":")
 			@socket.connect {host, port}
-			global.sockets.push @socket
 			@socket.on "close", =>
 				console.warn "Disconnected from server! (socket close)"
 				client.worlds_by_address.delete(@serverAddress)
