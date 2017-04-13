@@ -116,8 +116,9 @@ class Server
 				callback()
 		
 		@iid = setInterval =>
-			if global.window?.CRASHED
-				console.log "Server: stopping, since the client crashed"
+			if window?.CRASHED
+				# TODO: not in production?
+				console.log "Server: stopping because of an error"
 				@close ->
 					console.log "Server: stopped"
 				return
@@ -144,7 +145,6 @@ class Server
 		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, hub_room, @world
 		hub_room.ents.push player
 		global.clientPlayerID = player.id
-		
 		
 		# Find other clients and create doors to other worlds
 		otherworldly_doors = new Map

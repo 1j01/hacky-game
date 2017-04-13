@@ -27,7 +27,7 @@ class @World
 			global.sockets.push @socket
 			@socket.on "close", =>
 				console.warn "Disconnected from server! (socket close)"
-				window.worlds_by_address.delete(@serverAddress)
+				client.worlds_by_address.delete(@serverAddress)
 				@bootPlayerToLocalWorld()
 			@socket.on "message", (message)=>
 				if message?.room
@@ -45,13 +45,13 @@ class @World
 				console.error "Would boot player to the local server #{address} but they're already there"
 				return
 			console.warn "Booting player to #{address}"
-			entering_world = window.worlds_by_address.get(address)
+			entering_world = client.worlds_by_address.get(address)
 			unless entering_world
-				console.error "No world #{address} in", window.worlds_by_address
+				console.error "No world #{address} in", client.worlds_by_address
 				return
 			entering_room_id = "the second room" # XXX: hardcoded (and silly) value
 			leaving_world = @
-			window.visible_world = entering_world
+			client.visible_world = entering_world
 			entering_world.current_room_id = entering_room_id
 			entering_world.socket.sendMessage
 				enterRoom:
@@ -115,7 +115,6 @@ class @World
 	
 	draw: (ctx)->
 		@_ctx_ = ctx
-		# TODO: room transitions
 		
 		room = @rooms[@current_room_id]
 		if room?

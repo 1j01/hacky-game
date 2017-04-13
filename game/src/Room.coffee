@@ -105,7 +105,7 @@ class @Room
 		# ctx.fillRect 0, 0, @width*16, @height*16
 		
 		unless @bg_img
-			@bg_img = new window.Image
+			@bg_img = new Image
 			@bg_img.onload = =>
 				@bg = ctx.createPattern @bg_img, 'repeat'
 			@bg_img.src = "images/bg.png"

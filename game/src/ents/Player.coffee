@@ -40,6 +40,9 @@ class @Player extends (require "./Ent")
 				else
 					new ServersideController
 		
+		# FIXME: (race condition) player can get stuck without controls if a Player is created in non-active world
+		# could make controller send controls to an array of world sockets, but that wouldn't be ideal
+		# should call setPlayer on controller of visible player when updating
 		@controller.setPlayer(@)
 	
 	step: (t)->
@@ -89,22 +92,22 @@ class @Player extends (require "./Ent")
 				log "Leaving world", leaving_world
 				if on_client_side and @id is global.clientPlayerID
 					{World} = World if World.World # XXX: Why is require() returning an Object?
-					world = window.worlds_by_address.get(door.address)
+					world = client.worlds_by_address.get(door.address)
 					world ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
-					window.worlds_by_address.set(door.address, world)
-					# window.visible_world = world
+					client.worlds_by_address.set(door.address, world)
+					# client.visible_world = world
 					log "Entering world", world
 					world
 			else
 				@world
 		
 		if on_client_side and @id is global.clientPlayerID
-			# NOTE: we don't a Room to set window.transitioning_to_room to at this point
-			window.transitioning_from_room = @room
-			window.transitioning_from_world = @world
-			window.transitioning_from_door = door
-			window.transitioning_to_world = world
-			window.transition = "portal"
+			# NOTE: we don't a Room to set client.transitioning_to_room to at this point
+			client.transitioning_from_room = @room
+			client.transitioning_from_world = @world
+			client.transitioning_from_door = door
+			client.transitioning_to_world = world
+			client.transition = "portal"
 			# TODO: wait for a signal from the new world's socket before switching visible worlds
 			entering_world.current_room_id = entering_room_id
 			entering_world.socket.sendMessage
