@@ -99,10 +99,12 @@ class @Player extends (require "./Ent")
 			entering_world = @world
 		
 		if on_client_side and @id is global.clientPlayerID
-			# NOTE: we don't a Room to set client.transitioning_to_room to at this point
 			client.transitioning_from_room = @room
 			client.transitioning_from_world = @world
 			client.transitioning_from_door = door
 			client.transitioning_to_world = entering_world
 			client.transitioning_to_room_id = entering_room_id
+			# NOTE: we cant't necessarily get the Room or Door we're transitioning to yet
+			client.transitioning_to_room = null
+			client.transitioning_to_door = null
 			client.transition = if door.address then "portal" else "door"

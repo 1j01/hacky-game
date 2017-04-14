@@ -25,6 +25,7 @@ class Client
 		
 		@transition = null
 		@transition_time = 0
+		@transition_paused = no
 		
 		@worlds_by_address = new Map
 		@views_by_room = new Map
@@ -85,6 +86,7 @@ class Client
 			return
 		requestAnimationFrame @animate
 		# TODO: prevent player movement during transitions
+		# currently you're removed immediately but can move during the exit transition
 		@current_world.step()
 		@canvas2x.width = innerWidth if @canvas2x.width isnt innerWidth
 		@canvas2x.height = innerHeight if @canvas2x.height isnt innerHeight
@@ -150,7 +152,8 @@ class Client
 			unless enable_transitions
 				transition_duration = 0
 			
-			@transition_time += 1 / (1 + transition_duration)
+			unless @transition_paused
+				@transition_time += 1 / (1 + transition_duration)
 			t = @transition_time
 			
 			door = @transitioning_from_door
@@ -183,9 +186,9 @@ class Client
 			if enable_transitions
 				@ctx.putImageData(id, 0, 0)
 			
-			if @transition_time >= 1
-				@transition_time = 0
+			if @transition_time >= 1 and not @transition_paused
 				if @transition?.match("exit")
+					@transition_time = 0
 					@transition = null
 					@transitioning_from_room = null
 					@transitioning_to_room = null
@@ -195,24 +198,20 @@ class Client
 					@transitioning_to_world = null
 					@transitioning_to_room_id = null
 				else
-					@transition = "#{@transition}-exit"
-				if @transitioning_to_world
-					@current_world = @transitioning_to_world
-					if @transitioning_to_room_id
-						@current_room_id = @transitioning_to_room_id
-					@centerViewForNewlyEnteredRoom()
-					
-					@transitioning_to_world.socket.sendMessage
-						enterRoom:
-							player: @transitioning_from_world.getPlayer()
-							from: room_id: @transitioning_from_room.id, address: @transitioning_from_world.serverAddress
-							to: room_id: @transitioning_to_room_id, address: @transitioning_to_world.serverAddress
-					
-					# TODO: pause on black, wait for enteredRoom message,
-					# and transition back if failed to enter room
-					# (if we get enteredRoom after we gave up, it should just switch instantly)
-					# TODO: eventually disconnect from and destroy old world (if you go to a different world)
-					# (cancel if you come back within some period)
+					if @transitioning_to_world
+						@transition_paused = yes
+						
+						@transitioning_to_world.socket.sendMessage
+							enterRoom:
+								player: @transitioning_from_world.getPlayer()
+								from: room_id: @transitioning_from_room.id, address: @transitioning_from_world.serverAddress
+								to: room_id: @transitioning_to_room_id, address: @transitioning_to_world.serverAddress
+						
+						# TODO: after some time, give up on entering the room and transition back
+						# if we get enteredRoom after we gave up, it should just switch instantly
+						
+						# TODO: if you go to a different world, eventually disconnect and destroy the old World
+						# (cancel if you come back within some period)
 		
 		@ctx2x.fillStyle = "black"
 		@ctx2x.fillRect 0, 0, @canvas2x.width, @canvas2x.height

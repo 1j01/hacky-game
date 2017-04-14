@@ -72,8 +72,6 @@ class Server
 					player = new Player player, entering_room, @world
 					c.player = player
 					entering_room.ents.push player
-					# TODO: coordinate (visibly) adding the player only as the player's client starts to show this server's world
-					# I guess we could just *connect* to a world immediately but only send an enterDoor request at the transition point
 					
 					# if going between worlds
 					if to.address isnt from.address
@@ -90,6 +88,7 @@ class Server
 							exit_door.locked = yes
 					else
 						# TODO: we should probably just have door IDs and link to specific doors
+						
 						# try to find a door that's explicitly "from" the room we're leaving
 						exit_door = ent for ent in entering_room.ents when ent instanceof Door and ent.from is from.room_id
 						# if there isn't one (which is likely) find a door that would lead back
@@ -99,10 +98,14 @@ class Server
 						player.x = exit_door.x
 						player.y = exit_door.y
 					
-					# TODO: can we guarantee sending this after we've sent the room to the client?
+					# XXX(?): can we guarantee sending this after we've sent the room to the client?
 					# with their Player in it?
+					# I'm guessing not, and maybe that's related to..
+					# FIXME: client can get stuck without a Player in existence
+					# setTimeout => # for simulating latency
 					c.sendMessage
 						enteredRoom: room_id: entering_room.id, exit_door_id: exit_door.id
+					# , 500
 				else
 					console.warn "Unhandled message:", message
 			
