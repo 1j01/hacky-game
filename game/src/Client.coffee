@@ -14,14 +14,13 @@ class Client
 		@current_world = null
 		@current_room_id = "the second room"
 		
-		# NOTE: if I'm going to use these for logic, maybe I should name them entering_* and leaving_*
-		@transitioning_from_room = null
-		@transitioning_to_room = null
-		@transitioning_to_room_id = null
-		@transitioning_from_door = null
-		@transitioning_to_door = null
-		@transitioning_from_world = null
-		@transitioning_to_world = null
+		@leaving_room = null
+		@entering_room = null
+		@entering_room_id = null
+		@leaving_door = null
+		@entering_door = null
+		@leaving_world = null
+		@entering_world = null
 		
 		@transition = null
 		@transition_time = 0
@@ -48,7 +47,7 @@ class Client
 			@views_by_room.set(room, view)
 		view
 
-	getWhereToCenterView: (room, view, ctx, margin=0)->
+	getWhereToCenterView: (room, view, ctx, margin=0)=>
 		player = room.getPlayer()
 		
 		cx_to = view.cx
@@ -71,13 +70,46 @@ class Client
 		{cx_to, cy_to}
 
 	# TODO: center view at game start (once room is loaded)
-	centerViewForNewlyEnteredRoom: ->
+	centerViewForNewlyEnteredRoom: =>
 		room = @current_world.rooms[@current_room_id]
+		console.log "centerViewForNewlyEnteredRoom", {room, @current_room_id}
 		return unless room
 		view = @getView(room)
 		{cx_to, cy_to} = @getWhereToCenterView room, view, @ctx
 		view.cx = cx_to
 		view.cy = cy_to
+
+	enteredRoom: ({entered_room_id, exit_door_id, entered_world})=>
+		if @transition? and not @transition.match("exit")
+			@transition_time = 0
+			@transition = "#{@transition}-exit"
+			@transition_paused = no
+			@current_world = @entering_world
+			if @entering_room_id
+				@current_room_id = @entering_room_id
+			@centerViewForNewlyEnteredRoom()
+			@entering_world = entered_world
+			@entering_room_id = entered_room_id
+			@entering_room = @current_world.rooms[entered_room_id]
+			@entering_door = @entering_room?.getEntByID(exit_door_id)
+		else
+			@current_world = entered_world
+			@current_room_id = entered_room_id
+
+	enterRoom: ({leaving_room, leaving_world, leaving_door, entering_world, entering_room_id, transition})=>
+		# NOTE: could simplify and get world from leaving_room
+		# or actually just get both ourselves?
+		# @current_world and @current_world.rooms[@current_room_id]
+		@leaving_room = leaving_room
+		@leaving_world = leaving_world
+		@leaving_door = leaving_door
+		@entering_world = entering_world
+		@entering_room_id = entering_room_id
+		# NOTE: we cant't necessarily get the Room or Door we're transitioning to yet
+		@entering_room = null
+		@entering_door = null
+		@transition = transition
+		@transition_time = 0
 
 	animate: =>
 		if window.CRASHED
@@ -156,8 +188,8 @@ class Client
 				@transition_time += 1 / (1 + transition_duration)
 			t = @transition_time
 			
-			door = @transitioning_from_door
-			from_view = @views_by_room.get(@transitioning_from_room)
+			door = @leaving_door
+			from_view = @views_by_room.get(@leaving_room)
 			if door? and from_view?
 				door_x = @canvas.width / 2 + (door.x + door.w/2 - from_view.cx) * 16
 				door_y = @canvas.height / 2 + (door.y + door.h/2 - from_view.cy) * 16
@@ -165,8 +197,8 @@ class Client
 				door_x = width/2
 				door_y = height/2
 			
-			exit_door = @transitioning_to_door
-			to_view = @views_by_room.get(@transitioning_to_room)
+			exit_door = @entering_door
+			to_view = @views_by_room.get(@entering_room)
 			if exit_door? and to_view?
 				exit_door_x = @canvas.width / 2 + (exit_door.x + exit_door.w/2 - to_view.cx) * 16
 				exit_door_y = @canvas.height / 2 + (exit_door.y + exit_door.h/2 - to_view.cy) * 16
@@ -190,22 +222,22 @@ class Client
 				if @transition?.match("exit")
 					@transition_time = 0
 					@transition = null
-					@transitioning_from_room = null
-					@transitioning_to_room = null
-					@transitioning_from_door = null
-					@transitioning_to_door = null
-					@transitioning_from_world = null
-					@transitioning_to_world = null
-					@transitioning_to_room_id = null
+					@leaving_room = null
+					@entering_room = null
+					@leaving_door = null
+					@entering_door = null
+					@leaving_world = null
+					@entering_world = null
+					@entering_room_id = null
 				else
-					if @transitioning_to_world
+					if @entering_world
 						@transition_paused = yes
 						
-						@transitioning_to_world.socket.sendMessage
+						@entering_world.socket.sendMessage
 							enterRoom:
-								player: @transitioning_from_world.getPlayer()
-								from: room_id: @transitioning_from_room.id, address: @transitioning_from_world.serverAddress
-								to: room_id: @transitioning_to_room_id, address: @transitioning_to_world.serverAddress
+								player: @leaving_world.getPlayer()
+								from: room_id: @leaving_room.id, address: @leaving_world.serverAddress
+								to: room_id: @entering_room_id, address: @entering_world.serverAddress
 						
 						# TODO: after some time, give up on entering the room and transition back
 						# if we get enteredRoom after we gave up, it should just switch instantly

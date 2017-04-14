@@ -29,24 +29,9 @@ class @World
 					@applyRoomUpdate message.room
 				else if message?.enteredRoom
 					entered_room_id = message.enteredRoom.room_id
-					console.log "Entered room", entered_room_id
-					console.debug "client.transition =", client.transition
-					# HM MAYBE THIS SHOULD BE A METHOD OF THE CLIENT (TODO)
-					if client.transition? and not client.transition.match("exit")
-						client.transition_time = 0
-						client.transition = "#{client.transition}-exit"
-						client.transition_paused = no
-						client.current_world = client.transitioning_to_world
-						if client.transitioning_to_room_id
-							client.current_room_id = client.transitioning_to_room_id
-						client.centerViewForNewlyEnteredRoom()
-						client.transitioning_to_world = @
-						client.transitioning_to_room_id = entered_room_id
-						client.transitioning_to_room = @rooms[entered_room_id]
-						client.transitioning_to_door = client.transitioning_to_room?.getEntByID(message.enteredRoom.exit_door_id)
-					else
-						client.current_world = @
-						client.current_room_id = entered_room_id
+					exit_door_id = message.enteredRoom.exit_door_id
+					console.log "Entered room:", entered_room_id
+					client.enteredRoom({entered_room_id, exit_door_id, entered_world: @})
 				else
 					console.warn "Unhandled message:", message
 			@socket.on "error", (err)=>

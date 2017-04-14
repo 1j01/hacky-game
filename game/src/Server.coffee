@@ -104,7 +104,7 @@ class Server
 					# FIXME: client can get stuck without a Player in existence
 					# setTimeout => # for simulating latency
 					c.sendMessage
-						enteredRoom: room_id: entering_room.id, exit_door_id: exit_door.id
+						enteredRoom: room_id: entering_room.id, exit_door_id: exit_door?.id
 					# , 500
 				else
 					console.warn "Unhandled message:", message
