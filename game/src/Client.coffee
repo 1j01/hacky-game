@@ -17,14 +17,11 @@ class Client
 		@transitioning_to_door = null
 		@transitioning_from_world = null
 		@transitioning_to_world = null
-		# TODO: choose "current" or "visible"
-		# or ideally we could just have a current_room and infer the world from that
-		@visible_world = null
+		# NOTE: ideally we could just have a current_room and infer the world from that
+		@current_world = null
 		@current_room_id = "the second room"
-		@transition = null # "basic", "booted"; null = not transitioning
+		@transition = null
 		@transition_time = 0
-		
-		@last_shown_room = null
 		
 		@worlds_by_address = new Map
 		@views_by_room = new Map
@@ -32,7 +29,7 @@ class Client
 	start: (address)=>
 		world = new World onClientSide: yes, serverAddress: address
 		@worlds_by_address.set(address, world)
-		@visible_world = world
+		@current_world = world
 		@animate()
 
 	closeConnections: =>
@@ -71,7 +68,7 @@ class Client
 
 	# TODO: center view at game start (once room is loaded)
 	centerViewForNewlyEnteredRoom: ->
-		room = @visible_world.rooms[@current_room_id]
+		room = @current_world.rooms[@current_room_id]
 		return unless room
 		view = @getView(room)
 		{cx_to, cy_to} = @getWhereToCenterView room, view, @ctx
@@ -84,7 +81,7 @@ class Client
 			console.log "Client: stopped because of an error"
 			return
 		requestAnimationFrame @animate
-		@visible_world.step()
+		@current_world.step()
 		@canvas2x.width = innerWidth if @canvas2x.width isnt innerWidth
 		@canvas2x.height = innerHeight if @canvas2x.height isnt innerHeight
 		@canvas.width = Math.ceil(innerWidth / 2) if @canvas.width isnt Math.ceil(innerWidth / 2)
@@ -92,7 +89,7 @@ class Client
 		@ctx.fillStyle = "black"
 		@ctx.fillRect 0, 0, @canvas.width, @canvas.height
 		
-		room = @visible_world.rooms[@current_room_id]
+		room = @current_world.rooms[@current_room_id]
 		return unless room
 		view = @getView(room)
 		{cx_to, cy_to} = @getWhereToCenterView room, view, @ctx, 2.5
@@ -180,7 +177,7 @@ class Client
 				else
 					@transition = "#{@transition}-exit"
 				if @transitioning_to_world
-					@visible_world = @transitioning_to_world
+					@current_world = @transitioning_to_world
 					@transitioning_to_world = null
 					if @transitioning_to_room_id
 						@current_room_id = @transitioning_to_room_id

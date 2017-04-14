@@ -107,7 +107,7 @@ class @Player extends (require "./Ent")
 			client.transitioning_from_door = door
 			client.transitioning_to_world = world
 			client.transitioning_to_room_id = entering_room_id
-			client.transition = "portal" # XXX also "door" tho
+			client.transition = if door.address then "portal" else "door"
 			entering_world.socket.sendMessage
 				enterRoom:
 					player: @

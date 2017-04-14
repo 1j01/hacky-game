@@ -23,7 +23,7 @@ class @World
 				if message?.room
 					@applyRoomUpdate message.room
 				else if message?.enteredRoom
-					# client.visible_world = @
+					# client.current_world = @
 					client.transitioning_to_room_id = message.enteredRoom.id
 					client.transitioning_to_world = @
 				else
@@ -45,7 +45,7 @@ class @World
 				return
 			entering_room_id = "the second room" # XXX: hardcoded (and silly) value
 			leaving_world = @
-			client.visible_world = entering_world
+			client.current_world = entering_world
 			client.current_room_id = entering_room_id
 			entering_world.socket.sendMessage
 				enterRoom:
