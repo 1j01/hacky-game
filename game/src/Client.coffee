@@ -171,15 +171,18 @@ class Client
 					transition_duration = 100
 					fn = (x, y, t, width, height, door_x, door_y)->
 						# 1 - (Math.hypot(x-door_x, y-door_y)) / width + (0.1 * Math.atan2(y-door_y, x-door_x) % 0.1) < t
-						# dist = Math.hypot(x-door_x, y-door_y) / width
-						# 1 - dist + ((0.1 * Math.atan2(y-door_y, x-door_x) - dist) % 0.1) < t
-						# 1 - dist + 0.5 * ((Math.atan2(y-door_y, x-door_x) - dist) % 0.5) < t
-						# 1 - dist - 0.5 * ((Math.atan2(y-door_y, x-door_x) + dist * 5 + Math.sin(dist * 70)) %% (Math.PI / 5)) < t
-						1 - dist - 0.5 * ((Math.atan2(y-door_y, x-door_x) + dist * 5 + Math.sin(dist * 20)) %% (Math.PI / 5)) < t
+						dist = Math.hypot(x-door_x, y-door_y) / width
+						angle = Math.atan2(y-door_y, x-door_x)
+						# 1 - dist + ((0.1 * angle - dist) % 0.1) < t
+						# 1 - dist + 0.5 * ((angle - dist) % 0.5) < t
+						# 1 - dist - 0.5 * ((angle + dist * 5 + Math.sin(dist * 70)) %% (Math.PI / 5)) < t
+						1 - dist - 0.5 * ((angle + dist * 5 + Math.sin(dist * 20)) %% (Math.PI / 5)) < t
 				when "booted-exit"
 					transition_duration = 100
 					fn = (x, y, t, width, height, door_x, door_y, exit_door_x, exit_door_y)->
-						1 - dist - 0.5 * ((Math.atan2(y-door_y, x-door_x) + dist * 5 + Math.sin(dist * 70)) %% (Math.PI / 5)) < t
+						dist = Math.hypot(x-exit_door_x, y-exit_door_y) / width
+						angle = Math.atan2(y-exit_door_y, x-exit_door_x)
+						dist - 0.5 * ((angle + dist * 5 + Math.sin(dist * 70)) %% (Math.PI / 5)) > t
 				else
 					throw new Error "Unknown transition type '#{@transition}'"
 			
@@ -235,10 +238,15 @@ class Client
 					if @entering_world
 						@transition_paused = yes
 						
+						from = address: @leaving_world.serverAddress
+						if @transition is "booted"
+							from.booted = yes
+						else
+							from.room_id = @leaving_room.id
 						@entering_world.socket.sendMessage
 							enterRoom:
 								player: @leaving_world.getPlayer()
-								from: room_id: @leaving_room.id, address: @leaving_world.serverAddress
+								from: from
 								to: room_id: @entering_room_id, address: @entering_world.serverAddress
 						
 						# TODO: after some time, give up on entering the room and transition back

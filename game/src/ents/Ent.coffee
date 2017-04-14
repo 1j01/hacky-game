@@ -6,6 +6,7 @@ class Ent
 	constructor: (obj, room, world)->
 		@unsynced_props = ["unsynced_props"]
 		@unsynced {room, world, zIndex: 10}
+		@unsynced {_in_collision_state: no}
 		@x = 0
 		@y = 0
 		@w = @h = 1
@@ -55,7 +56,12 @@ class Ent
 			else
 				@x = new_x
 		if @collisionAt @x, @y
-			console.warn "entered collision state"
+			unless @_in_collision_state
+				console.warn "Entered collision state", @
+			@_in_collision_state = true
+		else
+			@_in_collision_state = false
+		
 		for new_y in [@y..@y+@vy] by (if @vy < 0 then -res else res)
 			if tile = @collisionAt @x, new_y, @vx, @vy
 				if not @collisionAt @x - res*2, new_y, @vx, @vy

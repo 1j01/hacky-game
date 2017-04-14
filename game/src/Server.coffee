@@ -97,6 +97,8 @@ class Server
 					if exit_door
 						player.x = exit_door.x
 						player.y = exit_door.y
+					else
+						console.warn "[Server] no exit_door; message data: ", message.enterRoom
 					
 					# NOTE: we want to guarantee sending the room data to the client with their Player in it
 					# that way room transitions can use the exit door, if nothing else
@@ -175,7 +177,7 @@ class Server
 						id: address
 						to: "the second room"
 						x: door_placement_x
-						y: 5
+						y: 4
 						type: "OtherworldlyDoor" # XXX: is this really necessary?
 					}, hub_room, @world
 					door_placement_x -= 3

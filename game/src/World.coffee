@@ -51,14 +51,20 @@ class @World
 				return
 			entering_room_id = "the second room" # XXX: hardcoded (and silly) value
 			leaving_world = @
-			# TODO: transition
-			client.current_world = entering_world
-			client.current_room_id = entering_room_id
-			entering_world.socket.sendMessage
-				enterRoom:
-					player: player
-					from: booted: yes, address: leaving_world.serverAddress
-					to: room_id: entering_room_id, address: entering_world.serverAddress
+			entering_room = entering_world.rooms[entering_room_id]
+			if entering_room?
+				exit_door = ent for ent in entering_room.ents when ent.type is "OtherworldlyDoor" and ent.address is @serverAddress
+			client.enterRoom
+				leaving_room: player.room
+				leaving_world: player.world
+				leaving_door: null
+				entering_world: entering_world
+				entering_room_id: entering_room_id
+				entering_door: exit_door
+				# booted: yes
+				transition: "booted"
+				# TODO: rename entering_door/leaving_door for clarity,
+				# probably entering_room_door/leaving_room_door
 
 	toJSON: ->
 		{@rooms}
