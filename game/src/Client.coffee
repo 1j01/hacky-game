@@ -14,7 +14,7 @@ class Client
 		@current_world = null
 		@current_room_id = "the second room"
 		
-		# can be in different worlds
+		# NOTE: if I'm going to use these for logic, maybe I should name them entering_* and leaving_*
 		@transitioning_from_room = null
 		@transitioning_to_room = null
 		@transitioning_to_room_id = null
@@ -108,6 +108,8 @@ class Client
 		room.draw @ctx, view
 		@ctx.restore()
 		
+		enable_transitions = localStorage.enable_transitions is "true"
+		
 		if @transition
 			id = @ctx.getImageData(0, 0, @canvas.width, @canvas.height)
 			{data, width, height} = id
@@ -145,9 +147,7 @@ class Client
 				else
 					throw new Error "Unknown transition type '#{@transition}'"
 			
-			unless localStorage.enable_transitions is "true"
-				# FIXME: doesn't completely disable transtions
-				# there's an ugly single frame flash
+			unless enable_transitions
 				transition_duration = 0
 			
 			@transition_time += 1 / (1 + transition_duration)
@@ -171,8 +171,6 @@ class Client
 				exit_door_x = width/2
 				exit_door_y = height/2
 			
-			console.log @transition, exit_door_x, exit_door
-			
 			for i in [0..data.length] by 4
 				x = (i/4) % width
 				y = (i/4) // width
@@ -182,7 +180,8 @@ class Client
 					# # data[i+2] = 0
 					data[i+3] = 0
 			
-			@ctx.putImageData(id, 0, 0)
+			if enable_transitions
+				@ctx.putImageData(id, 0, 0)
 			
 			if @transition_time >= 1
 				@transition_time = 0
@@ -202,7 +201,18 @@ class Client
 					if @transitioning_to_room_id
 						@current_room_id = @transitioning_to_room_id
 					@centerViewForNewlyEnteredRoom()
-					# TODO: transition back if failed to load world or this client's player isn't in it
+					
+					@transitioning_to_world.socket.sendMessage
+						enterRoom:
+							player: @transitioning_from_world.getPlayer()
+							from: room_id: @transitioning_from_room.id, address: @transitioning_from_world.serverAddress
+							to: room_id: @transitioning_to_room_id, address: @transitioning_to_world.serverAddress
+					
+					# TODO: pause on black, wait for enteredRoom message,
+					# and transition back if failed to enter room
+					# (if we get enteredRoom after we gave up, it should just switch instantly)
+					# TODO: eventually disconnect from and destroy old world (if you go to a different world)
+					# (cancel if you come back within some period)
 		
 		@ctx2x.fillStyle = "black"
 		@ctx2x.fillRect 0, 0, @canvas2x.width, @canvas2x.height

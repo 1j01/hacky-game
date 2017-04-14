@@ -87,29 +87,22 @@ class @Player extends (require "./Ent")
 		@remove()
 		
 		entering_room_id = door.to
-		entering_world =
-			if door.address
-				log "Leaving world", leaving_world
-				if on_client_side and @id is global.clientPlayerID
-					{World} = World if World.World # XXX: Why is require() returning an Object?
-					world = client.worlds_by_address.get(door.address)
-					world ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
-					client.worlds_by_address.set(door.address, world)
-					log "Entering world", world
-					world
-			else
-				@world
+		if door.address
+			log "Leaving world", leaving_world
+			if on_client_side and @id is global.clientPlayerID
+				{World} = World if World.World # XXX: Why is require() returning an Object?
+				entering_world = client.worlds_by_address.get(door.address)
+				entering_world ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
+				client.worlds_by_address.set(door.address, entering_world)
+				log "Entering world", entering_world
+		else
+			entering_world = @world
 		
 		if on_client_side and @id is global.clientPlayerID
 			# NOTE: we don't a Room to set client.transitioning_to_room to at this point
 			client.transitioning_from_room = @room
 			client.transitioning_from_world = @world
 			client.transitioning_from_door = door
-			client.transitioning_to_world = world
+			client.transitioning_to_world = entering_world
 			client.transitioning_to_room_id = entering_room_id
 			client.transition = if door.address then "portal" else "door"
-			entering_world.socket.sendMessage
-				enterRoom:
-					player: @
-					from: room_id: leaving_room.id, address: leaving_world.serverAddress
-					to: room_id: entering_room_id, address: entering_world.serverAddress

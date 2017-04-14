@@ -25,10 +25,19 @@ class @World
 				if message?.room
 					@applyRoomUpdate message.room
 				else if message?.enteredRoom
-					client.transitioning_to_room_id = message.enteredRoom.room_id
-					client.transitioning_to_world = @
-					client.transitioning_to_room = @rooms[message.enteredRoom.room_id]
-					client.transitioning_to_door = client.transitioning_to_room?.getEntByID(message.enteredRoom.exit_door_id)
+					entered_room_id = message.enteredRoom.room_id
+					# simulate latency
+					# setTimeout =>
+					if client.transition
+						client.transitioning_to_world = @
+						client.transitioning_to_room_id = entered_room_id
+						client.transitioning_to_room = @rooms[entered_room_id]
+						client.transitioning_to_door = client.transitioning_to_room?.getEntByID(message.enteredRoom.exit_door_id)
+					else
+						client.current_world = @
+						client.current_room_id = entered_room_id
+					console.log "Entered room", entered_room_id, "client.transition =", client.transition
+					# , 50
 				else
 					console.warn "Unhandled message:", message
 			@socket.on "error", (err)=>
