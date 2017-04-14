@@ -8,7 +8,7 @@ module.exports =
 class @World
 	constructor: ({@onClientSide, @serverAddress, @players={}})->
 		@["[[ID]]"] = (require "crypto").randomBytes(10).toString("hex")
-		@rooms = {}
+		@rooms = {} # TODO: use Map
 		
 		# The client starts out connected to its own server
 		if @onClientSide
@@ -20,12 +20,15 @@ class @World
 				client.worlds_by_address.delete(@serverAddress)
 				@bootPlayerToLocalWorld()
 			@socket.on "message", (message)=>
+				# TODO: standard {type, data} messaging would probably be cleaner
+				# actually just use socket.io
 				if message?.room
 					@applyRoomUpdate message.room
 				else if message?.enteredRoom
-					# client.current_world = @
-					client.transitioning_to_room_id = message.enteredRoom.id
+					client.transitioning_to_room_id = message.enteredRoom.room_id
 					client.transitioning_to_world = @
+					client.transitioning_to_room = @rooms[message.enteredRoom.room_id]
+					client.transitioning_to_door = client.transitioning_to_room?.getEntByID(message.enteredRoom.exit_door_id)
 				else
 					console.warn "Unhandled message:", message
 			@socket.on "error", (err)=>
@@ -45,6 +48,7 @@ class @World
 				return
 			entering_room_id = "the second room" # XXX: hardcoded (and silly) value
 			leaving_world = @
+			# TODO: transition
 			client.current_world = entering_world
 			client.current_room_id = entering_room_id
 			entering_world.socket.sendMessage

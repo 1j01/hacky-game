@@ -10,16 +10,19 @@ class Client
 		@ctx2x = @canvas2x.getContext "2d"
 		document.body.appendChild @canvas2x
 		
+		# NOTE: ideally we could just have a current_room and infer the world from that
+		@current_world = null
+		@current_room_id = "the second room"
+		
 		# can be in different worlds
 		@transitioning_from_room = null
 		@transitioning_to_room = null
+		@transitioning_to_room_id = null
 		@transitioning_from_door = null
 		@transitioning_to_door = null
 		@transitioning_from_world = null
 		@transitioning_to_world = null
-		# NOTE: ideally we could just have a current_room and infer the world from that
-		@current_world = null
-		@current_room_id = "the second room"
+		
 		@transition = null
 		@transition_time = 0
 		
@@ -81,6 +84,7 @@ class Client
 			console.log "Client: stopped because of an error"
 			return
 		requestAnimationFrame @animate
+		# TODO: prevent player movement during transitions
 		@current_world.step()
 		@canvas2x.width = innerWidth if @canvas2x.width isnt innerWidth
 		@canvas2x.height = innerHeight if @canvas2x.height isnt innerHeight
@@ -115,16 +119,16 @@ class Client
 						1 - (Math.hypot(x-door_x, y-door_y)) / width < t
 				when "door-exit"
 					transition_duration = 20
-					fn = (x, y, t, width, height, door_x, door_y)->
-						1 - (Math.hypot(x-door_x, y-door_y)) / width > t
+					fn = (x, y, t, width, height, door_x, door_y, exit_door_x, exit_door_y)->
+						(Math.hypot(x-exit_door_x, y-exit_door_y)) / width > t
 				when "portal"
 					transition_duration = 20
 					fn = (x, y, t, width, height, door_x, door_y)->
 						1 - (Math.hypot(x-door_x, y-door_y)) / width < t
 				when "portal-exit"
 					transition_duration = 20
-					fn = (x, y, t, width, height, door_x, door_y)->
-						(Math.hypot(x-door_x, y-door_y)) / width > t
+					fn = (x, y, t, width, height, door_x, door_y, exit_door_x, exit_door_y)->
+						(Math.hypot(x-exit_door_x, y-exit_door_y)) / width > t
 				when "booted"
 					transition_duration = 100
 					fn = (x, y, t, width, height, door_x, door_y)->
@@ -136,7 +140,7 @@ class Client
 						1 - dist - 0.5 * ((Math.atan2(y-door_y, x-door_x) + dist * 5 + Math.sin(dist * 20)) %% (Math.PI / 5)) < t
 				when "booted-exit"
 					transition_duration = 100
-					fn = (x, y, t, width, height, door_x, door_y)->
+					fn = (x, y, t, width, height, door_x, door_y, exit_door_x, exit_door_y)->
 						1 - dist - 0.5 * ((Math.atan2(y-door_y, x-door_x) + dist * 5 + Math.sin(dist * 70)) %% (Math.PI / 5)) < t
 				else
 					throw new Error "Unknown transition type '#{@transition}'"
@@ -149,20 +153,30 @@ class Client
 			@transition_time += 1 / (1 + transition_duration)
 			t = @transition_time
 			
-			# TODO: use exit door
 			door = @transitioning_from_door
-			if door?
-				from_view = @views_by_room.get(@transitioning_from_room)
-				door_x = @ctx.canvas.width / 2 + (door.x + door.w/2 - from_view?.cx) * 16
-				door_y = @ctx.canvas.height / 2 + (door.y + door.h/2 - from_view?.cy) * 16
+			from_view = @views_by_room.get(@transitioning_from_room)
+			if door? and from_view?
+				door_x = @canvas.width / 2 + (door.x + door.w/2 - from_view.cx) * 16
+				door_y = @canvas.height / 2 + (door.y + door.h/2 - from_view.cy) * 16
 			else
 				door_x = width/2
 				door_y = height/2
 			
+			exit_door = @transitioning_to_door
+			to_view = @views_by_room.get(@transitioning_to_room)
+			if exit_door? and to_view?
+				exit_door_x = @canvas.width / 2 + (exit_door.x + exit_door.w/2 - to_view.cx) * 16
+				exit_door_y = @canvas.height / 2 + (exit_door.y + exit_door.h/2 - to_view.cy) * 16
+			else
+				exit_door_x = width/2
+				exit_door_y = height/2
+			
+			console.log @transition, exit_door_x, exit_door
+			
 			for i in [0..data.length] by 4
 				x = (i/4) % width
 				y = (i/4) // width
-				if fn(x, y, t, width, height, door_x, door_y)
+				if fn(x, y, t, width, height, door_x, door_y, exit_door_x, exit_door_y)
 					# data[i+0] = 0
 					# data[i+1] = 0
 					# # data[i+2] = 0
@@ -174,17 +188,21 @@ class Client
 				@transition_time = 0
 				if @transition?.match("exit")
 					@transition = null
+					@transitioning_from_room = null
+					@transitioning_to_room = null
+					@transitioning_from_door = null
+					@transitioning_to_door = null
+					@transitioning_from_world = null
+					@transitioning_to_world = null
+					@transitioning_to_room_id = null
 				else
 					@transition = "#{@transition}-exit"
 				if @transitioning_to_world
 					@current_world = @transitioning_to_world
-					@transitioning_to_world = null
 					if @transitioning_to_room_id
 						@current_room_id = @transitioning_to_room_id
-					@transitioning_to_room_id = null
 					@centerViewForNewlyEnteredRoom()
-					# TODO: find exit door if applicable
-					# TODO: transition back if failed to load world or our player isn't in it
+					# TODO: transition back if failed to load world or this client's player isn't in it
 		
 		@ctx2x.fillStyle = "black"
 		@ctx2x.fillRect 0, 0, @canvas2x.width, @canvas2x.height

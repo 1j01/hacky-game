@@ -56,7 +56,6 @@ class Server
 			# console.debug "a client connected", c
 			@clients.push(c)
 			c.on "close", =>
-				# console.debug "a client disconnected", c
 				@clients.splice(@clients.indexOf(c), 1)
 				console.debug "player disconnected, removing", c.player
 				c.player?.remove()
@@ -73,6 +72,8 @@ class Server
 					player = new Player player, entering_room, @world
 					c.player = player
 					entering_room.ents.push player
+					# TODO: coordinate (visibly) adding the player only as the player's client starts to show this server's world
+					# I guess we could just *connect* to a world immediately but only send an enterDoor request at the transition point
 					
 					# if going between worlds
 					if to.address isnt from.address
@@ -98,8 +99,10 @@ class Server
 						player.x = exit_door.x
 						player.y = exit_door.y
 					
+					# TODO: can we guarantee sending this after we've sent the room to the client?
+					# with their Player in it?
 					c.sendMessage
-						enteredRoom: id: entering_room.id
+						enteredRoom: room_id: entering_room.id, exit_door_id: exit_door.id
 				else
 					console.warn "Unhandled message:", message
 			
@@ -128,10 +131,6 @@ class Server
 			@world.step()
 			send_ents()
 		, 1000 / 60
-		# TODO: maybe step the server from the client?
-		# @iid = setInterval =>
-		# 	send_ents()
-		# , 1000 / 1
 		
 		@slower_iid = setInterval =>
 			send_world_updates()
@@ -155,7 +154,7 @@ class Server
 		otherworldly_doors = new Map
 		door_placement_x = 12
 		
-		@getAddress (address)->
+		@getAddress (address)=>
 			peer = global.peer = ssdp.createPeer
 				name: App.manifest.name
 				version: App.manifest.version

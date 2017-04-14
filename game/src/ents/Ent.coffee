@@ -5,7 +5,7 @@ module.exports = @Ent =
 class Ent
 	constructor: (obj, room, world)->
 		@unsynced_props = ["unsynced_props"]
-		@unsynced {room, world}
+		@unsynced {room, world, zIndex: 10}
 		@x = 0
 		@y = 0
 		@w = @h = 1
@@ -13,11 +13,9 @@ class Ent
 		@vy = 0
 		@applyUpdate obj
 	
-	zIndex: 10
-	
 	unsynced: (obj)->
 		for k, v of obj
-			@unsynced_props.push(k)
+			@unsynced_props.push(k) unless k in @unsynced_props
 			@[k] = v
 	
 	toJSON: ->
