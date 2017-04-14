@@ -1,6 +1,9 @@
 
 World = require "./World"
 
+# FIXME: client can get stuck without a Player in existence
+# or with multiple Player objects in different rooms
+
 module.exports =
 class Client
 	constructor: ->
@@ -72,7 +75,6 @@ class Client
 	# TODO: center view at game start (once room is loaded)
 	centerViewForNewlyEnteredRoom: =>
 		room = @current_world.rooms[@current_room_id]
-		console.log "centerViewForNewlyEnteredRoom", {room, @current_room_id}
 		return unless room
 		view = @getView(room)
 		{cx_to, cy_to} = @getWhereToCenterView room, view, @ctx

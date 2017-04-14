@@ -98,11 +98,10 @@ class Server
 						player.x = exit_door.x
 						player.y = exit_door.y
 					
-					# XXX(?): can we guarantee sending this after we've sent the room to the client?
-					# with their Player in it?
-					# I'm guessing not, and maybe that's related to..
-					# FIXME: client can get stuck without a Player in existence
+					# NOTE: we want to guarantee sending the room data to the client with their Player in it
+					# that way room transitions can use the exit door, if nothing else
 					# setTimeout => # for simulating latency
+					c.sendMessage room: entering_room
 					c.sendMessage
 						enteredRoom: room_id: entering_room.id, exit_door_id: exit_door?.id
 					# , 500
