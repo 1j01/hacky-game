@@ -9,13 +9,12 @@ class @Controller
 	
 	setPlayer: (player)->
 		@playerID = player.id
-		@world = player.world
+		@socket = player.world.socket
 	
 	toJSON: ->
 		{@moveX, @jump, @enterDoor, @crouch, @playerID}
 	
 	sendControlsToServer: ->
-		if @world.socket
-			@world.socket.sendMessage {controls: @}
+		@socket?.sendMessage {controls: @}
 	
 	step: ->

@@ -9,9 +9,6 @@ class @World
 	constructor: ({@onClientSide, @serverAddress, @players={}})->
 		@["[[ID]]"] = (require "crypto").randomBytes(10).toString("hex")
 		@rooms = {}
-		@current_room_id = "the second room" # XXX: hardcoded separately from world data
-		# @current_room_id = null
-		@view = {cx: 0, cy: 0}
 		
 		# The client starts out connected to its own server
 		if @onClientSide
@@ -25,6 +22,10 @@ class @World
 			@socket.on "message", (message)=>
 				if message?.room
 					@applyRoomUpdate message.room
+				else if message?.enteredRoom
+					# client.visible_world = @
+					client.transitioning_to_room_id = message.enteredRoom.id
+					client.transitioning_to_world = @
 				else
 					console.warn "Unhandled message:", message
 			@socket.on "error", (err)=>
@@ -45,7 +46,7 @@ class @World
 			entering_room_id = "the second room" # XXX: hardcoded (and silly) value
 			leaving_world = @
 			client.visible_world = entering_world
-			entering_world.current_room_id = entering_room_id
+			client.current_room_id = entering_room_id
 			entering_world.socket.sendMessage
 				enterRoom:
 					player: player
@@ -53,11 +54,11 @@ class @World
 					to: room_id: entering_room_id, address: entering_world.serverAddress
 
 	toJSON: ->
-		{@rooms, @current_room_id}
+		{@rooms}
 	
 	# TODO: rename "applyUpdate" methods to "fromJSON"?
 	# to match toJSON methods and to better connote the implicit creation
-	applyUpdate: ({rooms, @current_room_id})->
+	applyUpdate: ({rooms})->
 		for room in rooms
 			@applyRoomUpdate room
 	
@@ -73,52 +74,3 @@ class @World
 	step: (t)->
 		for id, room of @rooms when room.hasPlayers()
 			room.step t
-	
-	getWhereToCenterView: (room, ctx, margin=0)->
-		player = room.getPlayer()
-		
-		cx_to = @view.cx
-		cy_to = @view.cy
-		
-		if ctx.canvas.width >= room.width * 16
-			cx_to = room.width / 2
-		else if player
-			px = (player.x + player.w / 2)
-			cx_to = px - margin if px > @view.cx + margin
-			cx_to = px + margin if px < @view.cx - margin
-		
-		if ctx.canvas.height >= room.height * 16
-			cy_to = room.height / 2
-		else if player
-			py = (player.y + player.h / 2)
-			cy_to = py - margin if py > @view.cy + margin
-			cy_to = py + margin if py < @view.cy - margin
-		
-		{cx_to, cy_to}
-	
-	centerViewForNewlyEnteredRoom: ->
-		# TODO: center view at game start (once room is loaded)
-		# TODO: center view when entering rooms (once again)
-		return unless @_ctx_
-		room = @rooms[@current_room_id]
-		return unless room
-		{cx_to, cy_to} = @getWhereToCenterView room, @_ctx_
-		@view.cx = cx_to
-		@view.cy = cy_to
-	
-	draw: (ctx)->
-		@_ctx_ = ctx
-		
-		room = @rooms[@current_room_id]
-		if room?
-			{cx_to, cy_to} = @getWhereToCenterView room, ctx, 2.5
-			@view.cx += (cx_to - @view.cx) / 5
-			@view.cy += (cy_to - @view.cy) / 5
-			
-			ctx.save()
-			ctx.translate(
-				~~(ctx.canvas.width / 2 - @view.cx * 16)
-				~~(ctx.canvas.height / 2 - @view.cy * 16)
-			)
-			room.draw ctx
-			ctx.restore()

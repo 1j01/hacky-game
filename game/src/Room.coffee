@@ -95,7 +95,7 @@ class @Room
 							else # "■", "▩"...
 								return tile
 	
-	draw: (ctx)->
+	draw: (ctx, view)->
 		ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"
 		if localStorage.debug_mode is "true"
 			ctx.strokeStyle = simple_color_hash(@world.serverAddress)
@@ -112,8 +112,8 @@ class @Room
 		
 		ctx.save()
 		ctx.fillStyle = @bg
-		vx = ~~(@world.view.cx*16 / 2)
-		vy = ~~(@world.view.cy*16 / 2)
+		vx = ~~(view.cx*16 / 2)
+		vy = ~~(view.cy*16 / 2)
 		ctx.translate vx, vy
 		ctx.fillRect -vx, -vy, @width*16, @height*16
 		ctx.restore()

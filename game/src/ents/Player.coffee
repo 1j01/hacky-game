@@ -95,7 +95,6 @@ class @Player extends (require "./Ent")
 					world = client.worlds_by_address.get(door.address)
 					world ?= new World onClientSide: yes, serverAddress: door.address, players: @world.players
 					client.worlds_by_address.set(door.address, world)
-					# client.visible_world = world
 					log "Entering world", world
 					world
 			else
@@ -107,9 +106,8 @@ class @Player extends (require "./Ent")
 			client.transitioning_from_world = @world
 			client.transitioning_from_door = door
 			client.transitioning_to_world = world
-			client.transition = "portal"
-			# TODO: wait for a signal from the new world's socket before switching visible worlds
-			entering_world.current_room_id = entering_room_id
+			client.transitioning_to_room_id = entering_room_id
+			client.transition = "portal" # XXX also "door" tho
 			entering_world.socket.sendMessage
 				enterRoom:
 					player: @

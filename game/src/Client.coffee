@@ -17,13 +17,17 @@ class Client
 		@transitioning_to_door = null
 		@transitioning_from_world = null
 		@transitioning_to_world = null
+		# TODO: choose "current" or "visible"
+		# or ideally we could just have a current_room and infer the world from that
 		@visible_world = null
+		@current_room_id = "the second room"
 		@transition = null # "basic", "booted"; null = not transitioning
 		@transition_time = 0
 		
 		@last_shown_room = null
 		
 		@worlds_by_address = new Map
+		@views_by_room = new Map
 
 	start: (address)=>
 		world = new World onClientSide: yes, serverAddress: address
@@ -34,6 +38,45 @@ class Client
 	closeConnections: =>
 		@worlds_by_address.forEach (world)->
 			world.socket?._socket.destroy()
+
+	getView: (room)=>
+		if @views_by_room.has(room)
+			view = @views_by_room.get(room)
+		else
+			view = {cx: 0, cy: 0}
+			@views_by_room.set(room, view)
+		view
+
+	getWhereToCenterView: (room, view, ctx, margin=0)->
+		player = room.getPlayer()
+		
+		cx_to = view.cx
+		cy_to = view.cy
+		
+		if ctx.canvas.width >= room.width * 16
+			cx_to = room.width / 2
+		else if player
+			px = (player.x + player.w / 2)
+			cx_to = px - margin if px > view.cx + margin
+			cx_to = px + margin if px < view.cx - margin
+		
+		if ctx.canvas.height >= room.height * 16
+			cy_to = room.height / 2
+		else if player
+			py = (player.y + player.h / 2)
+			cy_to = py - margin if py > view.cy + margin
+			cy_to = py + margin if py < view.cy - margin
+		
+		{cx_to, cy_to}
+
+	# TODO: center view at game start (once room is loaded)
+	centerViewForNewlyEnteredRoom: ->
+		room = @visible_world.rooms[@current_room_id]
+		return unless room
+		view = @getView(room)
+		{cx_to, cy_to} = @getWhereToCenterView room, view, @ctx
+		view.cx = cx_to
+		view.cy = cy_to
 
 	animate: =>
 		if window.CRASHED
@@ -48,7 +91,21 @@ class Client
 		@canvas.height = Math.ceil(innerHeight / 2) if @canvas.height isnt Math.ceil(innerHeight / 2)
 		@ctx.fillStyle = "black"
 		@ctx.fillRect 0, 0, @canvas.width, @canvas.height
-		@visible_world.draw @ctx
+		
+		room = @visible_world.rooms[@current_room_id]
+		return unless room
+		view = @getView(room)
+		{cx_to, cy_to} = @getWhereToCenterView room, view, @ctx, 2.5
+		view.cx += (cx_to - view.cx) / 5
+		view.cy += (cy_to - view.cy) / 5
+		
+		@ctx.save()
+		@ctx.translate(
+			~~(@canvas.width / 2 - view.cx * 16)
+			~~(@canvas.height / 2 - view.cy * 16)
+		)
+		room.draw @ctx, view
+		@ctx.restore()
 		
 		if @transition
 			id = @ctx.getImageData(0, 0, @canvas.width, @canvas.height)
@@ -88,6 +145,8 @@ class Client
 					throw new Error "Unknown transition type '#{@transition}'"
 			
 			unless localStorage.enable_transitions is "true"
+				# FIXME: doesn't completely disable transtions
+				# there's an ugly single frame flash
 				transition_duration = 0
 			
 			@transition_time += 1 / (1 + transition_duration)
@@ -96,8 +155,9 @@ class Client
 			# TODO: use exit door
 			door = @transitioning_from_door
 			if door?
-				door_x = @ctx.canvas.width / 2 + (door.x + door.w/2 - @transitioning_from_world.view.cx) * 16
-				door_y = @ctx.canvas.height / 2 + (door.y + door.h/2 - @transitioning_from_world.view.cy) * 16
+				from_view = @views_by_room.get(@transitioning_from_room)
+				door_x = @ctx.canvas.width / 2 + (door.x + door.w/2 - from_view?.cx) * 16
+				door_y = @ctx.canvas.height / 2 + (door.y + door.h/2 - from_view?.cy) * 16
 			else
 				door_x = width/2
 				door_y = height/2
@@ -122,6 +182,10 @@ class Client
 				if @transitioning_to_world
 					@visible_world = @transitioning_to_world
 					@transitioning_to_world = null
+					if @transitioning_to_room_id
+						@current_room_id = @transitioning_to_room_id
+					@transitioning_to_room_id = null
+					@centerViewForNewlyEnteredRoom()
 					# TODO: find exit door if applicable
 					# TODO: transition back if failed to load world or our player isn't in it
 		
@@ -129,9 +193,3 @@ class Client
 		@ctx2x.fillRect 0, 0, @canvas2x.width, @canvas2x.height
 		@ctx2x.imageSmoothingEnabled = off
 		@ctx2x.drawImage @canvas, 0, 0, @canvas2x.width, @canvas2x.height
-		
-		# doesn't work
-		# shown_room = @visible_world.rooms[@visible_world]
-		# if @last_shown_room isnt shown_room
-		# 	@visible_world.centerViewForNewlyEnteredRoom()
-		# 	@last_shown_room = shown_room

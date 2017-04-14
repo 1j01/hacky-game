@@ -73,7 +73,6 @@ class Server
 					player = new Player player, entering_room, @world
 					c.player = player
 					entering_room.ents.push player
-					# TODO: send a message back confirming the entrance
 					
 					# if going between worlds
 					if to.address isnt from.address
@@ -98,8 +97,12 @@ class Server
 					if exit_door
 						player.x = exit_door.x
 						player.y = exit_door.y
+					
+					c.sendMessage
+						enteredRoom: id: entering_room.id
 				else
 					console.warn "Unhandled message:", message
+			
 			send_all_data_to_new_client(c)
 		
 		@_getPort_callbacks = []
@@ -140,11 +143,13 @@ class Server
 		
 		initWorld(@world)
 		
-		# TODO: set current_room_id when adding the player
-		hub_room = @world.rooms[@world.current_room_id]
+		hub_room = @world.rooms["the second room"] # XXX: hardcoded (and silly) value
+		# TODO: uuid
+		# TODO: define spawn point in room data
 		player = new Player {id: "p#{Math.random()}", x: 8, y: 3, type: "Player"}, hub_room, @world
 		hub_room.ents.push player
 		global.clientPlayerID = player.id
+		# TODO: maybe the client should request to enter the room initially
 		
 		# Find other clients and create doors to other worlds
 		otherworldly_doors = new Map
