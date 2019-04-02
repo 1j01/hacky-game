@@ -98,7 +98,7 @@ class Client
 			@current_world = entered_world
 			@current_room_id = entered_room_id
 
-	enterRoom: ({leaving_room, leaving_world, leaving_door, entering_world, entering_room_id, transition})=>
+	enterRoom: ({leaving_room, leaving_world, leaving_door, entering_world, entering_room_id, entering_room, entering_door, transition})=>
 		# NOTE: could simplify and get world from leaving_room
 		# or actually just get both ourselves?
 		# @current_world and @current_world.rooms[@current_room_id]
@@ -107,9 +107,8 @@ class Client
 		@leaving_door = leaving_door
 		@entering_world = entering_world
 		@entering_room_id = entering_room_id
-		# NOTE: we cant't necessarily get the Room or Door we're transitioning to yet
-		@entering_room = null
-		@entering_door = null
+		@entering_room = entering_room
+		@entering_door = entering_door
 		@transition = transition
 		@transition_time = 0
 
@@ -154,35 +153,64 @@ class Client
 				when "door"
 					transition_duration = 20
 					fn = (x, y, t, width, height, door_x, door_y)->
-						1 - (Math.hypot(x-door_x, y-door_y)) / width < t
+						dist = Math.hypot(x-door_x, y-door_y) / width
+						1 - dist < t
 				when "door-exit"
 					transition_duration = 20
 					fn = (x, y, t, width, height, door_x, door_y, exit_door_x, exit_door_y)->
-						(Math.hypot(x-exit_door_x, y-exit_door_y)) / width > t
+						dist = Math.hypot(x-door_x, y-door_y) / width
+						dist > t
 				when "portal"
 					transition_duration = 20
 					fn = (x, y, t, width, height, door_x, door_y)->
-						1 - (Math.hypot(x-door_x, y-door_y)) / width < t
+						dist = Math.hypot(x-door_x, y-door_y) / width
+						1 - dist < t
 				when "portal-exit"
 					transition_duration = 20
 					fn = (x, y, t, width, height, door_x, door_y, exit_door_x, exit_door_y)->
-						(Math.hypot(x-exit_door_x, y-exit_door_y)) / width > t
-				when "booted"
-					transition_duration = 100
-					fn = (x, y, t, width, height, door_x, door_y)->
-						# 1 - (Math.hypot(x-door_x, y-door_y)) / width + (0.1 * Math.atan2(y-door_y, x-door_x) % 0.1) < t
 						dist = Math.hypot(x-door_x, y-door_y) / width
-						angle = Math.atan2(y-door_y, x-door_x)
+						dist > t
+				when "booted"
+				# when "booted", "door"
+					transition_duration = 100
+					fn = (x, y, t, width, height, door_x, door_y, exit_door_x, exit_door_y)->
+						# 1 - (Math.hypot(x-door_x, y-door_y)) / width + (0.1 * Math.atan2(y-door_y, x-door_x) % 0.1) < t
+						raw_dist = Math.hypot(x-exit_door_x, y-exit_door_y) / width
+						delta_x = exit_door_x - door_x
+						delta_y = exit_door_y - door_y
+						# a = (1 + (1 - t) * raw_dist)
+						# a = (1 + (1 - t) * Math.pow(0.5+raw_dist, 2))
+						# a = (1 + (1 - Math.pow(t, 2)) * 3 * raw_dist)
+						# a = (1 + (1 - Math.pow(t, 2.1)) * 3.1 * raw_dist)
+						# a = (1 + (1 - Math.pow(t + 0.1, 2.1)) * 1.1 * (1.1 + raw_dist))
+						a = (1 + (1 - t) * raw_dist * 5)
+						# target_x = exit_door_x * a
+						# target_y = exit_door_y * a
+						target_x = door_x + delta_x * a
+						target_y = door_y + delta_y * a
+						dist = Math.hypot(x-target_x, y-target_y) / width
+						angle = Math.atan2(y-target_y, x-target_x)
 						# 1 - dist + ((0.1 * angle - dist) % 0.1) < t
 						# 1 - dist + 0.5 * ((angle - dist) % 0.5) < t
 						# 1 - dist - 0.5 * ((angle + dist * 5 + Math.sin(dist * 70)) %% (Math.PI / 5)) < t
-						1 - dist - 0.5 * ((angle + dist * 5 + Math.sin(dist * 20)) %% (Math.PI / 5)) < t
+						# 1 - dist/2.5 - 0.5 * ((angle + dist * 5 + Math.sin(dist * 20 * t) * t) %% (Math.PI / 5)) < t
+						1 - dist/2.5 - 0.5 * ((angle + dist * 5 + Math.sin(dist * 20 * t) * t * 2) %% (Math.PI / 5)) < t
+						# dist += Math.sin(dist * 70) / 5
+						# dist - 0.5 * ((angle + dist * 5) %% (Math.PI / 5)) > t
+
 				when "booted-exit"
+				# when "booted-exit", "door-exit"
 					transition_duration = 100
 					fn = (x, y, t, width, height, door_x, door_y, exit_door_x, exit_door_y)->
 						dist = Math.hypot(x-exit_door_x, y-exit_door_y) / width
 						angle = Math.atan2(y-exit_door_y, x-exit_door_x)
-						dist - 0.5 * ((angle + dist * 5 + Math.sin(dist * 70)) %% (Math.PI / 5)) > t
+						# dist - 0.5 * ((angle + dist * 5 + Math.sin(dist * 70)) %% (Math.PI / 5)) > t
+						# dist - 0.5 * ((angle + dist * (5 + Math.sin(dist * 50)) + Math.sin(dist * 70)) %% (Math.PI / 5)) > t
+						dist - 0.5 * ((angle + dist * (5 + 3 * Math.sin(dist * 50)) + Math.sin(dist * 70)) %% (Math.PI / 5)) > t
+						# dist - 0.5 * ((angle + dist * (5 + 8 * Math.sin(dist * 10))) %% (Math.PI / 5)) > t
+						# dist *= Math.sin(dist * 70) / 5
+						# dist - 0.5 * ((angle + dist * 5) %% (Math.PI / 5)) > t
+						# dist - 0.5 * ((angle + dist * 5 * Math.cos(dist * 7) * Math.cos(dist * 20)) %% (Math.PI / 5)) > t
 				else
 					throw new Error "Unknown transition type '#{@transition}'"
 			

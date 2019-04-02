@@ -119,8 +119,8 @@ I did a tech demo of this first, but there are no persistent elements to the wor
 
 ## Install
 
-Final builds of the game will be standalone executables,
-but there's not much of a point yet to trying to release builds.
+(Final builds of the game will be standalone executables,
+but I don't see much of a point yet trying to release builds.)
 
 You'll need [Node.js][].
 [Clone the project][cloning a repo]
@@ -153,6 +153,7 @@ The game implements hackily saving game data directly to the executable binary,
 which is rather platform specific.
 This is only implemented for Windows so far,
 but it should be feasible on at least some other systems.
+This isn't used currently, so you should be good with the cross-platform `build-simple`.
 
 On Windows:
 

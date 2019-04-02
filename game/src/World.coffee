@@ -60,6 +60,7 @@ class @World
 				leaving_door: null
 				entering_world: entering_world
 				entering_room_id: entering_room_id
+				entering_room: entering_room
 				entering_door: exit_door
 				# booted: yes
 				transition: "booted"
